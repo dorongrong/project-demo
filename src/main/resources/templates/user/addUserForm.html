@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <link
+      th:href="@{/css/bootstrap.min.css}"
+      href="../css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .container {
+        max-width: 560px;
+      }
+      .field-error {
+        border-color: #dc3545;
+        color: #dc3545;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="py-5 text-center">
+        <h2>회원 가입</h2>
+      </div>
+
+      <h4 class="mb-3">회원 정보 입력</h4>
+
+      <form action="" th:action th:object="${user}" method="post">
+        <div th:if="${#fields.hasGlobalErrors()}">
+          <p
+            class="field-error"
+            th:each="err : ${#fields.globalErrors()}"
+            th:text="${err}"
+          >
+            전체 오류 메시지
+          </p>
+        </div>
+
+        <div>
+          <label for="loginId">로그인 ID</label>
+          <input
+            type="text"
+            id="loginId"
+            th:field="*{loginId}"
+            class="form-control"
+            th:errorclass="field-error"
+          />
+          <div class="field-error" th:errors="*{loginId}" />
+        </div>
+        <div>
+          <label for="password">비밀번호</label>
+          <input
+            type="password"
+            id="password"
+            th:field="*{password}"
+            class="form-control"
+            th:errorclass="field-error"
+          />
+          <div class="field-error" th:errors="*{password}" />
+        </div>
+        <div>
+          <label for="name">이름</label>
+          <input
+            type="text"
+            id="name"
+            th:field="*{loginName}"
+            class="form-control"
+            th:errorclass="field-error"
+          />
+          <div class="field-error" th:errors="*{loginName}" />
+        </div>
+        <div class="form-group">
+          <label th:for="zipcode">우편번호</label>
+          <input
+            type="text"
+            th:field="*{address.zipcode}"
+            class="form-control"
+            placeholder="우편번호를 입력하세요"
+            readonly
+            onclick="findAddr()"
+          >
+        </div>
+        <div class="form-group">
+          <label th:for="address.streetAdr">도로명 주소</label>
+          <input
+            type="text"
+            th:field="*{address.streetAdr}"
+            class="form-control"
+            placeholder="도로명 주소를 입력하세요"
+            readonly
+          >
+        </div>
+        <div class="form-group">
+          <label th:for="detailAdr">상세주소</label>
+          <input
+            type="text"
+            th:field="*{address.detailAdr}"
+            class="form-control"
+            placeholder="상세주소를 입력하세요"
+          >
+        </div>
+
+        <hr class="my-4" />
+
+        <div class="row">
+          <div class="col">
+            <button class="w-100 btn btn-primary btn-lg" type="submit">
+              회원 가입
+            </button>
+          </div>
+          <div class="col">
+            <button
+              class="w-100 btn btn-secondary btn-lg"
+              onclick="location.href='items.html'"
+              th:onclick="|location.href='@{/}'|"
+              type="button"
+            >
+              취소
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- /container -->
+    <script>
+    function findAddr() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+
+                var addr = ''; // 주소 변수
+                var extraAddr = ''; // 참고항목 변수
+
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                if(data.userSelectedType === 'R'){
+
+                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                        extraAddr += data.bname;
+                    }
+
+                    if(data.buildingName !== '' && data.apartment === 'Y'){
+                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                    }
+
+                    if(extraAddr !== ''){
+                        extraAddr = ' (' + extraAddr + ')';
+                    }
+
+                    document.getElementById("address.detailAdr").value = extraAddr;
+
+                } else {
+                    document.getElementById("address.detailAdr").value = '';
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('address.zipcode').value = data.zonecode;
+                document.getElementById("address.streetAdr").value = addr;
+                // 커서를 상세주소 필드로 이동한다.
+                document.getElementById("address.detailAdr").focus();
+            }
+        }).open();
+    }
+</script>
+
+  </body>
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</html>

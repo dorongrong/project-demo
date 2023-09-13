@@ -1,22 +1,15 @@
-package lee.projectdemo.login.user;
+package lee.projectdemo.login.web.login;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
-@Data
-public class User {
 
-    private Long id;
+@Data
+public class LoginForm {
 
     @NotEmpty
     private String loginId;
 
     @NotEmpty
-    private String loginName;
-
-    @NotEmpty
     private String password;
-
-    private Address address;
-
 }
