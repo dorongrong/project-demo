@@ -1,8 +1,8 @@
 package lee.projectdemo.login.service;
 
 
+import lee.projectdemo.login.repository.UserRepository;
 import lee.projectdemo.login.user.User;
-import lee.projectdemo.login.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

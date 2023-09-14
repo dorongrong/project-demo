@@ -2,9 +2,9 @@ package lee.projectdemo.login.web.user;
 
 
 import jakarta.validation.Valid;
+import lee.projectdemo.login.repository.UserRepository;
 import lee.projectdemo.login.user.Address;
 import lee.projectdemo.login.user.User;
-import lee.projectdemo.login.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
