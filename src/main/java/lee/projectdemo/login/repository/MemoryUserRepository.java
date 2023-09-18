@@ -27,8 +27,8 @@ public class MemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User findById(Long id) {
-        return userStore.get(id);
+    public Optional<User> findById(Long id) {
+        return Optional.ofNullable(userStore.get(id));
     }
 
     @Override
@@ -37,6 +37,13 @@ public class MemoryUserRepository implements UserRepository {
                 .filter(m -> m.getLoginId().equals(loginId))
                 .findFirst();
     }
+
+//    @Override
+//     public Optional<User> findByLoginName(String loginName) {
+//        return findAll().stream()
+//                .filter(m -> m.getLoginName().equals(loginName))
+//                .findFirst();
+//    }
 
     @Override
     public List<User> findAll() {

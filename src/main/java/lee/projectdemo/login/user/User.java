@@ -1,14 +1,19 @@
 package lee.projectdemo.login.user;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
+@Entity
 public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotEmpty
+    @Column
     private String loginId;
 
     @NotEmpty
@@ -18,5 +23,13 @@ public class User {
     private String password;
 
     private Address address;
+
+    public User(String loginId, String loginName, String password, Address address){
+
+    }
+
+    public User(){
+
+    }
 
 }
