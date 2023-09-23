@@ -4,9 +4,8 @@ import jakarta.annotation.PostConstruct;
 import lee.projectdemo.login.repository.UserRepository;
 import lee.projectdemo.login.user.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 public class TestDataInit {
 

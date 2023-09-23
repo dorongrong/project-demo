@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
+@Transactional //이건 나중에 빼야함
 @RequiredArgsConstructor
 public class JpaUserRepository implements UserRepository {
 

@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "US")
 public class User {
 
     @Id
@@ -22,6 +23,7 @@ public class User {
     @NotEmpty
     private String password;
 
+    @Embedded
     private Address address;
 
     public User(String loginId, String loginName, String password, Address address){

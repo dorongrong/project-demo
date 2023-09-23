@@ -2,10 +2,11 @@ package lee.projectdemo;
 
 import lee.projectdemo.login.config.SpringDataJpaConfig;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
 @Import(SpringDataJpaConfig.class)
-//@SpringBootApplication()
+@SpringBootApplication
 public class ProjectDemoApplication {
 
 	public static void main(String[] args) {
