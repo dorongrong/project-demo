@@ -27,7 +27,10 @@ public class User {
     private Address address;
 
     public User(String loginId, String loginName, String password, Address address){
-
+        this.loginId = loginId;
+        this.loginName = loginName;
+        this.password = password;
+        this.address = address;
     }
 
     public User(){

@@ -12,4 +12,5 @@ public interface SpringDataJpaUserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByLoginIdLike(String loginId);
 
+    
 }

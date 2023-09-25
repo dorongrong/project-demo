@@ -22,6 +22,7 @@ public class UserController {
 
     @GetMapping("/add")
     public String addForm(@ModelAttribute("user") User user) {
+
         return "user/addUserForm";
     }
 
@@ -30,11 +31,14 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             return "user/addUserForm";
         }
-
+        
+        //이거 DTO객체를 만들어서 넣자 Address객체 수정 요함
         Address address = new Address(user.getAddress().getZipcode(),
                 user.getAddress().getStreetAdr(), user.getAddress().getDetailAdr());
-        user.setAddress(address);
-        userRepository.save(user);
+
+        User regisUser = new User(user.getLoginId(), user.getLoginName(), user.getPassword(), address);
+
+        userRepository.save(regisUser);
         return "redirect:/";
     }
 
