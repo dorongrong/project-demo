@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserRepository userRepository;
     private final LoginService loginService;
 
     @GetMapping("/add")
@@ -34,10 +33,10 @@ public class UserController {
             return "user/addUserForm";
         }
 
-        if (loginService.isLoginIdExists(userDto.getLoginId()) == false){
-            bindingResult.reject("loginIdExists", "동일한 아이디가 존재합니다.");
-            return "user/addUserForm";
-        }
+//        if (loginService.signUpIdExists(userDto.getLoginId()) == false){
+//            bindingResult.reject("loginIdExists", "동일한 아이디가 존재합니다.");
+//            return "user/addUserForm";
+//        }
         
         //이거 DTO객체를 만들어서 넣자 Address객체 수정 요함
         Address address = new Address(userDto.getAddressDto().getZipcode(),
