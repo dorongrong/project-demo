@@ -17,4 +17,8 @@ public class LoginService {
                 .orElse(null);
     }
 
+    public boolean isLoginIdExists(String loginId) {
+        return userRepository.findByLoginId(loginId).isEmpty();
+    }
+
 }
