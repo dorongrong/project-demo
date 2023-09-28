@@ -2,6 +2,7 @@ package lee.projectdemo.login.web.user;
 
 
 import jakarta.validation.Valid;
+import lee.projectdemo.exception.UserIdExistsException;
 import lee.projectdemo.login.repository.UserRepository;
 import lee.projectdemo.login.service.LoginService;
 import lee.projectdemo.login.user.Address;
@@ -37,15 +38,15 @@ public class UserController {
 //            bindingResult.reject("loginIdExists", "동일한 아이디가 존재합니다.");
 //            return "user/addUserForm";
 //        }
-        
-        //이거 DTO객체를 만들어서 넣자 Address객체 수정 요함
-        Address address = new Address(userDto.getAddressDto().getZipcode(),
-                userDto.getAddressDto().getStreetAdr(), userDto.getAddressDto().getDetailAdr());
+        try {
+            loginService.signUp(userDto);
+            return "redirect:/";
+        }
+        catch (UserIdExistsException e) {
+            bindingResult.reject("loginIdExists", "동일한 아이디가 존재합니다.");
+            return "user/addUserForm";
+        }
 
-        User regisUser = new User(userDto.getLoginId(), userDto.getLoginName(), userDto.getPassword(), address);
-
-        userRepository.save(regisUser);
-        return "redirect:/";
     }
 
 }

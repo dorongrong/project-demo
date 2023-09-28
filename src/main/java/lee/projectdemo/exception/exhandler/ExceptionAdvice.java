@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(basePackages = "lee.projectdemo")
 public class ExceptionAdvice {
 
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserIdExistsException.class)
     public void userIdExHandler(UserIdExistsException e) {
         log.error("[userIdExistsException] ex", e);
