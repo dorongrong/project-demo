@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
-@RestControllerAdvice(basePackages = "lee.projectdemo")
+@RestControllerAdvice
 public class ExceptionAdvice {
 
     @ExceptionHandler(UserIdExistsException.class)
     public void userIdExHandler(UserIdExistsException e) {
-        log.error("[userIdExistsException] ex", e);
+        log.error("[userIdExistsException] ex TESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTEST", e);
     }
 
 }
