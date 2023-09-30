@@ -14,7 +14,7 @@ public class User {
     private Long id;
 
     @NotEmpty
-    @Column
+    @Column(unique=true)
     private String loginId;
 
     @NotEmpty
