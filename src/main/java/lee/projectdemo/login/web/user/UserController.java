@@ -3,10 +3,7 @@ package lee.projectdemo.login.web.user;
 
 import jakarta.validation.Valid;
 import lee.projectdemo.exception.UserIdExistsException;
-import lee.projectdemo.login.repository.UserRepository;
 import lee.projectdemo.login.service.LoginService;
-import lee.projectdemo.login.user.Address;
-import lee.projectdemo.login.user.User;
 import lee.projectdemo.login.user.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -42,10 +39,14 @@ public class UserController {
             loginService.signUp(userDto);
             return "redirect:/";
         }
+//        catch (UserIdExistsException e) {
+//            throw e;
+//        }
         catch (UserIdExistsException e) {
             bindingResult.reject("loginIdExists", "동일한 아이디가 존재합니다.");
             return "user/addUserForm";
         }
+
 
     }
 

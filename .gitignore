@@ -18,6 +18,7 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
+application-aws.properties
 .idea
 *.iws
 *.iml
@@ -35,3 +36,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# AWS credentials
+.env
+.aws/credentials
+.aws/config
