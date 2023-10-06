@@ -1,4 +1,7 @@
 package lee.projectdemo.item.item;
 
-public class ItemDto {
+public class ItemUpDto {
+
+
+
 }

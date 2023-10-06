@@ -1,5 +1,6 @@
 package lee.projectdemo.login.user;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 
@@ -8,8 +9,11 @@ import java.util.Objects;
 @Data
 public class AddressDto {
 
+    @NotEmpty(message = "우편번호 및 도로명 주소를 입력해주세요.")
     private String zipcode;
     private String streetAdr;
+
+    @NotEmpty(message = "상세주소를 입력해주세요.")
     private String detailAdr;
 
     protected AddressDto() {

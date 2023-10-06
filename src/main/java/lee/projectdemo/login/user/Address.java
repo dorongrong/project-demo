@@ -3,7 +3,6 @@ package lee.projectdemo.login.user;
 
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Objects;
 
@@ -13,6 +12,7 @@ public class Address {
 
     private String zipcode;
     private String streetAdr;
+
     private String detailAdr;
 
     protected Address() {

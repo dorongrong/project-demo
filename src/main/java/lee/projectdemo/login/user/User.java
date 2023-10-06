@@ -1,8 +1,11 @@
 package lee.projectdemo.login.user;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+import lee.projectdemo.item.item.Item;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -11,25 +14,28 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
-    @NotEmpty
     @Column(unique=true)
     private String loginId;
 
-    @NotEmpty
     private String loginName;
 
-    @NotEmpty
     private String password;
+
+    @OneToMany(mappedBy = "item")
+    private List<Item> item = new ArrayList<>();
 
     @Embedded
     private Address address;
 
-    public User(String loginId, String loginName, String password, Address address){
+    public User(Long id, String loginId, String loginName, String password, List<Item> item, Address address) {
+        this.id = id;
         this.loginId = loginId;
         this.loginName = loginName;
         this.password = password;
+        this.item = item;
         this.address = address;
     }
 
