@@ -20,7 +20,7 @@ public class Item {
 
     private String description;
 
-    private String price;
+    private Integer price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -29,7 +29,7 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL) //아이템이랑 이미지의 연관관계 생각
     private List<Image> images = new ArrayList<>();
 
-    public Item(Long id, String itemName, String description, String price, User user, List<Image> images) {
+    public Item(Long id, String itemName, String description, Integer price, User user, List<Image> images) {
         this.id = id;
         this.itemName = itemName;
         this.description = description;

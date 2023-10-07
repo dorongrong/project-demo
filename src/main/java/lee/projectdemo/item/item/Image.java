@@ -6,7 +6,7 @@ import lombok.Data;
 @Entity
 @Data
 public class Image {
-
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_id")
     private Long id;
@@ -16,7 +16,7 @@ public class Image {
     private String fileName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "item")
     private Item item;
 
     public Image(Long id, String url, String fileName, Item item) {

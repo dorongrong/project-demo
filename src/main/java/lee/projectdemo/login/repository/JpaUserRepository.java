@@ -14,27 +14,27 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JpaUserRepository implements UserRepository {
 
-    private final SpringDataJpaUserRepository repository;
+    private final SpringDataJpaUserRepository userRepository;
 
     @Override
     public User save(User user) {
-        return repository.save(user);
+        return userRepository.save(user);
     }
 
     @Override
     public Optional<User> findById(Long id) {
-        return repository.findById(id);
+        return userRepository.findById(id);
     }
 
     @Override 
     //한번 더 보자
     public Optional<User> findByLoginId(String loginId) {
-        return repository.findByLoginIdLike(loginId);
+        return userRepository.findByLoginIdLike(loginId);
     }
 
     @Override
     public List<User> findAll() {
-        return repository.findAll();
+        return userRepository.findAll();
     }
 
 

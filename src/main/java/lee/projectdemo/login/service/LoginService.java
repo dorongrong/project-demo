@@ -1,6 +1,7 @@
 package lee.projectdemo.login.service;
 
 import lee.projectdemo.exception.UserIdExistsException;
+import lee.projectdemo.item.item.Item;
 import lee.projectdemo.login.repository.UserRepository;
 import lee.projectdemo.login.user.Address;
 import lee.projectdemo.login.user.User;
@@ -9,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Slf4j
@@ -30,6 +34,7 @@ public class LoginService {
         try {
             Address address = new Address(userDto.getAddressDto().getZipcode(),
                     userDto.getAddressDto().getStreetAdr(), userDto.getAddressDto().getDetailAdr());
+            List<Item> item = new ArrayList<>();
             User regisUser = new User(userDto.getLoginId(), userDto.getLoginName(), userDto.getPassword(), address);
             userRepository.save(regisUser);
         }

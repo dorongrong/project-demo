@@ -24,7 +24,7 @@ public class User {
 
     private String password;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "user")
     private List<Item> item = new ArrayList<>();
 
     @Embedded
@@ -36,6 +36,13 @@ public class User {
         this.loginName = loginName;
         this.password = password;
         this.item = item;
+        this.address = address;
+    }
+
+    public User(String loginId, String loginName, String password, Address address) {
+        this.loginId = loginId;
+        this.loginName = loginName;
+        this.password = password;
         this.address = address;
     }
 
