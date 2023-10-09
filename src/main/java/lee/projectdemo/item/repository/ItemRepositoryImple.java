@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lee.projectdemo.item.item.Item;
 import lee.projectdemo.item.item.ItemSearchCond;
+import lee.projectdemo.item.item.ItemUpDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -17,7 +18,7 @@ import static lee.projectdemo.item.item.QItem.item;
 
 @Repository
 @RequiredArgsConstructor
-@Transactional
+@Transactional //추후 변경
 public class ItemRepositoryImple implements ItemRepository {
 
     private final EntityManager em;
@@ -35,13 +36,14 @@ public class ItemRepositoryImple implements ItemRepository {
         return item;
     }
 
-//    @Override
-//    public void update(Long itemId, ItemUpdateDto updateParam) {
-//        Item findItem = em.find(Item.class, itemId);
-//        findItem.setItemName(updateParam.getItemName());
-//        findItem.setPrice(updateParam.getPrice());
-//        findItem.setQuantity(updateParam.getQuantity());
-//    }
+    @Override
+    public void update(Long itemId, ItemUpDto updateParam) {
+        Item findItem = em.find(Item.class, itemId);
+        findItem.setItemName(updateParam.getItemName());
+        findItem.setDescription(updateParam.getDescription());
+        findItem.setPrice(updateParam.getPrice());
+        findItem.setImages(updateParam.getImages());
+    }
 
     @Override
     public Optional<Item> findById(Long id) {

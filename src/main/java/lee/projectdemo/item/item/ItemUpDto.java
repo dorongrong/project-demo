@@ -2,10 +2,11 @@ package lee.projectdemo.item.item;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Data
 public class ItemUpDto {
 
     @NotEmpty(message = "상품명을 입력해주세요.")
