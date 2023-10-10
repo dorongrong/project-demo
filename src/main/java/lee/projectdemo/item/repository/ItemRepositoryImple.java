@@ -7,7 +7,6 @@ import jakarta.transaction.Transactional;
 import lee.projectdemo.item.item.Item;
 import lee.projectdemo.item.item.ItemSearchCond;
 import lee.projectdemo.item.item.ItemUpDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -17,7 +16,6 @@ import java.util.Optional;
 import static lee.projectdemo.item.item.QItem.item;
 
 @Repository
-@RequiredArgsConstructor
 @Transactional //추후 변경
 public class ItemRepositoryImple implements ItemRepository {
 

@@ -24,6 +24,9 @@ public class User {
 
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
+
     @OneToMany(mappedBy = "user")
     private List<Item> item = new ArrayList<>();
 
