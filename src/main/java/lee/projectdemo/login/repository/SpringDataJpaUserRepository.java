@@ -9,8 +9,6 @@ import java.util.Optional;
 public interface SpringDataJpaUserRepository extends JpaRepository<User, Long> {
 
 //    List<User> findByLoginNameLike(String loginName);
-
-    Optional<User> findByLoginIdLike(String loginId);
-
+     Optional<User> findByLoginId(String loginId);
     
 }

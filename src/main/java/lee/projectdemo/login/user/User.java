@@ -42,10 +42,11 @@ public class User {
         this.address = address;
     }
 
-    public User(String loginId, String loginName, String password, Address address) {
+    public User(String loginId, String loginName, String password, UserRole userRole, Address address) {
         this.loginId = loginId;
         this.loginName = loginName;
         this.password = password;
+        this.userRole = userRole;
         this.address = address;
     }
 

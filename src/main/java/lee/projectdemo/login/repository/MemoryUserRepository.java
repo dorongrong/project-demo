@@ -31,12 +31,20 @@ public class MemoryUserRepository implements UserRepository {
         return Optional.ofNullable(userStore.get(id));
     }
 
+//    @Override
+//    public Optional<User> findByLoginId(String loginId) {
+//        return findAll().stream()
+//                .filter(m -> m.getLoginId().equals(loginId))
+//                .findFirst();
+//    }
+
     @Override
     public Optional<User> findByLoginId(String loginId) {
         return findAll().stream()
                 .filter(m -> m.getLoginId().equals(loginId))
                 .findFirst();
     }
+
 
 //    @Override
 //     public Optional<User> findByLoginName(String loginName) {

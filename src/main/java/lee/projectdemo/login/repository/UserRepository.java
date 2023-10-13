@@ -13,6 +13,7 @@ public interface UserRepository {
 
     Optional<User> findByLoginId(String loginId);
 
+
 //    Optional<User> findByLoginName(String loginName);
 
     List<User> findAll();

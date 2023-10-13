@@ -29,7 +29,7 @@ public class JpaUserRepository implements UserRepository {
     @Override 
     //한번 더 보자
     public Optional<User> findByLoginId(String loginId) {
-        return userRepository.findByLoginIdLike(loginId);
+        return userRepository.findByLoginId(loginId);
     }
 
     @Override
