@@ -3,13 +3,10 @@ package lee.projectdemo.auth;
 import lee.projectdemo.login.repository.UserRepository;
 import lee.projectdemo.login.user.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -23,22 +20,12 @@ public class PrincipalDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
 
-        try {
-            User userEntity = userRepository.findByLoginId(loginId).get();
-            return new PrincipalDetails(userEntity);
+        // userEntity에 null 이 들어가는 상황이 가능한가? loadUserByUsername은 토큰 검증 이후 들어갈텐데...
+        User userEntity = userRepository.findByLoginId(loginId).get();
+        if(userEntity == null) {
+            throw new UsernameNotFoundException("아이디가 존재하지 않습니다.");
         }
-        catch (NoSuchElementException e){
-            // 로그 찍어라
-            System.out.println("아이디 안적음");
-            throw new UsernameNotFoundException("아이디 안적었다고");
-        }
-        catch (AuthenticationException e) {
-            //로그
-            System.out.println("추후 추가");
-            throw new UsernameNotFoundException("비밀번호");
-        }
-
-
+        return new PrincipalDetails(userEntity);
 
 
 //        if(userEntity.isEmpty()) {

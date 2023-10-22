@@ -20,6 +20,7 @@ public class UserController {
 
     private final LoginService loginService;
 
+
     @GetMapping("/add")
     public String addForm(@ModelAttribute("userDto") UserDto userDto) {
         return "user/addUserForm";
@@ -46,8 +47,13 @@ public class UserController {
             bindingResult.reject("loginIdExists", "동일한 아이디가 존재합니다.");
             return "user/addUserForm";
         }
-
-
     }
+
+
+//    @PostMapping("/add")
+//    public ResponseEntity<JwtToken> loginSuccess(@Valid @ModelAttribute UserDto userDto, BindingResult bindingResult) {
+//        JwtToken token = loginService.login(userDto.getLoginId(), userDto.getPassword());
+//        return ResponseEntity.ok(token);
+//    }
 
 }

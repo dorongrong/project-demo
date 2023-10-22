@@ -11,12 +11,13 @@ import java.util.Collection;
 
 public class PrincipalDetails implements UserDetails {
 
-    private User user;
+    private final User user;
 
     public PrincipalDetails(User user) {
         this.user = user;
     }
 
+    //권한을 조회해서 가져오는 메소드
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collect = new ArrayList<>();
@@ -25,6 +26,7 @@ public class PrincipalDetails implements UserDetails {
         collect.add(authority);
         return collect;
     }
+    
 
     @Override
     public String getPassword() {

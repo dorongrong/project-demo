@@ -1,10 +1,14 @@
 package lee.projectdemo.login.web;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import lee.projectdemo.auth.PrincipalDetails;
 import lee.projectdemo.login.repository.UserRepository;
+import lee.projectdemo.login.service.LoginService;
+import lee.projectdemo.token.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +22,11 @@ public class HomeController {
 
     private final UserRepository userRepository;
 
-    @GetMapping("/")
+    //쿠키때문에
+    private final LoginService loginService;
+    private final JwtProvider jwtProvider;
+
+//    @GetMapping("/")
     public String home(@AuthenticationPrincipal PrincipalDetails userData, Model model) {
         //세션이 유지되면 로그인으로 이동
         if (userData != null) {
@@ -42,11 +50,24 @@ public class HomeController {
 //        return "loginHome";
 //    }
 
-//    @GetMapping("/")
-//    public String home() {
-//        //세션에 회원 데이터가 없으면 home
-//
-//        return "loginHome";
-//    }
+    @GetMapping("/")
+    public String home(HttpServletRequest request, Model model) {
+        //세션에 회원 데이터가 없으면 home
+        System.out.println("홈으로 리다이렉트으");
+
+        if (loginService.getCookie(request) == null){
+            return "home";
+        }
+//        String cToken = loginService.getCookie(request);
+        String cToken = loginService.getCookie(request);
+        // 토큰에서 사용자 정보 추출
+        Authentication authentication = jwtProvider.getAuthentication(cToken);
+            if (authentication != null) {
+                String username = authentication.getName();
+                model.addAttribute("user", username);
+                return "loginHome";
+            }
+        return "home";
+    }
 
 }
