@@ -96,6 +96,7 @@ public class WebSecurityConfig {
                         .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")));
 
 
+
 //                .logout((logout) -> logout.permitAll());
 
 

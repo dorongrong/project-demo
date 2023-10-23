@@ -93,7 +93,7 @@ public class JwtProvider {
             throw new JwtException("유효하지 않은 JWT 토큰");
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT token.");
-            throw new JwtException("토큰 기한 만료");
+            return false;
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token.");
         } catch (IllegalArgumentException e) {
