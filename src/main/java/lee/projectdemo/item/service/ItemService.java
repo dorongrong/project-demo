@@ -36,4 +36,8 @@ public class ItemService {
         return itemDtoList;
     }
 
+    public void itemSave(){
+        //유저아이디랑 아이템객체 받자
+    }
+
 }

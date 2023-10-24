@@ -3,6 +3,7 @@ package lee.projectdemo.item.item;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,6 @@ public class ItemRegDto {
     @NotEmpty(message = "상품 가격을 입력해주세요.")
     private Integer price; //int가 뭔가 있지 않나?
 
-    private List<Image> images = new ArrayList<>();
+    private List<MultipartFile> images = new ArrayList<>();
 
 }

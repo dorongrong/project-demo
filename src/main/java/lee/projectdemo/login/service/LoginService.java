@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -99,6 +100,15 @@ public class LoginService {
             }
         }
         return null;
+    }
+
+    public Authentication getUserDetail(String cToken) {
+        Authentication authentication = jwtProvider.getAuthentication(cToken);
+        if (authentication == null) {
+            //이게 맞나..
+            return null;
+        }
+        return authentication;
     }
 
 }

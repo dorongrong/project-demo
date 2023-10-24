@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lee.projectdemo.auth.PrincipalDetails;
 import lee.projectdemo.login.repository.UserRepository;
 import lee.projectdemo.login.service.LoginService;
-import lee.projectdemo.token.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -24,7 +23,6 @@ public class HomeController {
 
     //쿠키때문에
     private final LoginService loginService;
-    private final JwtProvider jwtProvider;
 
 //    @GetMapping("/")
     public String home(@AuthenticationPrincipal PrincipalDetails userData, Model model) {
@@ -60,14 +58,24 @@ public class HomeController {
         }
 //        String cToken = loginService.getCookie(request);
         String cToken = loginService.getCookie(request);
-        // 토큰에서 사용자 정보 추출
-        Authentication authentication = jwtProvider.getAuthentication(cToken);
-            if (authentication != null) {
-                String username = authentication.getName();
+
+        Authentication user = loginService.getUserDetail(cToken);
+            if (user != null) {
+                String username = user.getName();
                 model.addAttribute("user", username);
                 return "loginHome";
             }
+
         return "home";
+
+//        // 토큰에서 사용자 정보 추출
+//        Authentication authentication = jwtProvider.getAuthentication(cToken);
+//            if (authentication != null) {
+//                String username = authentication.getName();
+//                model.addAttribute("user", username);
+//                return "loginHome";
+//            }
+//        return "home";
     }
 
 }

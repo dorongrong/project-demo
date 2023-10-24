@@ -17,6 +17,10 @@ public class PrincipalDetails implements UserDetails {
         this.user = user;
     }
 
+    public Long getUserId() {
+        return user.getId();
+    }
+
     //권한을 조회해서 가져오는 메소드
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -35,7 +39,7 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getLoginName();
+        return user.getLoginId();
     }
 
     @Override
