@@ -11,21 +11,36 @@ public class Image {
     @Column(name = "image_id")
     private Long id;
 
-    private String url;
+    private String originalFileName;
 
-    private String fileName;
+    private String storeFileName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item")
+    @JoinColumn(name = "item_id")
     private Item item;
 
-    public Image(Long id, String url, String fileName, Item item) {
+    public Image(Long id, String originalFileName, String storeFileName, Item item) {
         this.id = id;
-        this.url = url;
-        this.fileName = fileName;
+        this.originalFileName = originalFileName;
+        this.storeFileName = storeFileName;
         this.item = item;
     }
 
+    public Image(String originalFileName, String storeFileName, Item item) {
+        this.originalFileName = originalFileName;
+        this.storeFileName = storeFileName;
+        this.item = item;
+    }
+
+    public Image(String originalFileName, String storeFileName) {
+        this.originalFileName = originalFileName;
+        this.storeFileName = storeFileName;
+    }
+
     public Image() {
+    }
+
+    public void changeItem(Item item) {
+        this.item = item;
     }
 }

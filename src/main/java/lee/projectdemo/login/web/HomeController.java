@@ -60,22 +60,16 @@ public class HomeController {
         String cToken = loginService.getCookie(request);
 
         Authentication user = loginService.getUserDetail(cToken);
+
             if (user != null) {
-                String username = user.getName();
+                PrincipalDetails userDetails = (PrincipalDetails)user.getPrincipal();
+                String username = userDetails.getUsername();
                 model.addAttribute("user", username);
                 return "loginHome";
             }
 
         return "home";
 
-//        // 토큰에서 사용자 정보 추출
-//        Authentication authentication = jwtProvider.getAuthentication(cToken);
-//            if (authentication != null) {
-//                String username = authentication.getName();
-//                model.addAttribute("user", username);
-//                return "loginHome";
-//            }
-//        return "home";
     }
 
 }

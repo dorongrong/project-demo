@@ -36,8 +36,9 @@ public class ItemService {
         return itemDtoList;
     }
 
-    public void itemSave(){
-        //유저아이디랑 아이템객체 받자
+    public Item itemSave(Item item){
+        // 이 상태에선 이미지는 저장이 안되어있을꺼임 왜냐하면 아이템과 이미지의 연관관계에서 이미지가 연관관계 주인이다보니 이미지에 해줘야함
+        return itemRepository.save(item);
     }
 
 }

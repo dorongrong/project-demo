@@ -22,13 +22,13 @@ public class QImage extends EntityPathBase<Image> {
 
     public static final QImage image = new QImage("image");
 
-    public final StringPath fileName = createString("fileName");
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QItem item;
 
-    public final StringPath url = createString("url");
+    public final StringPath originalFileName = createString("originalFileName");
+
+    public final StringPath storeFileName = createString("storeFileName");
 
     public QImage(String variable) {
         this(Image.class, forVariable(variable), INITS);

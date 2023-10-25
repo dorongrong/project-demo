@@ -38,8 +38,25 @@ public class Item {
         this.images = images;
     }
 
+    public Item(String itemName, String description, Integer price, User user) {
+        this.itemName = itemName;
+        this.description = description;
+        this.price = price;
+        this.user = user;
+    }
+
     public Item(){
 
     }
 
+    //연관관계 편의 메소드
+    //아이템에 이미지 리스트를 넣으면 이미지 하나하나에 아이템 객체를 넣는다.
+    public void changeImages(List<Image> images) {
+        this.images = images;
+        for (Image image : images) {
+            if (image != null) {
+                image.changeItem(this);
+            }
+        }
+    }
 }
