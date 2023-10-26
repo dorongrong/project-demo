@@ -25,6 +25,13 @@ public class ItemDto {
         this.images = images;
     }
 
+    public ItemDto(String itemName, String description, Integer price, List<Image> images) {
+        this.itemName = itemName;
+        this.description = description;
+        this.price = price;
+        this.images = images;
+    }
+
     public ItemDto(){
     }
 

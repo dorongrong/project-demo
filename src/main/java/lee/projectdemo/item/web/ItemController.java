@@ -3,9 +3,11 @@ package lee.projectdemo.item.web;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lee.projectdemo.auth.PrincipalDetails;
+import lee.projectdemo.item.aws.AwsS3Service;
 import lee.projectdemo.item.imageService.FileStore;
 import lee.projectdemo.item.item.Image;
 import lee.projectdemo.item.item.Item;
+import lee.projectdemo.item.item.ItemDto;
 import lee.projectdemo.item.item.ItemRegDto;
 import lee.projectdemo.item.service.ItemService;
 import lee.projectdemo.login.service.LoginService;
@@ -16,13 +18,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import static lee.projectdemo.item.item.ImageStorageFolderName.PRODUCT_IMAGE_PATH;
 
 @Slf4j
 @Controller
@@ -34,6 +37,8 @@ public class ItemController {
     private final FileStore fileStore;
     private final LoginService loginService;
 
+    private final AwsS3Service s3Service;
+
     //아이템 목록 조회
     @GetMapping
     public String items(Model moodel) {
@@ -43,7 +48,21 @@ public class ItemController {
     //아이템 조회 get 수정 삭제 채팅 구현
     // /{itemsId}
     @GetMapping("/{itemId}")
-    public String itemDetails() {
+    public String itemDetails(@PathVariable Long itemId, Model model) {
+        Item item = itemService.getItem(itemId).get();
+
+        List<String> imageURLs = new ArrayList<>();
+
+        for (Image image : item.getImages()) {
+            imageURLs.add(s3Service.loadImage(image.getStoreFileName()));
+        }
+
+        ItemDto itemDetails = new ItemDto(item.getItemName(), item.getDescription(),
+                item.getPrice(), item.getImages());
+
+        model.addAttribute("item", itemDetails);
+        model.addAttribute("images", imageURLs);
+
         return "items/details";
     }
 
@@ -59,7 +78,8 @@ public class ItemController {
 
     @PostMapping("/add")
     public String itemAdd (@Valid @ModelAttribute("item") ItemRegDto itemRegDto, BindingResult bindingResult,
-                           HttpServletRequest request) throws IOException {
+                           HttpServletRequest request,  RedirectAttributes
+                                       redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
             return "items/addItem";
         }
@@ -72,7 +92,10 @@ public class ItemController {
         User tokenUser = userDetails.getUser();
 
         //IOException 처리해라 filestore 처리하면 됨
-        List<Image> storeImageFiles = fileStore.storeFiles(itemRegDto.getImages());
+//        List<Image> storeImageFiles = fileStore.storeFiles(itemRegDto.getImages());
+
+        //S3 업로드와 동시에 List<Image>객체 반환(Image 객체에는 Item이 들어가있지 않은)
+        List<Image> storeImageFiles = s3Service.uploadFile(itemRegDto.getImages(), PRODUCT_IMAGE_PATH);
 
         //storeImageFiles에는 ID,Item 이 세팅 안돼있음
         Item item = new Item(itemRegDto.getItemName(), itemRegDto.getDescription(), itemRegDto.getPrice(),
@@ -82,8 +105,10 @@ public class ItemController {
 
         itemService.itemSave(item);
 
+        redirectAttributes.addAttribute("itemId", item.getId());
+
         // 아이템 상세 페이지로 이동
-        return "items/addItem";
+        return "redirect:/items/{itemId}";
     }
 
     //아이템 수정 get
@@ -93,5 +118,15 @@ public class ItemController {
     // /{itemId}/edit
 
     //삭제는 추후에
+
+    //이미지
+//    @GetMapping("/images/{storeFileName}")
+//    public ResponseEntity loadImage(@PathVariable String storeFileName) {
+//        //예외처리
+//        System.out.println("들어감222");
+//        String s3ObjectUrl = s3Service.loadImage(storeFileName);
+//
+//        return ResponseEntity<>(, HttpStatus.OK);;
+//    }
 
 }

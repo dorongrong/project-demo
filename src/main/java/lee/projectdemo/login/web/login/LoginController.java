@@ -64,7 +64,7 @@ public class LoginController {
 
             // 쿠키 추가 밑에 3줄은 쿠키에 넣을려고 넣는거임
             Cookie cookie = new Cookie("Authorization", signResponse.getToken());
-            cookie.setMaxAge(3600);
+            cookie.setMaxAge(36000);
             cookie.setPath("/");
             response.addCookie(cookie);
 
