@@ -54,7 +54,7 @@ public class HomeController {
         System.out.println("홈으로 리다이렉트으");
 
         if (loginService.getCookie(request) == null){
-            return "home";
+            return "newHome";
         }
 //        String cToken = loginService.getCookie(request);
         String cToken = loginService.getCookie(request);
@@ -65,10 +65,11 @@ public class HomeController {
                 PrincipalDetails userDetails = (PrincipalDetails)user.getPrincipal();
                 String username = userDetails.getUsername();
                 model.addAttribute("user", username);
-                return "loginHome";
+                //다시 변경
+                return "newHome";
             }
 
-        return "home";
+        return "newHome";
 
     }
 
