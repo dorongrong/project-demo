@@ -2,17 +2,35 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container">
     <div class="py-5 text-center">
-        <h2>상품 조회</h2>
+        <title>상품 조회</title>
     </div>
-    상품명: <span th:text="${item.itemName}">상품명</span><br/>
-    상품 상세내용: <span th:text="${item.description}">상품 상세내용</span><br/>
-    가격: <span th:text="${item.price}">가격</span><br/>
-    <br/>
-    <img th:each="image : ${images}" th:src="${image}" width="300" height="300"/>
+    <style>
+        .item-image {
+            margin-bottom: 20px;
+        }
+    </style>
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-center" th:text="${item.itemName}">상품명</h1>
+        </div>
+    </div>
+    <div>
+        <h4>상품 상세내용: <span th:text="${item.description}">상품 상세내용</span><br/></h4>
+        <h4>가격: <span th:text="${item.price}">가격</span><br/></h4>
+    </div>
+    <div class="row">
+        <div th:each="image : ${images}" class="col-md-4 item-image">
+            <div class="card">
+                <img th:src="${image}" class="card-img-top">
+            </div>
+        </div>
+    </div>
 </div> <!-- /container -->
 </body>
 </html>

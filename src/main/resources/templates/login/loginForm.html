@@ -3,17 +3,21 @@
 <head>
     <style>
  .loginContainer {
- max-width: 560px;
+ width: 560px;
  }
+ @media (max-width: 768px) {
+            .loginContainer {
+                width: 80%;
+            }
+        }
  .field-error {
  border-color: #dc3545;
  color: #dc3545;
  }
-
     </style>
 </head>
 <th:block layout:fragment="content">
-<body>
+    <div style="height: 80%; display: grid; place-items: center;">
 <div class="loginContainer">
     <div class="py-5 text-center">
         <h2>로그인</h2>
@@ -53,6 +57,6 @@
         </div>
     </form>
 </div> <!-- /container -->
-</body>
+</div>
 </th:block>
 </html>

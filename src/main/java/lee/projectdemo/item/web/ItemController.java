@@ -63,7 +63,12 @@ public class ItemController {
         model.addAttribute("item", itemDetails);
         model.addAttribute("images", imageURLs);
 
-        return "items/details";
+        return "items/detailsNew";
+    }
+
+    @GetMapping("/addd")
+    public String test () {
+        return "items/test";
     }
 
     //아이템 추가 페이지 get
