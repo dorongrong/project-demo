@@ -5,6 +5,8 @@ import lee.projectdemo.item.item.ItemDto;
 import lee.projectdemo.item.item.ItemSearchCond;
 import lee.projectdemo.item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,6 +46,13 @@ public class ItemService {
 
     public Optional<Item> getItem(Long id){
         return itemRepository.findById(id);
+    }
+
+    public Page<ItemDto> findAllItemPage(ItemSearchCond cond, Pageable pageable) {
+
+        Page<ItemDto> itemList = itemRepository.findAllPage(cond, pageable);
+
+        return itemList;
     }
 
 }

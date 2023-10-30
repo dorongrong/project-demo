@@ -5,13 +5,18 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lee.projectdemo.item.item.Item;
+import lee.projectdemo.item.item.ItemDto;
 import lee.projectdemo.item.item.ItemSearchCond;
 import lee.projectdemo.item.item.ItemUpDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static lee.projectdemo.item.item.QItem.item;
 
@@ -49,6 +54,7 @@ public class ItemRepositoryImple implements ItemRepository {
         return Optional.ofNullable(item);
     }
 
+
     @Override
     public List<Item> findAll(ItemSearchCond cond) {
 
@@ -60,6 +66,24 @@ public class ItemRepositoryImple implements ItemRepository {
                 .from(item)
                 .where(likeItemName(itemName), maxPrice(maxPrice))
                 .fetch();
+    }
+
+    //페이징용
+    @Override
+    public Page<ItemDto> findAllPage(ItemSearchCond cond, Pageable pageable){
+
+        List<Item> items = getItemDtos(cond, pageable);
+        
+        //dto객체로 변형
+        List<ItemDto> itemDtos = items.stream()
+                .map(item -> new ItemDto(item.getId(), item.getItemName(), item.getDescription(), item.getPrice(),
+                        item.getUser(), item.getImages(), item.getCreatedAt()))
+                .collect(Collectors.toList());
+
+        Long count = getCount(cond);
+
+        return new PageImpl<>(itemDtos, pageable, count);
+
     }
 
     private BooleanExpression likeItemName(String itemName) {
@@ -75,4 +99,34 @@ public class ItemRepositoryImple implements ItemRepository {
         }
         return null;
     }
+
+    //검색한 아이템의 총 수
+    private Long getCount(ItemSearchCond cond) {
+
+        String itemName = cond.getItemName();
+        Integer maxPrice = cond.getMaxPrice();
+
+        Long count = query
+                .select(item.count())
+                .from(item)
+                .where(likeItemName(itemName), maxPrice(maxPrice))
+                .fetchOne();
+        return count;
+    }
+
+    private List<Item> getItemDtos(ItemSearchCond cond, Pageable pageable) {
+
+        String itemName = cond.getItemName();
+        Integer maxPrice = cond.getMaxPrice();
+
+        List<Item> content = query
+                .select(item)
+                .from(item)
+                .where(likeItemName(itemName), maxPrice(maxPrice))
+                .offset(pageable.getOffset())   // 페이지 번호
+                .limit(pageable.getPageSize())  // 페이지 사이즈
+                .fetch();
+        return content;
+    }
+
 }

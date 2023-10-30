@@ -1,49 +1,32 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8">
-    <link th:href="@{/css/bootstrap.min.css}"
-          href="../css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-
-<div class="container" style="max-width: 600px">
-    <div class="py-5 text-center">
-        <h2 th:text="#{page.items}">상품 목록</h2>
-    </div>
-
-    <div class="row">
-        <div class="col">
-            <button class="btn btn-primary float-end"
-                    onclick="location.href='addForm.html'"
-                    th:onclick="|location.href='@{/items/add}'|"
-                    type="button" th:text="#{page.addItem}">상품 등록</button>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/default">
+<th:block layout:fragment="content">
+    <div class="container" style="max-width: 600px">
+        <div class="py-5 text-center">
+            <h2 th:text="#{page.items}">상품 목록</h2>
         </div>
+        <form
+                th:object="${itemSearch}"
+                method="get"
+                class="col-12 col-lg-auto mb-3 mb-lg-0 ms-lg-5"
+                role="search"
+        >
+            <input
+                    th:field="*{itemName}"
+                    type="search"
+                    class="form-control form-control-dark text-bg-dark"
+                    placeholder="Search..."
+                    aria-label="Search"
+            />
+            <input
+                    th:field="*{maxPrice}"
+                    type="search"
+                    class="form-control form-control-dark text-bg-dark"
+                    placeholder="Search..."
+                    aria-label="Search"
+            />
+            <button type="submit">제출</button>
+        </form>
     </div>
-
-    <hr class="my-4">
-    <div>
-        <table class="table">
-            <thead>
-            <tr>
-                <th th:text="#{label.item.id}">ID</th>
-                <th th:text="#{label.item.itemName}">상품명</th>
-                <th th:text="#{label.item.price}">가격</th>
-                <th th:text="#{label.item.quantity}">수량</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="item : ${items}">
-                <td><a href="item.html" th:href="@{/items/{itemId}(itemId=${item.id})}" th:text="${item.id}">회원id</a></td>
-                <td><a href="item.html" th:href="@{|/items/${item.id}|}" th:text="${item.itemName}">상품명</a></td>
-                <td th:text="${item.price}">10000</td>
-                <td th:text="${item.quantity}">10</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-</div> <!-- /container -->
-
-</body>
+</th:block>
 </html>

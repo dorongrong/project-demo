@@ -5,10 +5,7 @@ import jakarta.validation.Valid;
 import lee.projectdemo.auth.PrincipalDetails;
 import lee.projectdemo.item.aws.AwsS3Service;
 import lee.projectdemo.item.imageService.FileStore;
-import lee.projectdemo.item.item.Image;
-import lee.projectdemo.item.item.Item;
-import lee.projectdemo.item.item.ItemDto;
-import lee.projectdemo.item.item.ItemRegDto;
+import lee.projectdemo.item.item.*;
 import lee.projectdemo.item.service.ItemService;
 import lee.projectdemo.login.service.LoginService;
 import lee.projectdemo.login.user.User;
@@ -29,7 +26,7 @@ import static lee.projectdemo.item.item.ImageStorageFolderName.PRODUCT_IMAGE_PAT
 
 @Slf4j
 @Controller
-@RequestMapping("/items")
+@RequestMapping
 @RequiredArgsConstructor
 public class ItemController {
 
@@ -40,14 +37,18 @@ public class ItemController {
     private final AwsS3Service s3Service;
 
     //아이템 목록 조회
-    @GetMapping
-    public String items(Model moodel) {
+//    @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC)
+//    Pageable pageable,
+    @GetMapping("/items")
+    public String items(@ModelAttribute("itemSearch") ItemSearchCond cond) {
+//        model.addAttribute("itemList", itemService.findAllItemPage(itemSearch, pageable));
+
         return "items/items";
     }
 
     //아이템 조회 get 수정 삭제 채팅 구현
     // /{itemsId}
-    @GetMapping("/{itemId}")
+    @GetMapping("/items/{itemId}")
     public String itemDetails(@PathVariable Long itemId, Model model) {
         Item item = itemService.getItem(itemId).get();
 
@@ -66,14 +67,14 @@ public class ItemController {
         return "items/detailsNew";
     }
 
-    @GetMapping("/addd")
+    @GetMapping("/items/addd")
     public String test () {
         return "items/test";
     }
 
     //아이템 추가 페이지 get
     // /add
-    @GetMapping("/add")
+    @GetMapping("/items/add")
     public String itemAddPage (@ModelAttribute("item") ItemRegDto itemRegDto){
         return "items/addItem";
     }
@@ -81,7 +82,7 @@ public class ItemController {
     //아이템 추가 post
     // /add
 
-    @PostMapping("/add")
+    @PostMapping("/items/add")
     public String itemAdd (@Valid @ModelAttribute("item") ItemRegDto itemRegDto, BindingResult bindingResult,
                            HttpServletRequest request,  RedirectAttributes
                                        redirectAttributes) throws IOException {
@@ -115,6 +116,7 @@ public class ItemController {
         // 아이템 상세 페이지로 이동
         return "redirect:/items/{itemId}";
     }
+
 
     //아이템 수정 get
     // /{itemId}/edit
