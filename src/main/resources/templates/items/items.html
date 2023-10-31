@@ -26,6 +26,61 @@
                     aria-label="Search"
             />
             <button type="submit">제출</button>
+
+            <!-- Section-->
+            <section class="py-5">
+                <div class="container px-4 px-lg-5 mt-5">
+                    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 justify-content-center">
+                        <!-- Thymeleaf iteration -->
+                        <div th:each="item : ${itemList}" class="col mb-5">
+                            <div class="card h-100">
+                                <!-- Product image -->
+<!--                                <img class="card-img-top" th:src="${item.imageUrls[0]}" alt="Product Image" />-->
+                                <!-- Product details -->
+                                <div class="card-body p-4">
+                                    <div class="text-center">
+                                        <!-- Product name -->
+                                        <h5 class="fw-bolder" th:text="${item.itemName}"></h5>
+                                        <!-- Product price -->
+                                        <span th:text="${item.price + '원'}"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Thymeleaf iteration -->
+                    </div>
+                </div>
+            </section>
+<!--            섹션끝-->
+
+<!--            여기부터 list paging 출력-->
+            <div th:if="${!itemList.isEmpty()}">
+                <ul class="pagination"
+                    th:with="
+            pageNumber = ${itemList.pageable.pageNumber},
+            pageSize = ${itemList.pageable.pageSize},
+            totalPages = ${itemList.totalPages},
+            startPage = ${T(java.lang.Math).floor(pageNumber / pageSize) * pageSize + 1},
+            tempEndPage = ${startPage + pageSize - 1},
+            endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})">
+
+                    <li th:classappend="${itemList.first} ? 'disabled'" class="page-item">
+                        <a class="page-link" th:href="${itemList.first} ? '#' : @{/(page=${pageNumber - 1})}">
+                            <span aria-hidden="true">&lt;</span>
+                        </a>
+                    </li>
+
+                    <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page == pageNumber + 1} ? 'active'" class="page-item">
+                        <a th:text="${page}" class="page-link" th:href="@{/(page=${page - 1})}"></a>
+                    </li>
+
+                    <li th:classappend="${itemList.last} ? 'disabled'" class="page-item">
+                        <a class="page-link" th:href="${itemList.last} ? '#' : @{/(page=${pageNumber + 1})}" aria-label="Next">
+                            <span aria-hidden="true">&gt;</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </form>
     </div>
 </th:block>

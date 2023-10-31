@@ -11,6 +11,10 @@ import lee.projectdemo.login.service.LoginService;
 import lee.projectdemo.login.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,11 +41,16 @@ public class ItemController {
     private final AwsS3Service s3Service;
 
     //아이템 목록 조회
-//    @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC)
+//    @PageableDefault(page = 0, size = 9, sort = "id", direction = Sort.Direction.DESC)
 //    Pageable pageable,
     @GetMapping("/items")
-    public String items(@ModelAttribute("itemSearch") ItemSearchCond cond) {
-//        model.addAttribute("itemList", itemService.findAllItemPage(itemSearch, pageable));
+    public String items(@ModelAttribute("itemSearch") ItemSearchCond cond, Model model,
+                        @PageableDefault(page = 0, size = 9, sort = "item_id", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        //이미지가 들어가있는 itemList 반환
+        Page<ItemDto> itemList = s3Service.addImageItemDto(itemService.findAllItemPage(cond, pageable), pageable);
+        
+        model.addAttribute("itemList", itemService.findAllItemPage(cond, pageable));
 
         return "items/items";
     }
@@ -64,7 +73,7 @@ public class ItemController {
         model.addAttribute("item", itemDetails);
         model.addAttribute("images", imageURLs);
 
-        return "items/detailsNew";
+        return "items/details";
     }
 
     @GetMapping("/items/addd")

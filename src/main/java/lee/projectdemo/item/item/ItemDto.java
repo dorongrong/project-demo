@@ -16,6 +16,8 @@ public class ItemDto {
     private Integer price;
     private User user;
     private List<Image> images;
+    //aws s3 용
+    private List<String> imageUrls;
     private LocalDateTime date;
 
     public ItemDto(Long itemId, String itemName, String description, Integer price, User user, List<Image> images, LocalDateTime date) {

@@ -6,10 +6,14 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lee.projectdemo.item.item.Image;
+import lee.projectdemo.item.item.ItemDto;
 import lee.projectdemo.item.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -83,6 +87,20 @@ public class AwsS3Service {
 
     public String loadImage(String storedFileName) {
         return amazonS3.getUrl(bucket, storedFileName).toString();
+    }
+
+    public Page<ItemDto> addImageItemDto(Page<ItemDto> itemDtos, Pageable pageable) {
+        //페이징된 itemDtos를 그냥 ItemDto 리스트로 변형
+        List<ItemDto> addImageDtos = itemDtos.getContent();
+        for (ItemDto itemDto : addImageDtos) {
+            List<String> imageUrls = new ArrayList<>();
+            for (Image image : itemDto.getImages()) {
+                imageUrls.add(loadImage(image.getStoreFileName()));
+            }
+            itemDto.setImageUrls(imageUrls);
+        }
+
+        return new PageImpl<>(addImageDtos, pageable , itemDtos.getTotalElements());
     }
 
 
