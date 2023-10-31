@@ -67,4 +67,17 @@ public class Item {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "id=" + id +
+                ", itemName='" + itemName + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", createdAt=" + createdAt +
+                ", user=" + user +
+                ", images=" + images +
+                '}';
+    }
 }

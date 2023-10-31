@@ -36,6 +36,8 @@
                             <div class="card h-100">
                                 <!-- Product image -->
 <!--                                <img class="card-img-top" th:src="${item.imageUrls[0]}" alt="Product Image" />-->
+                                <img class="card-img-top" th:if="${item.imageUrls != null and item.imageUrls.size() > 0}" th:src="${item.imageUrls[0]}" />
+                                <span th:unless="${item.imageUrls != null and item.imageUrls.size() > 0}">이미지 없음</span>
                                 <!-- Product details -->
                                 <div class="card-body p-4">
                                     <div class="text-center">
@@ -65,17 +67,17 @@
             endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})">
 
                     <li th:classappend="${itemList.first} ? 'disabled'" class="page-item">
-                        <a class="page-link" th:href="${itemList.first} ? '#' : @{/(page=${pageNumber - 1})}">
+                        <a class="page-link" th:href="${itemList.first} ? '#' : @{/items(page=${pageNumber - 1})}">
                             <span aria-hidden="true">&lt;</span>
                         </a>
                     </li>
 
                     <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page == pageNumber + 1} ? 'active'" class="page-item">
-                        <a th:text="${page}" class="page-link" th:href="@{/(page=${page - 1})}"></a>
+                        <a th:text="${page}" class="page-link" th:href="@{/items(page=${page - 1})}"></a>
                     </li>
 
                     <li th:classappend="${itemList.last} ? 'disabled'" class="page-item">
-                        <a class="page-link" th:href="${itemList.last} ? '#' : @{/(page=${pageNumber + 1})}" aria-label="Next">
+                        <a class="page-link" th:href="${itemList.last} ? '#' : @{/items(page=${pageNumber + 1})}" aria-label="Next">
                             <span aria-hidden="true">&gt;</span>
                         </a>
                     </li>

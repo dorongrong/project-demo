@@ -40,6 +40,15 @@ public class Image {
     public Image() {
     }
 
+    @Override
+    public String toString() {
+        return "Image{" +
+                "id=" + id +
+                ", originalFileName='" + originalFileName + '\'' +
+                ", storeFileName='" + storeFileName + '\'' +
+                '}';
+    }
+
     public void changeItem(Item item) {
         this.item = item;
     }

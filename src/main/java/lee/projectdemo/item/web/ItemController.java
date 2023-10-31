@@ -49,8 +49,8 @@ public class ItemController {
 
         //이미지가 들어가있는 itemList 반환
         Page<ItemDto> itemList = s3Service.addImageItemDto(itemService.findAllItemPage(cond, pageable), pageable);
-        
-        model.addAttribute("itemList", itemService.findAllItemPage(cond, pageable));
+
+        model.addAttribute("itemList", itemList);
 
         return "items/items";
     }

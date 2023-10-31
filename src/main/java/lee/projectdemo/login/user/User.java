@@ -54,4 +54,16 @@ public class User {
 
     }
 
+    //querydsl 사용시 무한루프 방지
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", loginId='" + loginId + '\'' +
+                ", loginName='" + loginName + '\'' +
+                ", password='" + password + '\'' +
+                ", userRole=" + userRole +
+                ", address=" + address +
+                '}';
+    }
 }

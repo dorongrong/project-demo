@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="headerFragment">
-    <header>
+    <header style="background-color: #212529;">
         <div class="px-3 py-2 border-bottom ">
             <div class="container">
                 <div
@@ -10,16 +10,9 @@
                     <div
                             class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none"
                     >
-                        <a href="/">
-                            <svg
-                                    class="bi me-2"
-                                    width="40"
-                                    height="32"
-                                    role="img"
-                                    aria-label="Bootstrap"
-                            >
-                                <use xlink:href="#bootstrap" />
-                            </svg>
+                        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+                            <svg class="bi me-2" width="40" height="32"><use xlink:href="#logo"/></svg>
+                            <span class="fs-4">Project Demo</span>
                         </a>
 <!--                        <form-->
 <!--                                method="get"-->

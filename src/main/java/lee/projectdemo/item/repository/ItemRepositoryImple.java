@@ -71,7 +71,8 @@ public class ItemRepositoryImple implements ItemRepository {
     //페이징용
     @Override
     public Page<ItemDto> findAllPage(ItemSearchCond cond, Pageable pageable){
-
+        
+        //제대로 user가 안들어감 이유 찾아보자
         List<Item> items = getItemDtos(cond, pageable);
         
         //dto객체로 변형
