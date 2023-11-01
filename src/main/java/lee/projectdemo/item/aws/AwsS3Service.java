@@ -89,11 +89,19 @@ public class AwsS3Service {
         return amazonS3.getUrl(bucket, storedFileName).toString();
     }
 
+    public String loadEmptyImage(){
+        return amazonS3.getUrl(bucket, "item/3985091d-b909-4d57-afb0-7bc9292b2b56.jpg").toString();
+    }
+
     public Page<ItemDto> addImageItemDto(Page<ItemDto> itemDtos, Pageable pageable) {
         //페이징된 itemDtos를 그냥 ItemDto 리스트로 변형
         List<ItemDto> addImageDtos = itemDtos.getContent();
         for (ItemDto itemDto : addImageDtos) {
             List<String> imageUrls = new ArrayList<>();
+            if(itemDto.getImages().size() == 0){
+                //이미지가 없을 경우 대체이미지 삽입
+                imageUrls.add(loadEmptyImage());
+            }
             for (Image image : itemDto.getImages()) {
                 imageUrls.add(loadImage(image.getStoreFileName()));
             }
