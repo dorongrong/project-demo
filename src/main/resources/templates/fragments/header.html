@@ -56,8 +56,11 @@
                             </a>
                         </li>
                         <li>
+<!--                            거북이-->
+                            <div class="flex-shrink-0 dropdown">
 <!--                            추후 내정보로 이동-->
-                            <a th:if="${user != null}" href="/login" class="nav-link text-white">
+                            <a th:if="${user != null}" href="#" class="nav-link text-white"
+                               data-bs-toggle="dropdown" aria-expanded="false">
                                 <svg class="bi d-block mx-auto mb-1" width="24" height="24">
                                     <use xlink:href="#people-circle" />
                                 </svg>
@@ -69,6 +72,16 @@
                                 </svg>
                                 Login
                             </a>
+                                <ul class="dropdown-menu text-small shadow">
+                                    <li><a class="dropdown-item" href="#">판매 아이템</a></li>
+                                    <li><a class="dropdown-item" href="#">관심 아이템</a></li>
+                                    <li><a class="dropdown-item" href="#">채팅</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" href="#">Sign out</a></li>
+                                </ul>
+                            </div>
+<!--                            거북이-->
+
                         </li>
                     </ul>
                 </div>

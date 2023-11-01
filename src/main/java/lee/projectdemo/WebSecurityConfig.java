@@ -69,6 +69,7 @@ public class WebSecurityConfig {
                     .requestMatchers("/login").permitAll()
                     .requestMatchers("/users/add").permitAll()
                     .requestMatchers("/admin/**").hasRole("ADMIN") // /admin/** 주소로는 ADMIN role을 가진사람만 가능)
+                                .requestMatchers("/css/**").permitAll()
                     .anyRequest().authenticated() // 다른 주소는 모두 로그인 필요!
                     )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
