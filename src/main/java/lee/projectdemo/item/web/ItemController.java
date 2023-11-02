@@ -73,7 +73,7 @@ public class ItemController {
         model.addAttribute("item", itemDetails);
         model.addAttribute("images", imageURLs);
 
-        return "items/details";
+        return "items/newDetails";
     }
 
     @GetMapping("/items/addd")

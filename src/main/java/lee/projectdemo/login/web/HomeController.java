@@ -61,7 +61,7 @@ public class HomeController {
         model.addAttribute("itemList", itemList);
 
         if (loginService.getCookie(request) == null){
-            return "newHome";
+            return "home";
         }
 //        String cToken = loginService.getCookie(request);
         String cToken = loginService.getCookie(request);
@@ -73,10 +73,10 @@ public class HomeController {
                 String username = userDetails.getUsername();
                 model.addAttribute("user", username);
                 //다시 변경
-                return "newHome";
+                return "home";
             }
 
-        return "newHome";
+        return "home";
 
     }
 

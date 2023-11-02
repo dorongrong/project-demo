@@ -1,14 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/default">
   <head>
-    <meta charset="utf-8" />
-    <link
-      th:href="@{/css/bootstrap.min.css}"
-      href="../css/bootstrap.min.css"
-      rel="stylesheet"
-    />
     <style>
-      .container {
+      .loginContainer {
         max-width: 560px;
       }
       .field-error {
@@ -17,15 +11,15 @@
       }
     </style>
   </head>
-  <body>
-    <div class="container">
+  <th:block layout:fragment="content">
+    <div class="loginContainer container">
       <div class="py-5 text-center">
         <h2>회원 가입</h2>
       </div>
 
-      <h4 class="mb-3">회원 정보 입력</h4>
+      <h4 class="mb-3" style="color: white;">회원 정보 입력</h4>
 
-      <form action="" th:action th:object="${userDto}" method="post">
+      <form action="" th:action th:object="${userDto}" method="post" style="color: white;">
         <div th:if="${#fields.hasGlobalErrors()}">
           <p
             class="field-error"
@@ -123,7 +117,7 @@
         </div>
       </form>
     </div>
-  </body>
+  </th:block>
     <!-- /container -->
     <script>
     function findAddr() {
