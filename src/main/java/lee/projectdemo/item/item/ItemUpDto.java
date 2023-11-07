@@ -2,6 +2,7 @@ package lee.projectdemo.item.item;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lee.projectdemo.item.item.image.Image;
 import lombok.Data;
 
 import java.util.ArrayList;

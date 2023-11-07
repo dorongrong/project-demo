@@ -1,4 +1,4 @@
-package lee.projectdemo.item.item;
+package lee.projectdemo.item.item.image;
 
 public class ImageStorageFolderName {
     /**

@@ -26,6 +26,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final ListPath<lee.projectdemo.item.item.interest.Interest, lee.projectdemo.item.item.interest.QInterest> interests = this.<lee.projectdemo.item.item.interest.Interest, lee.projectdemo.item.item.interest.QInterest>createList("interests", lee.projectdemo.item.item.interest.Interest.class, lee.projectdemo.item.item.interest.QInterest.class, PathInits.DIRECT2);
+
     public final ListPath<lee.projectdemo.item.item.Item, lee.projectdemo.item.item.QItem> item = this.<lee.projectdemo.item.item.Item, lee.projectdemo.item.item.QItem>createList("item", lee.projectdemo.item.item.Item.class, lee.projectdemo.item.item.QItem.class, PathInits.DIRECT2);
 
     public final StringPath loginId = createString("loginId");

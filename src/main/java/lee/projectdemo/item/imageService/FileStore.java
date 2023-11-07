@@ -1,6 +1,6 @@
 package lee.projectdemo.item.imageService;
 
-import lee.projectdemo.item.item.Image;
+import lee.projectdemo.item.item.image.Image;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;

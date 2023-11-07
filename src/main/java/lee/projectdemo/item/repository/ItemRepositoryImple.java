@@ -78,7 +78,7 @@ public class ItemRepositoryImple implements ItemRepository {
         //dto객체로 변형
         List<ItemDto> itemDtos = items.stream()
                 .map(item -> new ItemDto(item.getId(), item.getItemName(), item.getDescription(), item.getPrice(),
-                        item.getUser(), item.getImages(), item.getCreatedAt()))
+                        item.getBargain(), item.getUser(), item.getImages(), item.getCreatedAt()))
                 .collect(Collectors.toList());
 
         Long count = getCount(cond);

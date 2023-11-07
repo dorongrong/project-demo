@@ -25,6 +25,12 @@ public class ItemRegDto {
     @Positive(message = "유효한 숫자를 입력해주세요")
     private Integer price; //int가 뭔가 있지 않나?
 
+    @NotNull
+    private Boolean bargain;
+
+    @NotEmpty
+    private String state;
+
     private List<MultipartFile> images = new ArrayList<>();
 
 }

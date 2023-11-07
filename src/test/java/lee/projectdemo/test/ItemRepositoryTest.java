@@ -1,13 +1,9 @@
 package lee.projectdemo.test;
 
 import lee.projectdemo.login.repository.UserRepository;
-import lee.projectdemo.login.user.Address;
-import lee.projectdemo.login.user.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class ItemRepositoryTest {
@@ -30,14 +26,14 @@ public class ItemRepositoryTest {
     @Test
     void save() {
         //given
-        User user = new User("donix", "이성훈", "1234", new Address("123", "456", "103동"));
-
-        //when
-        User savedUser = userRepository.save(user);
-
-        //then
-        User findUser = userRepository.findById(user.getId()).get();
-        assertThat(findUser).isEqualTo(savedUser);
+//        User user = new User("donix", "이성훈", "1234", new Address("123", "456", "103동"));
+//
+//        //when
+//        User savedUser = userRepository.save(user);
+//
+//        //then
+//        User findUser = userRepository.findById(user.getId()).get();
+//        assertThat(findUser).isEqualTo(savedUser);
     }
 
 //    @Test

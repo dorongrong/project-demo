@@ -2,6 +2,7 @@ package lee.projectdemo.login.user;
 
 import jakarta.persistence.*;
 import lee.projectdemo.item.item.Item;
+import lee.projectdemo.item.item.interest.Interest;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -29,6 +30,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Item> item = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Interest> interests = new ArrayList<>();
 
     @Embedded
     private Address address;

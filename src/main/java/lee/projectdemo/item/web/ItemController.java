@@ -5,7 +5,12 @@ import jakarta.validation.Valid;
 import lee.projectdemo.auth.PrincipalDetails;
 import lee.projectdemo.item.aws.AwsS3Service;
 import lee.projectdemo.item.imageService.FileStore;
-import lee.projectdemo.item.item.*;
+import lee.projectdemo.item.item.Item;
+import lee.projectdemo.item.item.ItemDto;
+import lee.projectdemo.item.item.ItemRegDto;
+import lee.projectdemo.item.item.ItemSearchCond;
+import lee.projectdemo.item.item.image.Image;
+import lee.projectdemo.item.service.InterestService;
 import lee.projectdemo.item.service.ItemService;
 import lee.projectdemo.login.service.LoginService;
 import lee.projectdemo.login.user.User;
@@ -23,10 +28,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static lee.projectdemo.item.item.ImageStorageFolderName.PRODUCT_IMAGE_PATH;
+import static lee.projectdemo.item.item.image.ImageStorageFolderName.PRODUCT_IMAGE_PATH;
 
 @Slf4j
 @Controller
@@ -37,6 +44,7 @@ public class ItemController {
     private final ItemService itemService;
     private final FileStore fileStore;
     private final LoginService loginService;
+    private final InterestService interestService;
 
     private final AwsS3Service s3Service;
 
@@ -67,13 +75,17 @@ public class ItemController {
             imageURLs.add(s3Service.loadImage(image.getStoreFileName()));
         }
 
-        ItemDto itemDetails = new ItemDto(item.getItemName(), item.getDescription(),
-                item.getPrice(), item.getImages());
+        ItemDto itemDetails = new ItemDto(item.getId(), item.getItemName(), item.getDescription(), item.getPrice(),
+                item.getBargain(), item.getCreatedAt() ,item.getImages(), item.getState(), item.getInterestCount());
 
+//        아이템 시간 계산 모델에 따로 넣는 이유는 locadatetime 이라는 데이터타입때문임
+        String time = formatTime(itemDetails.getDate());
+
+        model.addAttribute("time", time);
         model.addAttribute("item", itemDetails);
         model.addAttribute("images", imageURLs);
 
-        return "items/newDetails";
+        return "items/details";
     }
 
     @GetMapping("/items/addd")
@@ -114,7 +126,7 @@ public class ItemController {
 
         //storeImageFiles에는 ID,Item 이 세팅 안돼있음
         Item item = new Item(itemRegDto.getItemName(), itemRegDto.getDescription(), itemRegDto.getPrice(),
-                tokenUser);
+                itemRegDto.getBargain(), tokenUser, itemRegDto.getState(), 0);
         // 이미지 객체에 아이템 객체 넣어주기
         item.changeImages(storeImageFiles);
 
@@ -123,6 +135,24 @@ public class ItemController {
         redirectAttributes.addAttribute("itemId", item.getId());
 
         // 아이템 상세 페이지로 이동
+        return "redirect:/items/{itemId}";
+    }
+
+
+    @PostMapping("/items/{itemId}/interest")
+    public String interestItem(@PathVariable Long itemId, HttpServletRequest request, RedirectAttributes
+            redirectAttributes) {
+
+        //아이템 저장 서비스에 값 넘겨줘서 저장 엔티티 주인은 걱정하지마라 어차피 둘다 저장할꺼다
+        String cToken = loginService.getCookie(request);
+        Authentication user = loginService.getUserDetail(cToken);
+        PrincipalDetails userDetails = (PrincipalDetails)user.getPrincipal();
+
+        //토큰에서 빼온 유저 정보
+        User tokenUser = userDetails.getUser();
+
+        interestService.checkInterest(tokenUser, itemId);
+
         return "redirect:/items/{itemId}";
     }
 
@@ -144,5 +174,19 @@ public class ItemController {
 //
 //        return ResponseEntity<>(, HttpStatus.OK);;
 //    }
+
+    private String formatTime(LocalDateTime itemCreatedAt) {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        Duration duration = Duration.between(itemCreatedAt, now);
+        if (duration.toDays() >= 1) {
+            return duration.toDays() + "일";
+        } else if (duration.toHours() >= 1) {
+            return duration.toHours() + "시간";
+        } else {
+            return duration.toMinutes() + "분";
+        }
+    }
 
 }

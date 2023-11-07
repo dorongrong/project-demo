@@ -32,7 +32,7 @@ public class ItemService {
             itemDto.setPrice(item.getPrice());
             itemDto.setUser(item.getUser());
             itemDto.setImages(item.getImages());
-
+            itemDto.setBargain(item.getBargain());
             itemDtoList.add(itemDto);
         }
 

@@ -5,7 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import lee.projectdemo.item.item.Image;
+import lee.projectdemo.item.item.image.Image;
 import lee.projectdemo.item.item.ItemDto;
 import lee.projectdemo.item.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;

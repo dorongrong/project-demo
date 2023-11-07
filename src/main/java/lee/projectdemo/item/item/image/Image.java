@@ -1,6 +1,7 @@
-package lee.projectdemo.item.item;
+package lee.projectdemo.item.item.image;
 
 import jakarta.persistence.*;
+import lee.projectdemo.item.item.Item;
 import lombok.Data;
 
 @Entity

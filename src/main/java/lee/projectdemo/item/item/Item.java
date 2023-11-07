@@ -1,6 +1,8 @@
 package lee.projectdemo.item.item;
 
 import jakarta.persistence.*;
+import lee.projectdemo.item.item.image.Image;
+import lee.projectdemo.item.item.interest.Interest;
 import lee.projectdemo.login.user.User;
 import lombok.Data;
 
@@ -25,6 +27,13 @@ public class Item {
 
     private LocalDateTime createdAt;
 
+    private Boolean bargain;
+
+    private Integer interestCount;
+
+    private String state;
+
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -37,6 +46,9 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL) //아이템이랑 이미지의 연관관계 생각
     private List<Image> images = new ArrayList<>();
 
+    @OneToMany(mappedBy = "item")
+    private List<Interest> interests = new ArrayList<>();
+
     public Item(Long id, String itemName, String description, Integer price, User user, List<Image> images) {
         this.id = id;
         this.itemName = itemName;
@@ -46,11 +58,15 @@ public class Item {
         this.images = images;
     }
 
-    public Item(String itemName, String description, Integer price, User user) {
+    public Item(String itemName, String description, Integer price, Boolean bargain, User user, String state,
+                Integer interestCount) {
         this.itemName = itemName;
         this.description = description;
         this.price = price;
+        this.bargain = bargain;
         this.user = user;
+        this.state = state;
+        this.interestCount = interestCount;
     }
 
     public Item(){
@@ -76,8 +92,12 @@ public class Item {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", createdAt=" + createdAt +
+                ", bargain=" + bargain +
                 ", user=" + user +
                 ", images=" + images +
+                ", interests=" + interests +
+                ", interestCount=" + interestCount +
+                ", state=" + state +
                 '}';
     }
 }

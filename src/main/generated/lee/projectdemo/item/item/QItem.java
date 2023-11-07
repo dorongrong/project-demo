@@ -22,17 +22,25 @@ public class QItem extends EntityPathBase<Item> {
 
     public static final QItem item = new QItem("item");
 
+    public final BooleanPath bargain = createBoolean("bargain");
+
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final StringPath description = createString("description");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final ListPath<Image, QImage> images = this.<Image, QImage>createList("images", Image.class, QImage.class, PathInits.DIRECT2);
+    public final ListPath<lee.projectdemo.item.item.image.Image, lee.projectdemo.item.item.image.QImage> images = this.<lee.projectdemo.item.item.image.Image, lee.projectdemo.item.item.image.QImage>createList("images", lee.projectdemo.item.item.image.Image.class, lee.projectdemo.item.item.image.QImage.class, PathInits.DIRECT2);
+
+    public final NumberPath<Integer> interestCount = createNumber("interestCount", Integer.class);
+
+    public final ListPath<lee.projectdemo.item.item.interest.Interest, lee.projectdemo.item.item.interest.QInterest> interests = this.<lee.projectdemo.item.item.interest.Interest, lee.projectdemo.item.item.interest.QInterest>createList("interests", lee.projectdemo.item.item.interest.Interest.class, lee.projectdemo.item.item.interest.QInterest.class, PathInits.DIRECT2);
 
     public final StringPath itemName = createString("itemName");
 
     public final NumberPath<Integer> price = createNumber("price", Integer.class);
+
+    public final StringPath state = createString("state");
 
     public final lee.projectdemo.login.user.QUser user;
 

@@ -1,4 +1,4 @@
-package lee.projectdemo.item.item;
+package lee.projectdemo.item.item.image;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QImage extends EntityPathBase<Image> {
 
-    private static final long serialVersionUID = -1763609081L;
+    private static final long serialVersionUID = -1425435980L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
@@ -24,7 +24,7 @@ public class QImage extends EntityPathBase<Image> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final QItem item;
+    public final lee.projectdemo.item.item.QItem item;
 
     public final StringPath originalFileName = createString("originalFileName");
 
@@ -48,7 +48,7 @@ public class QImage extends EntityPathBase<Image> {
 
     public QImage(Class<? extends Image> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.item = inits.isInitialized("item") ? new QItem(forProperty("item"), inits.get("item")) : null;
+        this.item = inits.isInitialized("item") ? new lee.projectdemo.item.item.QItem(forProperty("item"), inits.get("item")) : null;
     }
 
 }

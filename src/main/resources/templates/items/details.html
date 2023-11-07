@@ -2,167 +2,147 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/default">
 <head>
     <style>
-<!--        슬라이드-->
-.slides {
-    padding: 0;
-    width: 30%;
-    height: 30%;
-    display: block;
-    margin: 0 auto;
+      * {
+    box-sizing: border-box;
+  }
+
+  .slider {
+    min-width: 50%;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .slides {
+    display: flex;
+    overflow-x: auto;
+    /* overflow: hidden; */
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  .slides::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  .slides::-webkit-scrollbar-thumb {
+    background: black;
+    border-radius: 10px;
+  }
+  .slides::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .slides > div {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 100%;
+    height: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #eee;
+    transform-origin: center center;
+    transform: scale(1);
+    transition: transform 0.5s;
     position: relative;
-}
-/* dd */
-.slides * {
-    user-select: none;
-    -ms-user-select: none;
-    -moz-user-select: none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
-}
-
-.slides input { display: none; }
-
-.slide-container { display: block; }
-
-.slide {
-    top: 0;
-    opacity: 0;
-    width: 30%;
-    height: 30%;
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 100px;
+  }
+  .img-detail {
+    object-fit: cover;
     position: absolute;
-
-    transform: scale(0);
-
-    transition: all .7s ease-in-out;
-}
-
-.slide img {
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-}
+  }
 
-.nav label {
-    width: 200px;
-    height: 100%;
-    display: none;
-    position: absolute;
-
-    opacity: 0;
-    z-index: 9;
-    cursor: pointer;
-
-    transition: opacity .2s;
-
-    color: #FFF;
-    font-size: 156pt;
-    text-align: center;
-    line-height: 380px;
-    font-family: "Varela Round", sans-serif;
-    background-color: rgba(255, 255, 255, .3);
-    text-shadow: 0px 0px 15px rgb(119, 119, 119);
-}
-
-.slide:hover + .nav label { opacity: 0.5; }
-.nav label:hover { opacity: 1; }
-.nav .next { right: 0; }
-input:checked + .slide-container  .slide {
-    opacity: 1;
-    transform: scale(1);
-    transition: opacity 1s ease-in-out;
-}
-
-input:checked + .slide-container .nav label { display: block; }
-
-.nav-dots {
-  width: 100%;
-  bottom: 9px;
-  height: 11px;
-  display: block;
-  position: absolute;
-  text-align: center;
-}
-
-.nav-dots .nav-dot {
-  top: -5px;
-  width: 11px;
-  height: 11px;
-  margin: 0 4px;
-  position: relative;
-  border-radius: 100%;
-  display: inline-block;
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-.nav-dots .nav-dot:hover {
-  cursor: pointer;
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-<!--input#img-1:checked ~ .nav-dots label#img-dot-1,-->
-<!--input#img-2:checked ~ .nav-dots label#img-dot-2,-->
-<!--input#img-3:checked ~ .nav-dots label#img-dot-3,-->
-<!--input#img-4:checked ~ .nav-dots label#img-dot-4,-->
-<!--input#img-5:checked ~ .nav-dots label#img-dot-5,-->
-<!--input#img-6:checked ~ .nav-dots label#img-dot-6 {-->
-<!--  background: rgba(0, 0, 0, 0.8);-->
-<!--}-->
-<!--        슬라이드-->
+  .slider > a {
+    display: inline-flex;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: #eee;
+    text-decoration: none;
+    justify-content: center;
+    border-radius: 50%;
+    margin: 0 0 0.5rem 0;
+    position: relative;
+  }
+  .slider > a:active {
+    top: 1px;
+  }
+  .slider > a:focus {
+    background: #000;
+  }
+  .btn-detail {
+    border-radius: 12px;
+    height: 50px;
+    flex: 1;
+    margin: 0px 10px;
+  }
     </style>
 </head>
 <th:block layout:fragment="content">
-<!--<div class="container">-->
-<!--    <section class="py-5">-->
-<!--        <div class="container px-4 px-lg-5">-->
-<!--            <div class="row row-cols-1 row-cols-md-2">-->
-<!--                슬라이드-->
-                <ul class="slides">
-                    <div th:each="image, iterStat : ${images}">
-                    <input type="radio" name="radio-btn" th:id="'img-' + ${iterStat.index}" th:checked="${iterStat.index == 0}" />
-                    <li class="slide-container">
-                        <div class="slide">
-                            <img th:src="${image}" />
-                        </div>
-                        <div class="nav">
-                            <label th:for="'img-' + ${iterStat.index + images.size() - 1}" class="prev">&#x2039;</label>
-                            <label :for="'img-' + ${iterStat.index + 1}" class="next">&#x203a;</label>
-                        </div>
-                    </li>
+<div class="container" style="max-width: 1000px;">
+    <div class="py-5 text-center border-bottom">
+        <h2 style="color: #dee2e6;">상세 정보</h2>
+    </div>
+    <section class="py-5">
+        <div class="container px-4 px-lg-5">
+            <div class="row row-cols-1 row-cols-md-2 border-bottom">
+                <div class="slider col mb-5 a-container">
+                    <div class="slides">
+                        <th:block th:each="image, iterStat : ${images}" th:remove="tag">
+                            <div th:id="'slide-' + ${iterStat.index + 1}">
+                                <img class="image-detail" th:src="${image}" />
+                            </div>
+                        </th:block>
                     </div>
-                    <li class="nav-dots">
-                        <div th:each="image, iterStat : ${images}">
-                            <label th:for="'img-' + ${iterStat.index}" th:id="'img-dot-' + ${iterStat.index}" class="nav-dot"></label>
-                        </div>
-<!--                        <label for="img-1" class="nav-dot" id="img-dot-1"></label>-->
-<!--                        <label for="img-2" class="nav-dot" id="img-dot-2"></label>-->
-<!--                        <label for="img-3" class="nav-dot" id="img-dot-3"></label>-->
-<!--                        <label for="img-4" class="nav-dot" id="img-dot-4"></label>-->
-<!--                        <label for="img-5" class="nav-dot" id="img-dot-5"></label>-->
-<!--                        <label for="img-6" class="nav-dot" id="img-dot-6"></label>-->
-                    </li>
-                </ul>
+                    <th:block th:each="image, iterStat : ${images}" th:remove="tag">
+                        <a th:href="'#slide-' + ${iterStat.index + 1}" th:text="${iterStat.index + 1}"></a>
+                    </th:block>
+                </div>
                 <!--                슬라이드-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </section>-->
-<!--    <div class="row">-->
-<!--        <div class="col-md-12">-->
-<!--            <h1 class="text-center" th:text="${item.itemName}">상품명</h1>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    <div>-->
-<!--        <h4>상품 상세내용: <span th:text="${item.description}">상품 상세내용</span><br/></h4>-->
-<!--        <h4>가격: <span th:text="${item.price}">가격</span><br/></h4>-->
-<!--    </div>-->
-<!--    <div class="row">-->
-<!--        <div th:each="image : ${images}" class="col-md-4 item-image">-->
-<!--            <div class="card">-->
-<!--                <img th:src="${image}" class="card-img-top">-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-    <!-- /container -->
-<!--    </div>-->
+                <div class="col mb-5">
+                    <div class="col-md-12 ms-2">
+                        <h2 style="color: white;" th:text="${item.itemName}">상품명</h2>
+                        <h1 style="color: white;" th:text="${item.price}">90000원</h1>
+                        <hr style="background-color: lightgray;">
+                        <ul id="example0">
+                            <div class="row row-cols-2">
+                            <li class="mb-4 col-md-4">
+                                <span style="color: rgb(153, 153, 153);" th:text="'시간'">시간</span>
+                            </li>
+                                <span class="col-md-8" style="color: white;" th:utext="${time}">시간</span>
+                            <li class="mb-4 col-md-4">
+                                <span style="color: rgb(153, 153, 153);" th:text="'흥정여부'">흥정여부</span>
+                            </li>
+                                <span class="col-md-8" style="color: white;" th:utext="${item.bargain ? '흥정 가능' : '흥정 불가능'}">흥정</span>
+                                <li class="mb-4 col-md-4">
+                                    <span style="color: rgb(153, 153, 153);" th:text="'상품상태'">상품상태</span>
+                                </li>
+                                <span class="col-md-8" style="color: white;" th:text="${item.state}">보통</span>
+                            </div>
+                        </ul>
+                        <div style="display: flex; justify-content: space-between;">
+                            <form th:action="@{'/items/' + ${item.itemId} + '/interest'}" method="post">
+                            <button class="btn-detail" style="background-color: gray;">
+                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij4KICAgIDxwYXRoIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTcuMDA1IDEuMDQ1aC4yMzNjLjI4LjIyOC41MzcuNDkuNzYyLjc3Ny4yMjUtLjI4OC40ODEtLjU0OS43NjItLjc3N2guMjMzYTYuMTYgNi4xNiAwIDAgMC0uMDktLjExM0M5LjY4NC4zNDQgMTAuNjI4IDAgMTEuNiAwIDE0LjA2NCAwIDE2IDIuMTEgMTYgNC43OTZjMCAzLjI5Ni0yLjcyIDUuOTgxLTYuODQgMTAuMDYyTDggMTZsLTEuMTYtMS4xNTFDMi43MiAxMC43NzcgMCA4LjA5MiAwIDQuNzk2IDAgMi4xMSAxLjkzNiAwIDQuNCAwYy45NzIgMCAxLjkxNi4zNDQgMi42OTUuOTMyYTYuMTYgNi4xNiAwIDAgMC0uMDkuMTEzeiIvPgo8L3N2Zz4K" width="16" height="16" alt="찜 아이콘">
+                                <span>찜</span><span th:text="${item.interestCount}"></span>
+                            </button>
+                            </form>
+                            <button class="btn-detail" style="background-color: yellow;">채팅</button>
+                            <button class="btn-detail" style="background-color: blue;">바로구매</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col a-container" style="margin-top: 50px">
+                <h4 style="color: rgb(153, 153, 153);">상품 상세내용: <span th:text="${item.description}">상품 상세내용</span><br/></h4>
+            </div>
+        </div>
+    </section>
+    </div>
 </th:block>
 </html>
