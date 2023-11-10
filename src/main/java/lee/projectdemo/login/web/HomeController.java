@@ -15,10 +15,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 @Slf4j
@@ -80,9 +85,10 @@ public class HomeController {
 
     }
 
-    @GetMapping("/test")
-    public String test() {
-        return "test/build/index";
+    @GetMapping("/api/hello")
+    public ResponseEntity<List<String>> getHello() {
+        List<String> messages = Arrays.asList("리액트 스프링", "연결 성공");
+        return ResponseEntity.ok(messages);
     }
 
 
