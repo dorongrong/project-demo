@@ -28,8 +28,8 @@ public class JwtProvider {
 
     private Key secretKey;
 
-    // 만료시간 : 30분
-    private final long exp = 1000L * 60 * 30;
+    // 만료시간 : 300분
+    private final long exp = 1000L * 60 * 300;
 
     private final PrincipalDetailsService userDetailsService;
 
