@@ -51,12 +51,12 @@ public class RabbitConfig {
     }
 
     @Bean
-    public SimpleMessageListenerContainer container(){
-        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory());
-        container.setQueueNames(CHAT_QUEUE_NAME);
-        container.setMessageListener(null);
-        return container;
+    public SimpleMessageListenerContainer listenerContainer(){
+        SimpleMessageListenerContainer listenerContainer = new SimpleMessageListenerContainer();
+        listenerContainer.setConnectionFactory(connectionFactory());
+        listenerContainer.setQueueNames(CHAT_QUEUE_NAME);
+//        listenerContainer.setMessageListener(null);
+        return listenerContainer;
     }
 
     //Spring에서 자동생성해주는 ConnectionFactory는 SimpleConnectionFactory인가? 그건데

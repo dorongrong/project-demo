@@ -28,11 +28,7 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
         //외부  메세지 브로커를 사용해 Client에게 Subscriptions, Broadcasting 기능을 제공한다.
         //또한 /queue", "/topic", "/exchange", "/amq/queue로 시작하는 "destination" 헤더를 가진 메세지를 브로커로 라우팅한다.
 //        해당하는 경로를 SUBSCRIBE하는 Client에게 메세지를 전달하는 간단한 작업을 수행
-        registry.enableStompBrokerRelay("/topic", "/exchange")
-                .setRelayHost("localhost")
-                .setRelayPort(15672)
-                .setClientLogin("guest")
-                .setClientPasscode("guest");
+        registry.enableStompBrokerRelay("/topic", "/exchange");
     }
 
 }
