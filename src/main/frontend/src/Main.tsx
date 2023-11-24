@@ -16,12 +16,10 @@ const Main: React.FC = () => {
       <button onClick={() => handleChatButtonClick(0, "이성훈")}>Chat 1</button>
       <button onClick={() => handleChatButtonClick(0, "이지훈")}>Chat 2</button>
       <Routes>
-        <Route path="/" element={<div>Main Default Content</div>} />
+        <Route path="*" element={<div>Main Default Content</div>} />
         <Route
           path="/chat"
-          element={
-            <ChatButton chatRoomId={0} nickname={currentChat.nickname} />
-          }
+          element={<ChatButton chatRoomId={0} nickname={"이성훈"} />}
         />
       </Routes>
     </div>

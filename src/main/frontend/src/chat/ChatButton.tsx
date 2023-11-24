@@ -1,6 +1,6 @@
-import { Stomp } from "@stomp/stompjs";
 import React, { useState, useEffect, useRef } from "react";
 import SockJS from "sockjs-client";
+import webstomp from "webstomp-client";
 
 const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
   chatRoomId,
@@ -10,7 +10,7 @@ const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
   const [chats, setChats] = useState<JSX.Element[]>([]);
 
   const sockJS = useRef(new SockJS("/stomp/chat"));
-  const stomp = useRef(Stomp.over(sockJS.current));
+  const stomp = useRef(webstomp.over(sockJS.current));
 
   useEffect(() => {
     const onError = (e: any) => {
@@ -50,7 +50,6 @@ const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
 
         stomp.current.send(
           `/pub/chat.enter.${chatRoomId}`,
-          {},
           JSON.stringify({
             memberId: 1,
             nickname: nickname,
@@ -67,6 +66,7 @@ const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
     };
   }, [chatRoomId, nickname, chats]);
 
+  // 메시지 send 버튼
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -84,7 +84,6 @@ const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
 
     stomp.current.send(
       `/pub/chat.message.${chatRoomId}`,
-      {},
       JSON.stringify({
         message: message,
         memberId: 1,

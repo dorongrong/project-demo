@@ -13,7 +13,7 @@ const App: React.FC = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Main />} />
+      <Route path="*" element={<Main />} />
       <Route
         path="/chat"
         element={<ChatButton chatRoomId={0} nickname={currentChat.nickname} />}

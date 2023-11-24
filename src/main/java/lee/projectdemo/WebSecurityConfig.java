@@ -65,7 +65,7 @@ public class WebSecurityConfig {
                 )
                 .formLogin(formLogin -> formLogin.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/").permitAll() //  /** 주소로 다 들어갈수있음
+                    .requestMatchers("/*").permitAll() //  /** 주소로 다 들어갈수있음
                     .requestMatchers("/login").permitAll()
                     .requestMatchers("/users/add").permitAll()
                     .requestMatchers("/admin/**").hasRole("ADMIN") // /admin/** 주소로는 ADMIN role을 가진사람만 가능)
