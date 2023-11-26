@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ChatButton from "./chat/ChatButton";
 import { Link, Route, Routes } from "react-router-dom";
 
@@ -8,6 +8,18 @@ const Main: React.FC = () => {
   const handleChatButtonClick = (roomId: any, nickname: any) => {
     setCurrentChat({ roomId, nickname });
   };
+
+  const test = useRef<any>("첫번째");
+  console.log(test);
+
+  const effectTest = () => {
+    test.current = "두번째";
+    console.log(test);
+  };
+
+  useEffect(() => {
+    effectTest();
+  });
 
   return (
     <div>
