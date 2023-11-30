@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import SockJS from "sockjs-client";
 import webstomp from "webstomp-client";
+import { getCookieInfo } from "../cookie/GetCookie";
 
 const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
   chatRoomId,
@@ -9,28 +10,24 @@ const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
   const [messageContent, setMessageContent] = useState<string>("");
   const [chats, setChats] = useState<JSX.Element[]>([]);
 
+  const userId = getCookieInfo();
+
+  const roomId = useRef<number>(chatRoomId);
   const stomp = useRef<any>();
-  const sock = new SockJS("/stomp/chat");
-
-  console.log("출력 ", sock);
-  sock.onopen = () => {
-    console.log("open");
-    sock.send("test");
-    console.log("추춫ㄹ력", sock);
-  };
-
-  console.log("나와서 출", sock);
-  // const sockJS = new SockJS("/stomp/chat");
-  // const stomp = useRef<any>(webstomp.over(sockJS));
+  const sockJS = new SockJS("http://localhost:1234/stomp/chat");
 
   const socketConnect = () => {
-    console.log("여길 왜 못들어가지1?");
-    stomp.current = webstomp.over(() => {
-      const sockJS = new SockJS("/stomp/chat");
-      return sockJS;
-    });
+    console.log("socketConnect 진입?");
 
-    console.log(stomp.current);
+    // stomp.current = webstomp.over(
+    //   (() => {
+    //     console.log("webstomp.over 진입");
+    //     const sockJS = new SockJS("http://localhost:1234/stomp/chat");
+    //     return sockJS;
+    //   })()
+    // );
+
+    stomp.current = webstomp.over(sockJS);
 
     const onError = (e: any) => {
       console.log("STOMP ERROR", e);
@@ -50,32 +47,32 @@ const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
       (frame: any) => {
         console.log("STOMP Connected");
 
-        // stomp.current.subscribe(
-        //   `/exchange/chat.exchange/room.${chatRoomId}`,
-        //   (content: any) => {
-        //     const payload = JSON.parse(content.body);
+        stomp.current.subscribe(
+          `/exchange/chat.exchange/room.${chatRoomId}`,
+          (content: any) => {
+            const payload = JSON.parse(content.body);
+            console.log("히히", payload.userId);
 
-        //     let className = payload.nickname === nickname ? "mine" : "yours";
+            let className = payload.userId === userId ? "mine" : "yours";
 
-        //     const newChat = (
-        //       <div key={chats.length} className={className}>
-        //         <div className="nickname">{payload.nickname}</div>
-        //         <div className="message">{payload.message}</div>
-        //       </div>
-        //     );
+            const newChat = (
+              <div key={chats.length} className={className}>
+                <div className="nickname">{payload.userId}</div>
+                <div className="message">{payload.message}</div>
+              </div>
+            );
 
-        //     setChats((prevChats) => [...prevChats, newChat]);
-        //   },
-        //   { "auto-delete": "true", durable: "false", exclusive: "false" }
-        // );
+            setChats((prevChats) => [...prevChats, newChat]);
+          },
+          { "auto-delete": "true", durable: "false", exclusive: "false" }
+        );
 
-        // stomp.current.send(
-        //   `/pub/chat.enter.${chatRoomId}`,
-        //   JSON.stringify({
-        //     memberId: 1,
-        //     nickname: nickname,
-        //   })
-        // );
+        stomp.current.send(
+          `/pub/chat.enter.${roomId}`,
+          JSON.stringify({
+            nickname: userId,
+          })
+        );
       },
       onError,
       "/"
@@ -83,12 +80,12 @@ const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
   };
 
   useEffect(() => {
-    // socketConnect();
+    socketConnect();
     // cleanup function
     return () => {
       stomp.current.disconnect(); // disconnect when component unmounts
     };
-  });
+  }, []);
   // , [chatRoomId, nickname, chats]
 
   // 메시지 send 버튼
@@ -97,7 +94,7 @@ const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
 
     const newChat = (
       <div key={chats.length} className="mine">
-        <div className="nickname">{nickname}</div>
+        <div className="nickname">{userId}</div>
         <div className="message">{messageContent}</div>
       </div>
     );
@@ -111,8 +108,7 @@ const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
       `/pub/chat.message.${chatRoomId}`,
       JSON.stringify({
         message: message,
-        memberId: 1,
-        nickname: nickname,
+        userId: userId,
       })
     );
   };
@@ -120,8 +116,8 @@ const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
   return (
     <div>
       <h1>CHAT ROOM</h1>
-      <h2>{`Room No. ${chatRoomId}`}</h2>
-      <h2>{`Nickname = ${nickname}`}</h2>
+      <h2>Room No. {chatRoomId}</h2>
+      <h2>Nickname {userId}</h2>
 
       <form onSubmit={handleSendMessage}>
         <input

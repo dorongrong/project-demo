@@ -52,12 +52,15 @@ public class WebSecurityConfig {
                             CorsConfigurationSource source = request -> { //react 가 있던데 확인하자
                                 // Cors 허용 패턴
                                 CorsConfiguration config = new CorsConfiguration();
-                                config.setAllowedOrigins(
+                                config.setAllowedOriginPatterns(
                                         List.of("*")
                                 );
                                 config.setAllowedMethods(
                                         List.of("*")
                                 );
+                                // 허용할 Header 설정
+                                config.addAllowedHeader("*");
+                                config.setAllowCredentials(true);
                                 return config;
                             };
                             c.configurationSource(source);

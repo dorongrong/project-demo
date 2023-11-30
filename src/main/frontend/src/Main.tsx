@@ -9,17 +9,7 @@ const Main: React.FC = () => {
     setCurrentChat({ roomId, nickname });
   };
 
-  const test = useRef<any>("첫번째");
-  console.log(test);
-
-  const effectTest = () => {
-    test.current = "두번째";
-    console.log(test);
-  };
-
-  useEffect(() => {
-    effectTest();
-  });
+  console.log(currentChat);
 
   return (
     <div>
@@ -31,7 +21,9 @@ const Main: React.FC = () => {
         <Route path="*" element={<div>Main Default Content</div>} />
         <Route
           path="/chat"
-          element={<ChatButton chatRoomId={0} nickname={"이성훈"} />}
+          element={
+            <ChatButton chatRoomId={0} nickname={currentChat.nickname} />
+          }
         />
       </Routes>
     </div>
