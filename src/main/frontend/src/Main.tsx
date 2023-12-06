@@ -3,7 +3,7 @@ import ChatButton from "./chat/ChatButton";
 import { Link, Route, Routes } from "react-router-dom";
 
 const Main: React.FC = () => {
-  const [currentChat, setCurrentChat] = useState({ roomId: 0, nickname: "" });
+  const [currentChat, setCurrentChat] = useState({ roomId: "0", nickname: "" });
 
   const handleChatButtonClick = (roomId: any, nickname: any) => {
     setCurrentChat({ roomId, nickname });
@@ -22,7 +22,10 @@ const Main: React.FC = () => {
         <Route
           path="/chat"
           element={
-            <ChatButton chatRoomId={0} nickname={currentChat.nickname} />
+            <ChatButton
+              chatRoomId={currentChat.roomId}
+              nickname={currentChat.nickname}
+            />
           }
         />
       </Routes>

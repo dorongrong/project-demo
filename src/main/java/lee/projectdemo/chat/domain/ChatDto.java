@@ -19,12 +19,11 @@ public class ChatDto {
 //
 //    private String message;
 
-    private Long id;
     private Long chatRoomId;
-    private Long memberId;
-
+    private String sendUserId;
+    //Default unread
+    private ChatState chatState;
     private String message;
-    private String region;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime regDate;

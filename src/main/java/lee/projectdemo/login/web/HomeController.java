@@ -3,7 +3,9 @@ package lee.projectdemo.login.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lee.projectdemo.auth.PrincipalDetails;
+import lee.projectdemo.chat.service.ChatService;
 import lee.projectdemo.item.aws.AwsS3Service;
+import lee.projectdemo.item.item.Item;
 import lee.projectdemo.item.item.ItemDto;
 import lee.projectdemo.item.item.ItemSearchCond;
 import lee.projectdemo.item.service.ItemService;
@@ -20,7 +22,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +40,8 @@ public class HomeController {
     private final ItemService itemService;
 
     private final AwsS3Service s3Service;
+
+    private final ChatService chatService;
 
 //    @GetMapping("/")
 //    public String home(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false)
@@ -76,8 +79,16 @@ public class HomeController {
             if (user != null) {
                 PrincipalDetails userDetails = (PrincipalDetails)user.getPrincipal();
                 String username = userDetails.getUsername();
+                String userId = userDetails.getLoginId();
                 model.addAttribute("user", username);
                 //다시 변경
+
+                //로그인한 순간 유저의 아이템 전부 구독
+                List<Item> items = userDetails.getItem();
+                //확인
+                System.out.println(items);
+                if (!items.isEmpty())
+                chatService.subscribeQueue(items,userId);
                 return "home";
             }
 

@@ -1,5 +1,6 @@
 package lee.projectdemo.auth;
 
+import lee.projectdemo.item.item.Item;
 import lee.projectdemo.login.user.User;
 import lee.projectdemo.login.user.UserRole;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class PrincipalDetails implements UserDetails {
 
@@ -37,6 +39,10 @@ public class PrincipalDetails implements UserDetails {
 
     public String getLoginId() {
         return user.getLoginId();
+    }
+
+    public List<Item> getItem() {
+        return user.getItem();
     }
 
     @Override

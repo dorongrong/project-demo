@@ -4,13 +4,11 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -30,6 +28,7 @@ public class RabbitConfig {
     public Queue queue() {
         return new Queue(CHAT_QUEUE_NAME, true);
     }
+
 
     //Exchange 등록
     @Bean
@@ -83,8 +82,29 @@ public class RabbitConfig {
     }
 
     @Bean
+    public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+        return new RabbitAdmin(connectionFactory);
+    }
+
+    @Bean
     public Module dateTimeModule(){
         return new JavaTimeModule();
     }
+
+    //동적 메시지 큐를 위한 코드
+//    @Bean
+//    public MessageListener messageListener() {
+//        return new CustomMessageListener();
+//    }
+//
+//    // Custom message listener implementation
+//    public static class CustomMessageListener implements MessageListener {
+//        @Override
+//        public void onMessage(Message message) {
+//            // 처리 로직을 여기에 구현
+//            System.out.println("Received message: " + new String(message.getBody()));
+//        }
+//    }
+
 }
 

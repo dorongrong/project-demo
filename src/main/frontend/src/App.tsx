@@ -6,7 +6,7 @@ import Main from "./Main";
 import { CookiesProvider } from "react-cookie";
 
 const App: React.FC = () => {
-  const [currentChat, setCurrentChat] = useState({ roomId: 0, nickname: "" });
+  const [currentChat, setCurrentChat] = useState({ roomId: "0", nickname: "" });
 
   const handleChatButtonClick = (roomId: any, nickname: any) => {
     setCurrentChat({ roomId, nickname });
@@ -19,7 +19,7 @@ const App: React.FC = () => {
         <Route
           path="/chat"
           element={
-            <ChatButton chatRoomId={0} nickname={currentChat.nickname} />
+            <ChatButton chatRoomId={"0"} nickname={currentChat.nickname} />
           }
         />
       </Routes>

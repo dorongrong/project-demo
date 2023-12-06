@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import SockJS from "sockjs-client";
 import webstomp from "webstomp-client";
 import { getCookieInfo } from "../cookie/GetCookie";
+import { Message, ChatState } from "./model/message";
 
-const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
+const ChatButton: React.FC<{ chatRoomId: string; nickname: string }> = ({
   chatRoomId,
   nickname,
 }) => {
@@ -12,7 +13,7 @@ const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
 
   const userId = getCookieInfo();
 
-  const roomId = useRef<number>(chatRoomId);
+  const roomId = useRef<string>(chatRoomId);
   const stomp = useRef<any>();
   const sockJS = new SockJS("http://localhost:1234/stomp/chat");
 
@@ -48,29 +49,34 @@ const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
         console.log("STOMP Connected");
 
         stomp.current.subscribe(
-          `/exchange/chat.exchange/room.${chatRoomId}`,
+          `/exchange/chat.exchange/room.` + roomId.current,
           (content: any) => {
             const payload = JSON.parse(content.body);
-            console.log("히히", payload.userId);
 
-            let className = payload.userId === userId ? "mine" : "yours";
+            // let className = payload.userId === userId ? userId : payload.userId;
 
             const newChat = (
-              <div key={chats.length} className={className}>
-                <div className="nickname">{payload.userId}</div>
+              <div>
+                <div className="nickname">{payload.sendUserId}</div>
                 <div className="message">{payload.message}</div>
               </div>
             );
 
             setChats((prevChats) => [...prevChats, newChat]);
+
+            //메시지 읽음 확인요청
+            // messageRead(content.body);
           },
           { "auto-delete": "true", durable: "false", exclusive: "false" }
         );
 
         stomp.current.send(
-          `/pub/chat.enter.${roomId}`,
+          `/pub/chat.enter.` + roomId.current,
           JSON.stringify({
-            nickname: userId,
+            message: userId + "님이 입장하셨습니다.",
+            chatState: ChatState.CHAT_UNREAD,
+            chatRoomId: roomId.current,
+            sendUserId: userId,
           })
         );
       },
@@ -92,25 +98,32 @@ const ChatButton: React.FC<{ chatRoomId: number; nickname: string }> = ({
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newChat = (
-      <div key={chats.length} className="mine">
-        <div className="nickname">{userId}</div>
-        <div className="message">{messageContent}</div>
-      </div>
-    );
+    // const newChat = (
+    //   <div key={chats.length} className="mine">
+    //     <div className="nickname">{userId}</div>
+    //     <div className="message">{messageContent}</div>
+    //   </div>
+    // );
 
-    setChats((prevChats) => [...prevChats, newChat]);
+    // setChats((prevChats) => [...prevChats, newChat]);
 
     const message = messageContent;
     setMessageContent("");
 
     stomp.current.send(
-      `/pub/chat.message.${chatRoomId}`,
+      `/pub/chat.message.` + roomId.current,
       JSON.stringify({
+        chatRoomId: roomId.current,
+        sendUserId: userId,
+        chatState: ChatState.CHAT_UNREAD,
         message: message,
-        userId: userId,
       })
     );
+  };
+
+  const messageRead = (message: JSON) => {
+    //메시지 확인처리를 서버에 요청
+    stomp.current.send(`/pub/chat.messageRead.` + roomId.current, message);
   };
 
   return (
