@@ -91,20 +91,6 @@ public class RabbitConfig {
         return new JavaTimeModule();
     }
 
-    //동적 메시지 큐를 위한 코드
-//    @Bean
-//    public MessageListener messageListener() {
-//        return new CustomMessageListener();
-//    }
-//
-//    // Custom message listener implementation
-//    public static class CustomMessageListener implements MessageListener {
-//        @Override
-//        public void onMessage(Message message) {
-//            // 처리 로직을 여기에 구현
-//            System.out.println("Received message: " + new String(message.getBody()));
-//        }
-//    }
 
 }
 

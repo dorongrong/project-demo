@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -64,13 +65,15 @@ public class LoginService {
             if(!passwordEncoder.matches(password, user.getPassword())) {
                 throw new BadCredentialsException("비밀번호가 맞지 않습니다.");
             }
+            // itemId 전부 추출 (홈페이지에서 큐 구독을 위해)
+            List<String> itemId = itemListId(user.getItem());
 
             return SignResponse.builder()
                     .id(user.getId())
                     .loginId(user.getLoginId())
                     .loginName(user.getLoginName())
                     .role(user.getUserRole())
-                    .token(jwtProvider.createToken(user.getLoginId(), user.getUserRole()))
+                    .token(jwtProvider.createToken(user.getLoginId(), user.getUserRole(), itemId))
                     .build();
 
         } catch (NoSuchElementException e) {
@@ -109,6 +112,13 @@ public class LoginService {
             return null;
         }
         return authentication;
+    }
+
+    public List<String> itemListId(List<Item> itemList){
+        return itemList.stream()
+                .map(Item::getId)
+                .map(String::valueOf)
+                .collect(Collectors.toList());
     }
 
 }

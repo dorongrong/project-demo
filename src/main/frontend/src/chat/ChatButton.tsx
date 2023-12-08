@@ -49,7 +49,7 @@ const ChatButton: React.FC<{ chatRoomId: string; nickname: string }> = ({
         console.log("STOMP Connected");
 
         stomp.current.subscribe(
-          `/exchange/chat.exchange/room.` + roomId.current,
+          `/exchange/chate.exchange/chat.queue/room.` + roomId.current,
           (content: any) => {
             const payload = JSON.parse(content.body);
 

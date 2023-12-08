@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,9 +40,10 @@ public class JwtProvider {
     }
 
     // 토큰 생성
-    public String createToken(String account, UserRole role) {
+    public String createToken(String account, UserRole role, List<String> itemIdList) {
         Claims claims = Jwts.claims().setSubject(account);
         claims.put("role", role);
+        claims.put("itemsId", itemIdList);
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claims)

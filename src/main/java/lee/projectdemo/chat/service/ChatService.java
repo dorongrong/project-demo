@@ -6,7 +6,6 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
@@ -82,15 +81,13 @@ public class ChatService {
     }
 
 //    동적 큐 구독
-    @RabbitListener(queues = "#{dynamicQueueName(queueName)}")
-    public void handleMessage(String message) {
-        // 동적으로 큐를 구독하는 리스너 메서드
-        System.out.println("Received dynamic message: " + message);
-    }
-
-    public String getDynamicQueueName(String queueName) {
-        // 동적으로 큐 이름 생성 또는 가져오기 로직
-        return "dynamic.queue." + System.currentTimeMillis();
-    }
+//    public void StartListening(String userId) {
+//        String queueName = "user.queue." + userId;
+//
+//        // Add the queue to the listener container
+//        SimpleMessageListenerContainer container = dynamicListener();
+//        container.addQueues(queue);
+//        container.start();
+//    }
 
 }
