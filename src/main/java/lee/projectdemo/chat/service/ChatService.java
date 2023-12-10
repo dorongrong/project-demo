@@ -33,11 +33,10 @@ public class ChatService {
                             createDynamicQueueAndBinding("chat.queue", "chat.exchange"
                                     , queueNameString, userLoginId);
                             //생성된 큐 구독
-                            rabbitTemplate.receiveAndConvert("chat.queue." + itemId + "." + userLoginId);
 
                         } else {
                             //생성된 큐랑 바인딩 큐에 맞게 바꿔야함
-                            rabbitTemplate.receiveAndConvert("yourQueueName." + itemId);
+                            System.out.println(itemId + "큐가 존재합니다");
                         }
                     }
                     );
@@ -55,7 +54,7 @@ public class ChatService {
         return rabbitAdmin.getQueueProperties(queueNameString) != null;
     }
 
-//    동적 queue 생성
+//    동적 queue 생성 여기서 routingKey는 itemid임
     public void createDynamicQueueAndBinding(String queueName, String exchangeName, String routingKey, String userLoginId) {
         // 동적으로 큐 생성
         Queue dynamicQueue = new Queue(queueName + "." + routingKey + "." +userLoginId
@@ -72,7 +71,7 @@ public class ChatService {
         // new Queue(dynamicQueueName) 을 사용한건 rabbitmq에 있는 큐를 가져오기 위함
         Binding binding = BindingBuilder.bind(new Queue(dynamicQueueName))
                 .to(dynamicExchange)
-                .with(routingKey +".*");
+                .with(routingKey +".#");
 
         // RabbitMQ 브로커에 바인딩 설정
         rabbitAdmin.declareBinding(binding);

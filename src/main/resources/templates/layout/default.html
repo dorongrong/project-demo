@@ -22,6 +22,9 @@
     const cookies = getCookie();
     const decodeCookie = jwtDecode(cookies);
     const itemsId = decodeCookie.itemsId;
+    const userId = decodeCookie.sub;
+
+    console.log(decodeCookie);
 
     function getCookie() {
       const cookies = document.cookie.split(";");
@@ -57,7 +60,18 @@
         /* subscribe 설정에 따라 rabbit의 Exchange, Queue가 상당히 많이 바뀜 */
         console.log(itemsId);
         itemsId.forEach((id) => {
-          stomp.subscribe(`/exchange/chat.exchange/${id}.*`);
+          stomp.subscribe(
+            `/exchange/chat.exchange/${id}.#`,
+            function (content) {
+              console.log("뭔가 왔다", { id });
+            }
+          );
+          stomp.send(
+            `/pub/chat.enter.${id}.#`,
+            JSON.stringify({
+              sendUserId: userId,
+            })
+          );
         });
       },
       onError,
