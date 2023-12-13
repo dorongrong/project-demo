@@ -14,20 +14,9 @@ const Main: React.FC = () => {
   return (
     <div>
       <Link to="/chat">이성훈 채팅</Link>
-      <Link to="/chat">이지훈 채팅</Link>
-      <button onClick={() => handleChatButtonClick(0, "이성훈")}>Chat 1</button>
-      <button onClick={() => handleChatButtonClick(0, "이지훈")}>Chat 2</button>
+      <Link to="/test">전부 볼수있는 채팅</Link>
       <Routes>
         <Route path="*" element={<div>Main Default Content</div>} />
-        <Route
-          path="/chat"
-          element={
-            <ChatButton
-              chatRoomId={currentChat.roomId}
-              nickname={currentChat.nickname}
-            />
-          }
-        />
       </Routes>
     </div>
   );

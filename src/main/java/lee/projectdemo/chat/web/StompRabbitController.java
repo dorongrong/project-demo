@@ -21,8 +21,8 @@ public class StompRabbitController {
     private final static String CHAT_EXCHANGE_NAME = "chat.exchange";
     private final static String CHAT_QUEUE_NAME = "chat.queue";
 
-    @MessageMapping("/chat.enter.{chatRoomId}")
-    public void enter(@Payload ChatDto content, @DestinationVariable String chatRoomId){
+    @MessageMapping("chat.enter.{chatRoomId}.{userId}")
+    public void enter(@Payload ChatDto content, @DestinationVariable String chatRoomId, @DestinationVariable String userId){
         //메시지 고유 키값 설정
 
         String sendUserId = content.getSendUserId();
@@ -32,72 +32,14 @@ public class StompRabbitController {
         content.setMessage(sendUserId + "님이 입장하셨습니다.");
         content.setRegDate(LocalDateTime.now());
 
-        template.convertAndSend(CHAT_EXCHANGE_NAME, chatRoomId, content); // exchange
+        template.convertAndSend(CHAT_EXCHANGE_NAME, chatRoomId + "." + userId, content); // exchange
         //template.convertAndSend("room." + chatRoomId, chat); //queue
         //template.convertAndSend("amq.topic", "room." + chatRoomId, chat); //topic
     }
-
-    @MessageMapping("{chatRoomId}")
-    public void enterTest(@Payload ChatDto content, @DestinationVariable String chatRoomId){
-        //메시지 고유 키값 설정
-
-        System.out.println("어서오세용" + chatRoomId);
-
-        //template.convertAndSend("room." + chatRoomId, chat); //queue
-        //template.convertAndSend("amq.topic", "room." + chatRoomId, chat); //topic
-    }
-
-    @MessageMapping("chat.enter.1.#")
-    public void test2(@Payload ChatDto content){
-        //메시지 고유 키값 설정
-
-        System.out.println("어서오세용1");
-
-        content.setMessage("님이 입장하셨습니다.");
-        content.setRegDate(LocalDateTime.now());
-
-        template.convertAndSend(CHAT_EXCHANGE_NAME, "1.#", content); // exchange
-        template.convertAndSend(CHAT_EXCHANGE_NAME, "3.#", content); // exchange
-
-        //template.convertAndSend("room." + chatRoomId, chat); //queue
-        //template.convertAndSend("amq.topic", "room." + chatRoomId, chat); //topic
-    }
-
-    @MessageMapping("/chat.enter.1.#")
-    public void test3(@Payload ChatDto content){
-        //메시지 고유 키값 설정
-
-        System.out.println("어서오세용2");
-
-        //template.convertAndSend("room." + chatRoomId, chat); //queue
-        //template.convertAndSend("amq.topic", "room." + chatRoomId, chat); //topic
-    }
-
-    @MessageMapping("/pub.chat.enter.1.#")
-    public void test(@Payload ChatDto content){
-        //메시지 고유 키값 설정
-
-        System.out.println("어서오세용3");
-
-        //template.convertAndSend("room." + chatRoomId, chat); //queue
-        //template.convertAndSend("amq.topic", "room." + chatRoomId, chat); //topic
-    }
-
-    @MessageMapping("/pub/chat.enter.1.#")
-    public void test1(@Payload ChatDto content){
-        //메시지 고유 키값 설정
-
-        System.out.println("어서오세용4");
-
-        //template.convertAndSend("room." + chatRoomId, chat); //queue
-        //template.convertAndSend("amq.topic", "room." + chatRoomId, chat); //topic
-    }
-
-
 
     //송신자가 보낸 메시지를 후처리후 퍼블리싱함
-    @MessageMapping("chat.message.{chatRoomId}")
-    public void send(@DestinationVariable Long chatRoomId, @Payload ChatDto content){
+    @MessageMapping("chat.message.{chatRoomId}.{userId}")
+    public void send(@DestinationVariable Long chatRoomId, @Payload ChatDto content, @DestinationVariable String userId){
 
         //json으로 받은 메시지를 파싱
         String scontent = content.getMessage();
@@ -105,9 +47,9 @@ public class StompRabbitController {
         System.out.println(scontent);
 
         content.setRegDate(LocalDateTime.now());
-        content.setChatRoomId(chatRoomId);
+        content.setId(chatRoomId);
 
-        template.convertAndSend(CHAT_EXCHANGE_NAME, "room." + chatRoomId + "." + sendUserId, content);
+        template.convertAndSend(CHAT_EXCHANGE_NAME, chatRoomId + "." + userId, content);
         //template.convertAndSend( "room." + chatRoomId, chat);
         //template.convertAndSend("amq.topic", "room." + chatRoomId, chat);
     }

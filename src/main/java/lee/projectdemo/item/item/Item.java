@@ -1,6 +1,7 @@
 package lee.projectdemo.item.item;
 
 import jakarta.persistence.*;
+import lee.projectdemo.chat.domain.ChatRoom;
 import lee.projectdemo.item.item.image.Image;
 import lee.projectdemo.item.item.interest.Interest;
 import lee.projectdemo.login.user.User;
@@ -43,11 +44,14 @@ public class Item {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL) //아이템이랑 이미지의 연관관계 생각
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true) //아이템이랑 이미지의 생명주기 관리
     private List<Image> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "item")
     private List<Interest> interests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatRoom> chatRooms = new ArrayList<>();
 
     public Item(Long id, String itemName, String description, Integer price, User user, List<Image> images) {
         this.id = id;

@@ -3,35 +3,19 @@ import SockJS from "sockjs-client";
 import webstomp from "webstomp-client";
 import { getCookieInfo } from "../cookie/GetCookie";
 import { Message, ChatState } from "./model/message";
-import { useParams } from "react-router-dom";
 
-const ChatButton: React.FC = () => {
-  const [responseMessage, setResponseMessage] = useState("");
-  const { itemId } = useParams<{ itemId: string }>();
-  const userId = getCookieInfo();
-
+const ChatTest: React.FC<{ chatRoomId: string; nickname: string }> = ({
+  chatRoomId,
+  nickname,
+}) => {
   const [messageContent, setMessageContent] = useState<string>("");
   const [chats, setChats] = useState<JSX.Element[]>([]);
 
-  const roomId = itemId;
+  const userId = getCookieInfo();
+
+  const roomId = useRef<string>(chatRoomId);
   const stomp = useRef<any>();
   const sockJS = new SockJS("http://localhost:1234/stomp/chat");
-
-  const [chatRoomData, setChatRoomData] = useState<
-    | {
-        itemId: string;
-        senderId: string;
-      }
-    | undefined
-  >(() => {
-    if (itemId && userId) {
-      return {
-        itemId: itemId,
-        senderId: userId,
-      };
-    }
-    return undefined;
-  });
 
   const socketConnect = () => {
     console.log("socketConnect 진입?");
@@ -65,7 +49,7 @@ const ChatButton: React.FC = () => {
         console.log("STOMP Connected");
         // 송신자는 본인의 큐만 subscribe해야함 그렇기에 본인의 큐의 이름을 명확하게 구분해야함
         stomp.current.subscribe(
-          `/exchange/chat.exchange/${roomId}.${userId}`,
+          `/exchange/chat.exchange/${roomId.current}.#`,
           (content: any) => {
             const payload = JSON.parse(content.body);
 
@@ -85,54 +69,11 @@ const ChatButton: React.FC = () => {
           },
           { "auto-delete": "true", durable: "false", exclusive: "false" }
         );
-
-        stomp.current.send(
-          `/pub/chat.enter.${roomId}.${userId}`,
-          JSON.stringify({
-            message: userId + "님이 입장하셨습니다.",
-            chatState: ChatState.CHAT_UNREAD,
-            chatRoomId: roomId,
-            sendUserId: userId,
-          })
-        );
       },
       onError,
       "/"
     );
   };
-
-  //변수 할당후 fetch api 실행
-  useEffect(() => {
-    const fetchData = async () => {
-      if (
-        chatRoomData !== undefined &&
-        chatRoomData.itemId !== undefined &&
-        chatRoomData.senderId !== undefined
-      ) {
-        try {
-          const response = await fetch("http://localhost:1234/api/createChat", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(chatRoomData),
-          });
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-
-          const data = await response.json();
-          // 서버 응답을 처리 또는 다른 작업 수행
-        } catch (error) {
-          console.error("Error:", error);
-        }
-      }
-    };
-
-    // fetchData 함수는 chatRoomData가 변경될 때마다 실행됨
-    fetchData();
-  }, [chatRoomData]);
 
   useEffect(() => {
     socketConnect();
@@ -160,9 +101,9 @@ const ChatButton: React.FC = () => {
     setMessageContent("");
 
     stomp.current.send(
-      `/pub/chat.message.${roomId}.${userId}`,
+      `/pub/chat.message.${roomId.current}.${userId}`,
       JSON.stringify({
-        chatRoomId: roomId,
+        chatRoomId: roomId.current,
         sendUserId: userId,
         chatState: ChatState.CHAT_UNREAD,
         message: message,
@@ -173,7 +114,7 @@ const ChatButton: React.FC = () => {
   return (
     <div>
       <h1>CHAT ROOM</h1>
-      <h2>Room No. {roomId}</h2>
+      <h2>Room No. {chatRoomId}</h2>
       <h2>Nickname {userId}</h2>
 
       <form onSubmit={handleSendMessage}>
@@ -191,4 +132,4 @@ const ChatButton: React.FC = () => {
   );
 };
 
-export default ChatButton;
+export default ChatTest;

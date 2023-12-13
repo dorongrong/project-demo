@@ -24,6 +24,8 @@ public class QItem extends EntityPathBase<Item> {
 
     public final BooleanPath bargain = createBoolean("bargain");
 
+    public final ListPath<lee.projectdemo.chat.domain.ChatRoom, lee.projectdemo.chat.domain.QChatRoom> chatRooms = this.<lee.projectdemo.chat.domain.ChatRoom, lee.projectdemo.chat.domain.QChatRoom>createList("chatRooms", lee.projectdemo.chat.domain.ChatRoom.class, lee.projectdemo.chat.domain.QChatRoom.class, PathInits.DIRECT2);
+
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final StringPath description = createString("description");

@@ -4,22 +4,20 @@ import ChatButton from "./chat/ChatButton";
 import { Route, Routes } from "react-router-dom";
 import Main from "./Main";
 import { CookiesProvider } from "react-cookie";
+import ChatTest from "./chat/ChatTest";
 
 const App: React.FC = () => {
   const [currentChat, setCurrentChat] = useState({ roomId: "0", nickname: "" });
-
-  const handleChatButtonClick = (roomId: any, nickname: any) => {
-    setCurrentChat({ roomId, nickname });
-  };
 
   return (
     <CookiesProvider>
       <Routes>
         <Route path="*" element={<Main />} />
+        <Route path="/items/:itemId/chat" element={<ChatButton />} />
         <Route
-          path="/chat"
+          path="/test"
           element={
-            <ChatButton chatRoomId={"0"} nickname={currentChat.nickname} />
+            <ChatTest chatRoomId={"1"} nickname={currentChat.nickname} />
           }
         />
       </Routes>

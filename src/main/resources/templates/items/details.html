@@ -132,7 +132,9 @@
                                 <span>찜</span><span th:text="${item.interestCount}"></span>
                             </button>
                             </form>
+                            <a th:href="@{'http://localhost:3000/items/' + ${item.itemId} + '/chat'}">
                             <button class="btn-detail" style="background-color: yellow;">채팅</button>
+                            </a>
                             <button class="btn-detail" style="background-color: blue;">바로구매</button>
                         </div>
                     </div>

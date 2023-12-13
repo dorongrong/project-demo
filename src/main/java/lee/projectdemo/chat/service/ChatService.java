@@ -1,5 +1,6 @@
 package lee.projectdemo.chat.service;
 
+import lee.projectdemo.chat.domain.Chat;
 import lee.projectdemo.item.item.Item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Binding;
@@ -30,8 +31,7 @@ public class ChatService {
                             //큐가 존재하지 않을시 큐를 생성하고 구독
                             System.out.println(itemId + "큐가 존재하지 않습니다");
                             String queueNameString = Long.toString(itemId);
-                            createDynamicQueueAndBinding("chat.queue", "chat.exchange"
-                                    , queueNameString, userLoginId);
+                            createDynamicQueueAndBinding(queueNameString);
                             //생성된 큐 구독
 
                         } else {
@@ -55,11 +55,11 @@ public class ChatService {
     }
 
 //    동적 queue 생성 여기서 routingKey는 itemid임
-    public void createDynamicQueueAndBinding(String queueName, String exchangeName, String routingKey, String userLoginId) {
+    public void createDynamicQueueAndBinding(String routingKey) {
         // 동적으로 큐 생성
-        Queue dynamicQueue = new Queue(queueName + "." + routingKey + "." +userLoginId
+        Queue dynamicQueue = new Queue("chat.queue." + routingKey
                 , true, false, false);
-        TopicExchange dynamicExchange = new TopicExchange(exchangeName);
+        TopicExchange dynamicExchange = new TopicExchange("chat.exchange");
 
         // 큐를 RabbitMQ 브로커에 선언
         rabbitAdmin.declareQueue(dynamicQueue);
@@ -79,14 +79,9 @@ public class ChatService {
         System.out.println("Dynamic Queue '" + dynamicQueueName + "' created and binding set up.");
     }
 
-//    동적 큐 구독
-//    public void StartListening(String userId) {
-//        String queueName = "user.queue." + userId;
-//
-//        // Add the queue to the listener container
-//        SimpleMessageListenerContainer container = dynamicListener();
-//        container.addQueues(queue);
-//        container.start();
-//    }
+    public void chatRoomSave(Chat item){
+        return;
+    }
+
 
 }
