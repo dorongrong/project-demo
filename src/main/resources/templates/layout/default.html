@@ -20,11 +20,9 @@
     const sockJs = new SockJS("http://localhost:1234/stomp/chat");
     const stomp = webstomp.over(sockJs);
     const cookies = getCookie();
-    const decodeCookie = jwtDecode(cookies);
-    const itemsId = decodeCookie.itemsId;
-    const userId = decodeCookie.sub;
-
-    console.log(decodeCookie);
+    let decodeCookie;
+    let itemsId;
+    let userId;
 
     function getCookie() {
       const cookies = document.cookie.split(";");
@@ -39,7 +37,14 @@
       return null;
     }
 
-    console.log("Authorization 쿠키 값:", itemsId);
+    if (cookies !== null) {
+      decodeCookie = jwtDecode(cookies);
+      itemsId = decodeCookie.itemsId;
+      userId = decodeCookie.sub;
+    } else {
+      // getCookie에서 반환된 값이 null일 경우에 대한 처리
+      console.log("Cookie not found");
+    }
 
     function onError(e) {
       console.log("STOMP ERROR", e);
@@ -52,31 +57,33 @@
     stomp.debug = onDebug;
 
     // 소켓연결
-    stomp.connect(
-      "guest",
-      "guest",
-      function (frame) {
-        console.log("STOMP Connected");
-        /* subscribe 설정에 따라 rabbit의 Exchange, Queue가 상당히 많이 바뀜 */
-        console.log(itemsId);
-        itemsId.forEach((id) => {
-          stomp.subscribe(
-            `/exchange/chat.exchange/${id}.#`,
-            function (content) {
-              console.log("뭔가 왔다", { id });
-            }
-          );
-          stomp.send(
-            `/pub/chat.enter.${id}.#`,
-            JSON.stringify({
-              sendUserId: userId,
-            })
-          );
-        });
-      },
-      onError,
-      "/"
-    );
+    if (cookies !== null) {
+      stomp.connect(
+        "guest",
+        "guest",
+        function (frame) {
+          console.log("STOMP Connected");
+          /* subscribe 설정에 따라 rabbit의 Exchange, Queue가 상당히 많이 바뀜 */
+          console.log(itemsId);
+          itemsId.forEach((id) => {
+            stomp.subscribe(
+              `/exchange/chat.exchange/${id}.#`,
+              function (content) {
+                console.log("뭔가 왔다", { id });
+              }
+            );
+            stomp.send(
+              `/pub/chat.enter.${id}.#`,
+              JSON.stringify({
+                sendUserId: userId,
+              })
+            );
+          });
+        },
+        onError,
+        "/"
+      );
+    }
 
     function findAddr() {
       new daum.Postcode({

@@ -4,11 +4,14 @@ import webstomp from "webstomp-client";
 import { getCookieInfo } from "../cookie/GetCookie";
 import { Message, ChatState } from "./model/message";
 import { useParams } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { Cookies } from "react-cookie";
 
 const ChatButton: React.FC = () => {
   const [responseMessage, setResponseMessage] = useState("");
   const { itemId } = useParams<{ itemId: string }>();
   const userId = getCookieInfo();
+  const cookies = new Cookies();
 
   const [messageContent, setMessageContent] = useState<string>("");
   const [chats, setChats] = useState<JSX.Element[]>([]);
@@ -110,9 +113,11 @@ const ChatButton: React.FC = () => {
         chatRoomData.senderId !== undefined
       ) {
         try {
-          const response = await fetch("http://localhost:1234/api/createChat", {
+          const response = await fetch("http://localhost:1234/api/chat", {
             method: "POST",
+            credentials: "include", // 쿠키를 전송해야 하는 경우
             headers: {
+              Authorization: jwtDecode(cookies.get("Authorization")),
               "Content-Type": "application/json",
             },
             body: JSON.stringify(chatRoomData),

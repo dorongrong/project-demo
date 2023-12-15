@@ -44,7 +44,9 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // sessionManagement는 세션 안쓰겠다는거임
         http
+                // CSRF 보호 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
+                // 세션 사용 안 함
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 일반적인 루트가 아닌 다른 방식으로 요청시 거절, header에 id, pw가 아닌 token(jwt)을 달고 간다. 그래서 basic이 아닌 bearer를 사용한다.
                 .httpBasic(httpBasic -> httpBasic.disable())

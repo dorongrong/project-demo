@@ -2,6 +2,7 @@ package lee.projectdemo.login.repository;
 
 
 import jakarta.transaction.Transactional;
+import lee.projectdemo.item.item.Item;
 import lee.projectdemo.login.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -35,6 +36,11 @@ public class JpaUserRepository implements UserRepository {
     @Override
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public Optional<User> findByItem(Item item) {
+        return userRepository.findByItem(item);
     }
 
 

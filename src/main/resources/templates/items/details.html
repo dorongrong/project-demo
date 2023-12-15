@@ -132,9 +132,20 @@
                                 <span>찜</span><span th:text="${item.interestCount}"></span>
                             </button>
                             </form>
-                            <a th:href="@{'http://localhost:3000/items/' + ${item.itemId} + '/chat'}">
+                            <!-- 추후 refactor -->
+                            <!-- 본인이 올린 아이템인 경우 채팅 버튼이 아닌 내 채팅으로 이동 버튼으로 바뀜 -->
+
+                            <!-- <a th:href="@{'http://localhost:3000/items/' + ${item.itemId} + '/chat'}">
                             <button class="btn-detail" style="background-color: yellow;">채팅</button>
-                            </a>
+                            </a> -->
+
+                            <a th:if="${chatButton}" th:href="@{'http://localhost:1234/chat'}">
+                              <button class="btn-detail" style="background-color: red;" th:text="${chatButton}"></button>
+                          </a>
+                          <a th:unless="${chatButton}" th:href="@{'http://localhost:3000/items/' + ${item.itemId} + '/chat'}">
+                              <button class="btn-detail" style="background-color: yellow;" th:text="'채팅'"></button>
+                          </a>
+
                             <button class="btn-detail" style="background-color: blue;">바로구매</button>
                         </div>
                     </div>

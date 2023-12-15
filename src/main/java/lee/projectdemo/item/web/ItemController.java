@@ -66,8 +66,19 @@ public class ItemController {
     //아이템 조회 get 수정 삭제 채팅 구현
     // /{itemsId}
     @GetMapping("/items/{itemId}")
-    public String itemDetails(@PathVariable Long itemId, Model model) {
+    public String itemDetails(@PathVariable Long itemId, Model model, HttpServletRequest request) {
         Item item = itemService.getItem(itemId).get();
+
+        String cToken = loginService.getCookie(request);
+        Authentication user = loginService.getUserDetail(cToken);
+        PrincipalDetails userDetails = (PrincipalDetails)user.getPrincipal();
+        //토큰에서 빼온 유저 정보
+        User tokenUser = userDetails.getUser();
+
+        //사이트 방문자랑 판매자 동일 인물 비교 후 채팅버튼 변경
+        if (tokenUser == item.getUser()) {
+            model.addAttribute("chatButton", "내 채팅방");
+        }
 
         List<String> imageURLs = new ArrayList<>();
 

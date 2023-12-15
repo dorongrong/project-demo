@@ -1,7 +1,12 @@
 package lee.projectdemo.chat.service;
 
-import lee.projectdemo.chat.domain.Chat;
+import lee.projectdemo.chat.domain.ChatRoom;
+import lee.projectdemo.chat.domain.ChatRoomDto;
+import lee.projectdemo.chat.repository.SpringDataJpaChatRoomRepository;
 import lee.projectdemo.item.item.Item;
+import lee.projectdemo.item.repository.ItemRepository;
+import lee.projectdemo.login.repository.UserRepository;
+import lee.projectdemo.login.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -19,6 +24,12 @@ public class ChatService {
 
     private final RabbitTemplate rabbitTemplate;
     private final RabbitAdmin rabbitAdmin;
+
+    private final ItemRepository itemRepository;
+
+    private final UserRepository userRepository;
+
+    private final SpringDataJpaChatRoomRepository chatRoomRepository;
 
     // RabbitMQ 관리 API를 사용하여 큐 리스트를 가져오기
 
@@ -79,8 +90,23 @@ public class ChatService {
         System.out.println("Dynamic Queue '" + dynamicQueueName + "' created and binding set up.");
     }
 
-    public void chatRoomSave(Chat item){
-        return;
+    public void chatRoomSave(ChatRoomDto chatRoomDto){
+
+        Item item = itemRepository.findById(chatRoomDto.getItemId()).get();
+
+        User seller = userRepository.findByItem(item).get();
+
+        System.out.println(seller);
+
+        User buyer = userRepository.findByLoginId(chatRoomDto.getSenderId()).get();
+        ChatRoom chatRoom = new ChatRoom(item, seller, buyer);
+
+
+        // 해당 채팅방이 존재하면 생성 안함
+        if (!chatRoomRepository.existsByBuyerAndItem(buyer, item)) {
+            //해당 채팅방 존재 안함
+            chatRoomRepository.save(chatRoom);
+        }
     }
 
 

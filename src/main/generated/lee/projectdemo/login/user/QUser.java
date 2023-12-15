@@ -24,6 +24,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final QAddress address;
 
+    public final ListPath<lee.projectdemo.chat.domain.ChatRoom, lee.projectdemo.chat.domain.QChatRoom> buyingChatRooms = this.<lee.projectdemo.chat.domain.ChatRoom, lee.projectdemo.chat.domain.QChatRoom>createList("buyingChatRooms", lee.projectdemo.chat.domain.ChatRoom.class, lee.projectdemo.chat.domain.QChatRoom.class, PathInits.DIRECT2);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final ListPath<lee.projectdemo.item.item.interest.Interest, lee.projectdemo.item.item.interest.QInterest> interests = this.<lee.projectdemo.item.item.interest.Interest, lee.projectdemo.item.item.interest.QInterest>createList("interests", lee.projectdemo.item.item.interest.Interest.class, lee.projectdemo.item.item.interest.QInterest.class, PathInits.DIRECT2);
@@ -35,6 +37,8 @@ public class QUser extends EntityPathBase<User> {
     public final StringPath loginName = createString("loginName");
 
     public final StringPath password = createString("password");
+
+    public final ListPath<lee.projectdemo.chat.domain.ChatRoom, lee.projectdemo.chat.domain.QChatRoom> sellingChatRooms = this.<lee.projectdemo.chat.domain.ChatRoom, lee.projectdemo.chat.domain.QChatRoom>createList("sellingChatRooms", lee.projectdemo.chat.domain.ChatRoom.class, lee.projectdemo.chat.domain.QChatRoom.class, PathInits.DIRECT2);
 
     public final EnumPath<UserRole> userRole = createEnum("userRole", UserRole.class);
 

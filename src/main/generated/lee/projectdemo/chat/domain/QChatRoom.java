@@ -22,13 +22,15 @@ public class QChatRoom extends EntityPathBase<ChatRoom> {
 
     public static final QChatRoom chatRoom = new QChatRoom("chatRoom");
 
+    public final lee.projectdemo.login.user.QUser buyer;
+
     public final ListPath<Chat, QChat> chats = this.<Chat, QChat>createList("chats", Chat.class, QChat.class, PathInits.DIRECT2);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final lee.projectdemo.item.item.QItem item;
 
-    public final StringPath queueName = createString("queueName");
+    public final lee.projectdemo.login.user.QUser seller;
 
     public QChatRoom(String variable) {
         this(ChatRoom.class, forVariable(variable), INITS);
@@ -48,7 +50,9 @@ public class QChatRoom extends EntityPathBase<ChatRoom> {
 
     public QChatRoom(Class<? extends ChatRoom> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.buyer = inits.isInitialized("buyer") ? new lee.projectdemo.login.user.QUser(forProperty("buyer"), inits.get("buyer")) : null;
         this.item = inits.isInitialized("item") ? new lee.projectdemo.item.item.QItem(forProperty("item"), inits.get("item")) : null;
+        this.seller = inits.isInitialized("seller") ? new lee.projectdemo.login.user.QUser(forProperty("seller"), inits.get("seller")) : null;
     }
 
 }

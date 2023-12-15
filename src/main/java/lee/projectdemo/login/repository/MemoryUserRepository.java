@@ -1,6 +1,7 @@
 package lee.projectdemo.login.repository;
 
 
+import lee.projectdemo.item.item.Item;
 import lee.projectdemo.login.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -56,6 +57,11 @@ public class MemoryUserRepository implements UserRepository {
     @Override
     public List<User> findAll() {
         return new ArrayList<>(userStore.values());
+    }
+
+    @Override
+    public Optional<User> findByItem(Item item) {
+        return Optional.empty();
     }
 
     public void clearStore() {

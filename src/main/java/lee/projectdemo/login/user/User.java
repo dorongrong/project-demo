@@ -1,6 +1,7 @@
 package lee.projectdemo.login.user;
 
 import jakarta.persistence.*;
+import lee.projectdemo.chat.domain.ChatRoom;
 import lee.projectdemo.item.item.Item;
 import lee.projectdemo.item.item.interest.Interest;
 import lombok.Data;
@@ -33,6 +34,12 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Interest> interests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "seller")
+    private List<ChatRoom> sellingChatRooms  = new ArrayList<>();
+
+    @OneToMany(mappedBy = "buyer")
+    private List<ChatRoom> buyingChatRooms  = new ArrayList<>();
 
     @Embedded
     private Address address;

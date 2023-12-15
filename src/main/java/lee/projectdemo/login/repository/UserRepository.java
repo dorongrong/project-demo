@@ -1,5 +1,6 @@
 package lee.projectdemo.login.repository;
 
+import lee.projectdemo.item.item.Item;
 import lee.projectdemo.login.user.User;
 
 import java.util.List;
@@ -18,5 +19,7 @@ public interface UserRepository {
 
     List<User> findAll();
 
+
+    Optional<User> findByItem(Item item);
 
 }
