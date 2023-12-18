@@ -82,8 +82,15 @@ public class ItemController {
 
         List<String> imageURLs = new ArrayList<>();
 
-        for (Image image : item.getImages()) {
-            imageURLs.add(s3Service.loadImage(image.getStoreFileName()));
+        //아이템 상세 이미지
+        if(item.getImages().size() == 0){
+            //이미지가 없을 경우 대체이미지 삽입
+            imageURLs.add(s3Service.loadEmptyImage());
+        }
+        else{
+            for (Image image : item.getImages()) {
+                imageURLs.add(s3Service.loadImage(image.getStoreFileName()));
+            }
         }
 
         ItemDto itemDetails = new ItemDto(item.getId(), item.getItemName(), item.getDescription(), item.getPrice(),
@@ -133,20 +140,33 @@ public class ItemController {
 //        List<Image> storeImageFiles = fileStore.storeFiles(itemRegDto.getImages());
 
         //S3 업로드와 동시에 List<Image>객체 반환(Image 객체에는 Item이 들어가있지 않은)
-        List<Image> storeImageFiles = s3Service.uploadFile(itemRegDto.getImages(), PRODUCT_IMAGE_PATH);
+        //이미지를 넣지 않았을때
+        if(itemRegDto.getImages().get(0).getOriginalFilename() == ""){
+            Item item = new Item(itemRegDto.getItemName(), itemRegDto.getDescription(), itemRegDto.getPrice(),
+                    itemRegDto.getBargain(), tokenUser, itemRegDto.getState(), 0);
+            itemService.itemSave(item);
 
-        //storeImageFiles에는 ID,Item 이 세팅 안돼있음
-        Item item = new Item(itemRegDto.getItemName(), itemRegDto.getDescription(), itemRegDto.getPrice(),
-                itemRegDto.getBargain(), tokenUser, itemRegDto.getState(), 0);
-        // 이미지 객체에 아이템 객체 넣어주기
-        item.changeImages(storeImageFiles);
+            redirectAttributes.addAttribute("itemId", item.getId());
 
-        itemService.itemSave(item);
+            // 아이템 상세 페이지로 이동
+            return "redirect:/items/{itemId}";
+        }
+        else{
+            List<Image> storeImageFiles = s3Service.uploadFile(itemRegDto.getImages(), PRODUCT_IMAGE_PATH);
 
-        redirectAttributes.addAttribute("itemId", item.getId());
+            //storeImageFiles에는 ID,Item 이 세팅 안돼있음
+            Item item = new Item(itemRegDto.getItemName(), itemRegDto.getDescription(), itemRegDto.getPrice(),
+                    itemRegDto.getBargain(), tokenUser, itemRegDto.getState(), 0);
+            // 이미지 객체에 아이템 객체 넣어주기
+            item.changeImages(storeImageFiles);
 
-        // 아이템 상세 페이지로 이동
-        return "redirect:/items/{itemId}";
+            itemService.itemSave(item);
+
+            redirectAttributes.addAttribute("itemId", item.getId());
+
+            // 아이템 상세 페이지로 이동
+            return "redirect:/items/{itemId}";
+        }
     }
 
 

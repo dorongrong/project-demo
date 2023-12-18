@@ -43,8 +43,9 @@ public class ItemService {
 
     public Item itemSave(Item item){
         // 이 상태에선 이미지는 저장이 안되어있을꺼임 왜냐하면 아이템과 이미지의 연관관계에서 이미지가 연관관계 주인이다보니 이미지에 해줘야함
-        // 아이템 큐 추가
-        chatService.createDynamicQueueAndBinding(Long.toString(item.getId()));
+        // 아이템 큐 추가 -> 실패 해당 상황에선 아직 아이템이 저장이 안되서 밑의 item.getId가 안됨!! 어차피 매 페이지마다 큐를 생성하니
+//        굳이 안만들어줘도됨
+//        chatService.createDynamicQueueAndBinding(Long.toString(item.getId()));
         return itemRepository.save(item);
     }
 

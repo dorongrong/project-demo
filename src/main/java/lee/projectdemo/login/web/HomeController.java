@@ -85,8 +85,6 @@ public class HomeController {
 
                 //로그인한 순간 유저의 아이템 전부 구독
                 List<Item> items = userDetails.getItem();
-                //확인
-                System.out.println(items);
                 if (!items.isEmpty())
                 chatService.subscribeQueue(items,userId);
                 return "home";

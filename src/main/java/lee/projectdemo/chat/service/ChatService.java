@@ -94,18 +94,28 @@ public class ChatService {
 
         Item item = itemRepository.findById(chatRoomDto.getItemId()).get();
 
+        //판매자
         User seller = userRepository.findByItem(item).get();
 
         System.out.println(seller);
 
+        //구매자
         User buyer = userRepository.findByLoginId(chatRoomDto.getSenderId()).get();
-        ChatRoom chatRoom = new ChatRoom(item, seller, buyer);
+        //예외 처리 추가
+        if(seller == buyer) {
+            System.out.println("해당 사용자는 해당 아이템에 속한 채팅방을 만들 수 없습니다.");
+        }
+        else{
+            ChatRoom chatRoom = new ChatRoom(item, seller, buyer);
 
-
-        // 해당 채팅방이 존재하면 생성 안함
-        if (!chatRoomRepository.existsByBuyerAndItem(buyer, item)) {
-            //해당 채팅방 존재 안함
-            chatRoomRepository.save(chatRoom);
+            // 해당 채팅방이 존재하면 생성 안함
+            if (!chatRoomRepository.existsByBuyerAndItem(buyer, item)) {
+                //해당 채팅방 존재 안함
+                chatRoomRepository.save(chatRoom);
+            }
+            else{
+                //채팅방 불러와서 대화내역 표시
+            }
         }
     }
 

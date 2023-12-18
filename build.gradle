@@ -29,6 +29,8 @@ dependencies {
 
 	//쿼리dsl
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    implementation 'org.projectlombok:lombok:1.18.22'
+	implementation 'org.projectlombok:lombok:1.18.22'
 	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
 
 	//보안

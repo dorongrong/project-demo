@@ -1,13 +1,22 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/default">
-<th:block layout:fragment="content">
-  <div class="container" style="max-width: 1000px;">
-    <h2>Chat Rooms:</h2>
-    <div th:each="roomName : ${chatRoomName}">
-      <a th:href="@{'/chat/' + ${roomName}}">
-        <button th:text="${roomName}" class="btn-chat"></button>
-      </a>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="layout/default"
+>
+  <th:block layout:fragment="content">
+    <div class="container" style="max-width: 1000px">
+      <h2>Chat Rooms:</h2>
+      <div th:each="roomName : ${chatRoom}">
+        <a
+          th:href="@{'http://localhost:3000/items/' + ${roomName.itemId} + '/chat'}"
+        >
+          <button
+            th:text="${roomName.itemId} + ${roomName.displayName}"
+            class="btn-chat"
+          ></button>
+        </a>
+      </div>
     </div>
-  </div>
-</th:block>
+  </th:block>
 </html>

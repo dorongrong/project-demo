@@ -39,14 +39,6 @@ const ChatButton: React.FC = () => {
   const socketConnect = () => {
     console.log("socketConnect 진입?");
 
-    // stomp.current = webstomp.over(
-    //   (() => {
-    //     console.log("webstomp.over 진입");
-    //     const sockJS = new SockJS("http://localhost:1234/stomp/chat");
-    //     return sockJS;
-    //   })()
-    // );
-
     stomp.current = webstomp.over(sockJS);
 
     const onError = (e: any) => {
@@ -93,7 +85,6 @@ const ChatButton: React.FC = () => {
           `/pub/chat.enter.${roomId}.${userId}`,
           JSON.stringify({
             message: userId + "님이 입장하셨습니다.",
-            chatState: ChatState.CHAT_UNREAD,
             chatRoomId: roomId,
             sendUserId: userId,
           })
@@ -169,7 +160,6 @@ const ChatButton: React.FC = () => {
       JSON.stringify({
         chatRoomId: roomId,
         sendUserId: userId,
-        chatState: ChatState.CHAT_UNREAD,
         message: message,
       })
     );

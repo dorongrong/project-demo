@@ -3,6 +3,7 @@ package lee.projectdemo.chat.web;
 import jakarta.servlet.http.HttpServletRequest;
 import lee.projectdemo.auth.PrincipalDetails;
 import lee.projectdemo.chat.domain.ChatRoom;
+import lee.projectdemo.chat.domain.ChatRoomDto;
 import lee.projectdemo.login.service.LoginService;
 import lee.projectdemo.login.user.User;
 import lombok.RequiredArgsConstructor;
@@ -38,19 +39,25 @@ public class ChatRoomController {
         allRoom.addAll(sellRoom);
         allRoom.addAll(buyRoom);
 
-        List<String> chatRoomName = new ArrayList<>();
+
+        List<ChatRoomDto> chatRoomDto = new ArrayList<>();
 
         for (ChatRoom chatRoom : allRoom) {
+            //판매자랑 사용자랑 같은 사람일때
             if (chatRoom.getSeller().equals(tokenUser)) {
                 // If the seller is the same as tokenUser, add buyer's loginId to the list
-                chatRoomName.add(chatRoom.getBuyer().getLoginId());
+                chatRoomDto.add(new ChatRoomDto(chatRoom.getItem().getId(), chatRoom.getBuyer().getLoginId(),
+                        chatRoom.getItem().getItemName()));
             } else {
                 // If the seller is different from tokenUser, add tokenUser's loginId to the list
-                chatRoomName.add(tokenUser.getLoginId());
+                chatRoomDto.add(new ChatRoomDto(chatRoom.getItem().getId(), chatRoom.getSeller().getLoginId(),
+                        chatRoom.getItem().getItemName()));
             }
         }
 
-        model.addAttribute("chatRoom", chatRoomName);
+        System.out.println("이잉" + chatRoomDto);
+
+        model.addAttribute("chatRoom", chatRoomDto);
 
         return "chat/myChatRoom";
     }
