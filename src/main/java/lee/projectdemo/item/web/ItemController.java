@@ -79,6 +79,9 @@ public class ItemController {
         if (tokenUser == item.getUser()) {
             model.addAttribute("chatButton", "내 채팅방");
         }
+        else{
+            model.addAttribute("buyerId", tokenUser.getId());
+        }
 
         List<String> imageURLs = new ArrayList<>();
 
@@ -102,6 +105,7 @@ public class ItemController {
         model.addAttribute("time", time);
         model.addAttribute("item", itemDetails);
         model.addAttribute("images", imageURLs);
+        model.addAttribute("user", tokenUser.getId());
 
         return "items/details";
     }

@@ -13,7 +13,7 @@ const App: React.FC = () => {
     <CookiesProvider>
       <Routes>
         <Route path="*" element={<Main />} />
-        <Route path="/items/:itemId/chat" element={<ChatButton />} />
+        <Route path="/items/:itemId/chat/:buyerId" element={<ChatButton />} />
         <Route
           path="/test"
           element={

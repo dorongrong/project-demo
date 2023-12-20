@@ -9,7 +9,7 @@
       <h2>Chat Rooms:</h2>
       <div th:each="roomName : ${chatRoom}">
         <a
-          th:href="@{'http://localhost:3000/items/' + ${roomName.itemId} + '/chat'}"
+          th:href="@{'http://localhost:3000/items/' + ${roomName.itemId} + '/chat/' + ${roomName.buyerId}}"
         >
           <button
             th:text="${roomName.itemId} + ${roomName.displayName}"

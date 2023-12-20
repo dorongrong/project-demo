@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import SockJS from "sockjs-client";
 import webstomp from "webstomp-client";
 import { getCookieInfo } from "../cookie/GetCookie";
-import { Message, ChatState } from "./model/message";
 
 const ChatTest: React.FC<{ chatRoomId: string; nickname: string }> = ({
   chatRoomId,
@@ -105,7 +104,6 @@ const ChatTest: React.FC<{ chatRoomId: string; nickname: string }> = ({
       JSON.stringify({
         chatRoomId: roomId.current,
         sendUserId: userId,
-        chatState: ChatState.CHAT_UNREAD,
         message: message,
       })
     );

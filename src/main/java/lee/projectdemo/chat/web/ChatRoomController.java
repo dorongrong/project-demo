@@ -47,11 +47,12 @@ public class ChatRoomController {
             if (chatRoom.getSeller().equals(tokenUser)) {
                 // If the seller is the same as tokenUser, add buyer's loginId to the list
                 chatRoomDto.add(new ChatRoomDto(chatRoom.getItem().getId(), chatRoom.getBuyer().getLoginId(),
-                        chatRoom.getItem().getItemName()));
+                        chatRoom.getItem().getItemName(), chatRoom.getBuyer().getId()));
+
             } else {
                 // If the seller is different from tokenUser, add tokenUser's loginId to the list
                 chatRoomDto.add(new ChatRoomDto(chatRoom.getItem().getId(), chatRoom.getSeller().getLoginId(),
-                        chatRoom.getItem().getItemName()));
+                        chatRoom.getItem().getItemName(), chatRoom.getBuyer().getId()));
             }
         }
 

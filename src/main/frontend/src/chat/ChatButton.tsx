@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import SockJS from "sockjs-client";
 import webstomp from "webstomp-client";
-import { getCookieInfo } from "../cookie/GetCookie";
-import { Message, ChatState } from "./model/message";
+import { ChatRoom, Message } from "./model/chatRoomData";
+import { getCookieInfo, getCookieChatInfo } from "../cookie/GetCookie";
 import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { Cookies } from "react-cookie";
@@ -10,31 +10,23 @@ import { Cookies } from "react-cookie";
 const ChatButton: React.FC = () => {
   const [responseMessage, setResponseMessage] = useState("");
   const { itemId } = useParams<{ itemId: string }>();
-  const userId = getCookieInfo();
+  const { buyerId } = useParams<{ buyerId: string }>();
+  // 방문자의 id
+  const [userId, setUserId] = useState<String>(getCookieInfo());
+  // const userId = getCookieInfo();
+  // 사용자의 itemId -> 추후 fetch api 실행 유무에 사용
+  const [myRoomsId, setMyRoomsId] = useState<String>(getCookieChatInfo());
+  // const myRoomsId = getCookieChatInfo();
+  const roomId = itemId;
   const cookies = new Cookies();
 
   const [messageContent, setMessageContent] = useState<string>("");
   const [chats, setChats] = useState<JSX.Element[]>([]);
 
-  const roomId = itemId;
   const stomp = useRef<any>();
   const sockJS = new SockJS("http://localhost:1234/stomp/chat");
 
-  const [chatRoomData, setChatRoomData] = useState<
-    | {
-        itemId: string;
-        senderId: string;
-      }
-    | undefined
-  >(() => {
-    if (itemId && userId) {
-      return {
-        itemId: itemId,
-        senderId: userId,
-      };
-    }
-    return undefined;
-  });
+  const [chatRoomData, setChatRoomData] = useState<ChatRoom | null>(null);
 
   const socketConnect = () => {
     console.log("socketConnect 진입?");
@@ -95,39 +87,60 @@ const ChatButton: React.FC = () => {
     );
   };
 
+  useEffect(() => {
+    if (itemId && userId && buyerId) {
+      const chatRoom: ChatRoom = {
+        senderId: userId,
+        itemId: itemId,
+        buyerId: buyerId,
+      };
+      setChatRoomData(chatRoom);
+    }
+  }, [userId, itemId, buyerId]);
+
   //변수 할당후 fetch api 실행
   useEffect(() => {
+    //chatRoom 데이터 할당
+    console.log("?????????????");
+    console.log(
+      chatRoomData?.itemId,
+      chatRoomData?.senderId,
+      chatRoomData?.buyerId
+    );
+
+    //fetch api
     const fetchData = async () => {
-      if (
-        chatRoomData !== undefined &&
-        chatRoomData.itemId !== undefined &&
-        chatRoomData.senderId !== undefined
-      ) {
-        try {
-          const response = await fetch("http://localhost:1234/api/chat", {
-            method: "POST",
-            credentials: "include", // 쿠키를 전송해야 하는 경우
-            headers: {
-              Authorization: jwtDecode(cookies.get("Authorization")),
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(chatRoomData),
-          });
+      try {
+        const response = await fetch("http://localhost:1234/api/chat", {
+          method: "POST",
+          credentials: "include", // 쿠키를 전송해야 하는 경우
+          headers: {
+            Authorization: jwtDecode(cookies.get("Authorization")),
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(chatRoomData),
+        });
 
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-
-          const data = await response.json();
-          // 서버 응답을 처리 또는 다른 작업 수행
-        } catch (error) {
-          console.error("Error:", error);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
+
+        const data = await response.json();
+        // 서버 응답을 컴포넌트에 넣어서 (저장된) 채팅을 보여줄꺼임
+      } catch (error) {
+        console.error("Error:", error);
       }
     };
+    //해당 변수 할당이 끝났을시 실행
+    if (
+      chatRoomData?.itemId &&
+      chatRoomData?.senderId &&
+      chatRoomData?.buyerId
+    ) {
+      fetchData();
+    }
 
     // fetchData 함수는 chatRoomData가 변경될 때마다 실행됨
-    fetchData();
   }, [chatRoomData]);
 
   useEffect(() => {
