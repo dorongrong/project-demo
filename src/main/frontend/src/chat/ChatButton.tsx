@@ -24,17 +24,32 @@ const ChatButton: React.FC = () => {
   const [chats, setChats] = useState<JSX.Element[]>([]);
 
   const stomp = useRef<any>();
-  const sockJS = new SockJS("http://localhost:1234/stomp/chat");
 
   const [chatRoomData, setChatRoomData] = useState<ChatRoom | null>(null);
 
   const socketConnect = () => {
+    const sockJS = new SockJS("http://localhost:1234/stomp/chat");
     console.log("socketConnect 진입?");
 
     stomp.current = webstomp.over(sockJS);
 
     const onError = (e: any) => {
       console.log("STOMP ERROR", e);
+      console.log("다시 연결");
+
+      sockJS.onclose = function () {
+        setTimeout(function () {
+          socketConnect();
+        }, 1000);
+      };
+
+      // setTimeout(() => {
+      //   // 이미 연결이 되어 있는 경우에는 disconnect 후에 다시 connect
+      //   if (stomp.current.connected) {
+      //     stomp.current.disconnect();
+      //   }
+      //   socketConnect();
+      // }, 5000);
     };
 
     const onDebug = (m: any) => {
@@ -52,7 +67,7 @@ const ChatButton: React.FC = () => {
         console.log("STOMP Connected");
         // 송신자는 본인의 큐만 subscribe해야함 그렇기에 본인의 큐의 이름을 명확하게 구분해야함
         stomp.current.subscribe(
-          `/exchange/chat.exchange/${roomId}.${userId}`,
+          `/exchange/chat.exchange/${roomId}.${buyerId}`,
           (content: any) => {
             const payload = JSON.parse(content.body);
 
@@ -74,7 +89,7 @@ const ChatButton: React.FC = () => {
         );
 
         stomp.current.send(
-          `/pub/chat.enter.${roomId}.${userId}`,
+          `/pub/chat.enter.${roomId}.${buyerId}`,
           JSON.stringify({
             message: userId + "님이 입장하셨습니다.",
             chatRoomId: roomId,
@@ -85,6 +100,7 @@ const ChatButton: React.FC = () => {
       onError,
       "/"
     );
+    return sockJS;
   };
 
   useEffect(() => {
@@ -169,7 +185,7 @@ const ChatButton: React.FC = () => {
     setMessageContent("");
 
     stomp.current.send(
-      `/pub/chat.message.${roomId}.${userId}`,
+      `/pub/chat.message.${roomId}.${buyerId}`,
       JSON.stringify({
         chatRoomId: roomId,
         sendUserId: userId,

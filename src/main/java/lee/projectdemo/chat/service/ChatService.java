@@ -8,10 +8,7 @@ import lee.projectdemo.item.repository.ItemRepository;
 import lee.projectdemo.login.repository.UserRepository;
 import lee.projectdemo.login.user.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
@@ -138,4 +135,25 @@ public class ChatService {
         }
         
     }
+
+    public void consumeFromDynamicQueue() {
+        // 큐에서 메시지 수신
+
+        Message message;
+        while ((message = rabbitTemplate.receive("chat.queue.16")) != null) {
+            String messageBody = new String(message.getBody());
+            // 메시지 처리 로직
+            System.out.println("라라라랄라ㅏ라라라랄Received message from dynamic queue: " + messageBody);
+        }
+
+//        Message message = rabbitTemplate.receive(dynamicQueueName);
+//        Message message = rabbitTemplate.receive("chat.queue.16");
+//
+//        if (message != null) {
+//            String messageBody = new String(message.getBody());
+//            // 메시지 처리 로직
+//            System.out.println("Received message from dynamic queue: " + messageBody);
+//        }
+    }
+
 }

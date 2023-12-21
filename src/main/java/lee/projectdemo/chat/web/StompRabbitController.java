@@ -27,7 +27,7 @@ public class StompRabbitController {
 
         String sendUserId = content.getSendUserId();
 
-        System.out.println("어서오세용" + chatRoomId);
+        System.out.println("어서오세용" + chatRoomId + userId);
 
         content.setMessage(sendUserId + "님이 입장하셨습니다.");
         content.setRegDate(LocalDateTime.now());
@@ -39,7 +39,7 @@ public class StompRabbitController {
 
     //송신자가 보낸 메시지를 후처리후 퍼블리싱함
     @MessageMapping("chat.message.{chatRoomId}.{userId}")
-    public void send(@DestinationVariable Long chatRoomId, @Payload ChatDto content, @DestinationVariable String userId){
+    public void send(@DestinationVariable String chatRoomId, @Payload ChatDto content, @DestinationVariable String userId){
 
         //json으로 받은 메시지를 파싱
         String scontent = content.getMessage();
@@ -47,7 +47,7 @@ public class StompRabbitController {
         System.out.println(scontent);
 
         content.setRegDate(LocalDateTime.now());
-        content.setId(chatRoomId);
+//        content.setId(chatRoomId);
 
         template.convertAndSend(CHAT_EXCHANGE_NAME, chatRoomId + "." + userId, content);
         //template.convertAndSend( "room." + chatRoomId, chat);
@@ -65,6 +65,12 @@ public class StompRabbitController {
     //receive()는 단순히 큐에 들어온 메세지를 소비만 한다. (현재는 디버그용도)
     @RabbitListener(queues = CHAT_QUEUE_NAME)
     public void receive(ChatDto chat){
+
+        System.out.println("received : " + chat.getMessage());
+    }
+
+    @RabbitListener(queues = "chat.queue.*.*")
+    public void receive1(ChatDto chat){
 
         System.out.println("received : " + chat.getMessage());
     }
