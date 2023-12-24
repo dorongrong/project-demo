@@ -37,19 +37,18 @@ const ChatButton: React.FC = () => {
       console.log("STOMP ERROR", e);
       console.log("다시 연결");
 
-      sockJS.onclose = function () {
+      stomp.current.disconnect(function () {
+        console.log("Disconnected successfully.");
         setTimeout(function () {
           socketConnect();
-        }, 1000);
-      };
+        }, 3000);
+      });
 
-      // setTimeout(() => {
-      //   // 이미 연결이 되어 있는 경우에는 disconnect 후에 다시 connect
-      //   if (stomp.current.connected) {
-      //     stomp.current.disconnect();
-      //   }
-      //   socketConnect();
-      // }, 5000);
+      // sockJS.onclose = function () {
+      //   setTimeout(function () {
+      //     socketConnect();
+      //   }, 5000);
+      // };
     };
 
     const onDebug = (m: any) => {
@@ -58,15 +57,13 @@ const ChatButton: React.FC = () => {
 
     stomp.current.debug = onDebug;
 
-    console.log("시작");
-
     stomp.current.connect(
       "guest",
       "guest",
-      (frame: any) => {
+      async (frame: any) => {
         console.log("STOMP Connected");
         // 송신자는 본인의 큐만 subscribe해야함 그렇기에 본인의 큐의 이름을 명확하게 구분해야함
-        stomp.current.subscribe(
+        await stomp.current.subscribe(
           `/exchange/chat.exchange/${roomId}.${buyerId}`,
           (content: any) => {
             const payload = JSON.parse(content.body);
@@ -87,7 +84,6 @@ const ChatButton: React.FC = () => {
           },
           { "auto-delete": "true", durable: "false", exclusive: "false" }
         );
-
         stomp.current.send(
           `/pub/chat.enter.${roomId}.${buyerId}`,
           JSON.stringify({
@@ -96,11 +92,13 @@ const ChatButton: React.FC = () => {
             sendUserId: userId,
           })
         );
+        //추후 변경
       },
       onError,
       "/"
     );
-    return sockJS;
+
+    // return sockJS;
   };
 
   useEffect(() => {

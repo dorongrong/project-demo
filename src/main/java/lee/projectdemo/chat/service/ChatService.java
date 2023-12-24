@@ -136,24 +136,4 @@ public class ChatService {
         
     }
 
-    public void consumeFromDynamicQueue() {
-        // 큐에서 메시지 수신
-
-        Message message;
-        while ((message = rabbitTemplate.receive("chat.queue.16")) != null) {
-            String messageBody = new String(message.getBody());
-            // 메시지 처리 로직
-            System.out.println("라라라랄라ㅏ라라라랄Received message from dynamic queue: " + messageBody);
-        }
-
-//        Message message = rabbitTemplate.receive(dynamicQueueName);
-//        Message message = rabbitTemplate.receive("chat.queue.16");
-//
-//        if (message != null) {
-//            String messageBody = new String(message.getBody());
-//            // 메시지 처리 로직
-//            System.out.println("Received message from dynamic queue: " + messageBody);
-//        }
-    }
-
 }
