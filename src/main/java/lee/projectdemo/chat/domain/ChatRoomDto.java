@@ -10,8 +10,12 @@ public class ChatRoomDto {
 
     private Long itemId;
     //채팅 요구자를 의미 loginId임
-    private String senderId;
+    private String senderLoginId;
+    //사용자의 Id임
+    private Long userId;
     private String displayName;
+    //상대방의 ID
+    private Long otherUserId;
     private String itemName;
 
     private Long buyerId;
@@ -28,11 +32,12 @@ public class ChatRoomDto {
         this.buyerId = buyerId;
     }
 
-    public ChatRoomDto(Long itemId, String senderId, String displayName, String itemName, List<Chat> chats) {
+    public ChatRoomDto(Long itemId, String senderId, String displayName, String itemName, List<Chat> chats, Long otherUser) {
         this.itemId = itemId;
-        this.senderId = senderId;
+        this.senderLoginId = senderId;
         this.displayName = displayName;
         this.itemName = itemName;
         this.chats = chats;
+        this.otherUserId = otherUser;
     }
 }

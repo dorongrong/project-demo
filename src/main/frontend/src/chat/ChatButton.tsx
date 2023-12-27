@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import SockJS from "sockjs-client";
 import webstomp from "webstomp-client";
-import { ChatRoom, Message } from "./model/chatRoomData";
-import { getCookieInfo, getCookieChatInfo } from "../cookie/GetCookie";
+import { ChatRoom, Message, UserState } from "./model/chatRoomData";
+import {
+  getCookieInfo,
+  getCookieChatInfo,
+  getCookieUserId,
+} from "../cookie/GetCookie";
 import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { Cookies } from "react-cookie";
@@ -11,8 +15,10 @@ const ChatButton: React.FC = () => {
   const [responseMessage, setResponseMessage] = useState("");
   const { itemId } = useParams<{ itemId: string }>();
   const { buyerId } = useParams<{ buyerId: string }>();
+  // 방문자의 loginid
+  const [userLoginId, setUserLoginId] = useState<String>(getCookieInfo());
   // 방문자의 id
-  const [userId, setUserId] = useState<String>(getCookieInfo());
+  const [userId, setUserId] = useState<String>(getCookieUserId());
   // const userId = getCookieInfo();
   // 사용자의 itemId -> 추후 fetch api 실행 유무에 사용
   const [myRoomsId, setMyRoomsId] = useState<String>(getCookieChatInfo());
@@ -26,6 +32,10 @@ const ChatButton: React.FC = () => {
   const stomp = useRef<any>();
 
   const [chatRoomData, setChatRoomData] = useState<ChatRoom | null>(null);
+
+  const [userState, setUserState] = useState<UserState>();
+
+  const refState = useRef<UserState>();
 
   const socketConnect = () => {
     const sockJS = new SockJS("http://localhost:1234/stomp/chat");
@@ -60,36 +70,66 @@ const ChatButton: React.FC = () => {
     stomp.current.connect(
       "guest",
       "guest",
-      async (frame: any) => {
+      (frame: any) => {
         console.log("STOMP Connected");
         // 송신자는 본인의 큐만 subscribe해야함 그렇기에 본인의 큐의 이름을 명확하게 구분해야함
-        await stomp.current.subscribe(
+        stomp.current.subscribe(
           `/exchange/chat.exchange/${roomId}.${buyerId}`,
           (content: any) => {
             const payload = JSON.parse(content.body);
 
-            // let className = payload.userId === userId ? userId : payload.userId;
+            console.log(payload);
 
-            const newChat = (
-              <div>
-                <div className="nickname">{payload.sendUserId}</div>
-                <div className="message">{payload.message}</div>
-              </div>
-            );
+            //데이터를 보낸자가 본인이 아닐시를 판단해 온라인 유무 판단
+            if (
+              payload.userId !== userId &&
+              payload.chatUserState === "ONLINE"
+            ) {
+              console.log("뭐야야야양");
+              const userState: UserState = {
+                userId: payload.userId,
+                userState: "ONLINE",
+              };
+              setUserState(userState);
+              console.log("업데이트된 사용자 정보", userState);
+            }
+            if (
+              payload.userId !== userId &&
+              payload.chatUserState === "OFFLINE"
+            ) {
+              console.log("뭐야야야양");
+              const userState: UserState = {
+                userId: payload.userId,
+                userState: "OFFLINE",
+              };
+              setUserState(userState);
+              console.log("업데이트된 사용자 정보", userState);
+            } else {
+              const newChat = (
+                <div>
+                  <div className="nickname">{payload.sendUserId}</div>
+                  <div className="message">{payload.message}</div>
+                </div>
+              );
 
-            setChats((prevChats) => [...prevChats, newChat]);
+              setChats((prevChats) => [...prevChats, newChat]);
+            }
 
             //메시지 읽음 확인요청
             // messageRead(content.body);
           },
           { "auto-delete": "true", durable: "false", exclusive: "false" }
         );
+        //사용자 상태 업로드
+
+        //폐기
         stomp.current.send(
           `/pub/chat.enter.${roomId}.${buyerId}`,
           JSON.stringify({
-            message: userId + "님이 입장하셨습니다.",
+            message: userLoginId + "님이 입장하셨습니다.",
             chatRoomId: roomId,
-            sendUserId: userId,
+            sendUserId: userLoginId,
+            userId: userId,
           })
         );
         //추후 변경
@@ -102,15 +142,16 @@ const ChatButton: React.FC = () => {
   };
 
   useEffect(() => {
-    if (itemId && userId && buyerId) {
+    if (itemId && userLoginId && buyerId && userId) {
       const chatRoom: ChatRoom = {
-        senderId: userId,
+        senderLoginId: userLoginId,
         itemId: itemId,
         buyerId: buyerId,
+        userId: userId,
       };
       setChatRoomData(chatRoom);
     }
-  }, [userId, itemId, buyerId]);
+  }, [userLoginId, itemId, buyerId, userId]);
 
   //변수 할당후 fetch api 실행
   useEffect(() => {
@@ -118,8 +159,9 @@ const ChatButton: React.FC = () => {
     console.log("?????????????");
     console.log(
       chatRoomData?.itemId,
-      chatRoomData?.senderId,
-      chatRoomData?.buyerId
+      chatRoomData?.senderLoginId,
+      chatRoomData?.buyerId,
+      chatRoomData?.userId
     );
 
     //fetch api
@@ -140,6 +182,7 @@ const ChatButton: React.FC = () => {
         }
 
         const data = await response.json();
+        console.log("fetch api response data ", data);
         // 서버 응답을 컴포넌트에 넣어서 (저장된) 채팅을 보여줄꺼임
       } catch (error) {
         console.error("Error:", error);
@@ -148,8 +191,9 @@ const ChatButton: React.FC = () => {
     //해당 변수 할당이 끝났을시 실행
     if (
       chatRoomData?.itemId &&
-      chatRoomData?.senderId &&
-      chatRoomData?.buyerId
+      chatRoomData?.senderLoginId &&
+      chatRoomData?.buyerId &&
+      chatRoomData?.userId
     ) {
       fetchData();
     }
@@ -158,9 +202,51 @@ const ChatButton: React.FC = () => {
   }, [chatRoomData]);
 
   useEffect(() => {
+    const fetchUnmountData = async () => {
+      try {
+        const response = await fetch("http://localhost:1234/api/chatunmount", {
+          method: "POST",
+          credentials: "include", // 쿠키를 전송해야 하는 경우
+          headers: {
+            Authorization: jwtDecode(cookies.get("Authorization")),
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(chatRoomData),
+          // body: JSON.stringify(chatRoomData),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        setUserState(await response.json());
+
+        console.log("Server response:", userState);
+        // 서버 응답을 컴포넌트에 넣어서 (저장된) 채팅을 보여줄꺼임
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    const handleBeforeUnload = () => {
+      stomp.current.send(
+        `/pub/chat.exit.${roomId}.${buyerId}`,
+        JSON.stringify({
+          message: userLoginId + "님이 입장하셨습니다.",
+          chatRoomId: roomId,
+          sendUserId: userLoginId,
+          userId: userId,
+        })
+      );
+      fetchUnmountData();
+    };
+
     socketConnect();
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
     // cleanup function
     return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
       stomp.current.disconnect(); // disconnect when component unmounts
     };
   }, []);
@@ -186,8 +272,9 @@ const ChatButton: React.FC = () => {
       `/pub/chat.message.${roomId}.${buyerId}`,
       JSON.stringify({
         chatRoomId: roomId,
-        sendUserId: userId,
+        sendUserId: userLoginId,
         message: message,
+        userId: userId,
       })
     );
   };
@@ -196,7 +283,7 @@ const ChatButton: React.FC = () => {
     <div>
       <h1>CHAT ROOM</h1>
       <h2>Room No. {roomId}</h2>
-      <h2>Nickname {userId}</h2>
+      <h2>Nickname {userLoginId}</h2>
 
       <form onSubmit={handleSendMessage}>
         <input

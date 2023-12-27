@@ -12,12 +12,19 @@ import java.time.LocalDateTime;
 public class ChatDto {
 
     private Long id;
-
+    //진짜 보낸사람의 long ID
+    private String userId;
+    //진짜 보낸 사람의 login Id
     private String sendUserId;
 
     private Long readCount = 1L;
 
     private String message;
+
+    private Long chatRoomId;
+
+    private ChatUserState chatUserState;
+
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime regDate;

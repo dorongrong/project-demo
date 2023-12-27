@@ -69,12 +69,12 @@
                 console.log("뭔가 왔다", { id });
               }
             );
-            stomp.send(
-              `/pub/chat.enter.${id}.#`,
-              JSON.stringify({
-                sendUserId: userId,
-              })
-            );
+            // stomp.send(
+            //   `/pub/chat.enter.${id}.#`,
+            //   JSON.stringify({
+            //     sendUserId: userId,
+            //   })
+            // );
           });
         },
         onError,

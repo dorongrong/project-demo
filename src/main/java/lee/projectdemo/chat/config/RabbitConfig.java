@@ -29,6 +29,8 @@ public class RabbitConfig {
     private final DynamicMessageListener dynamicMessageListener;
 
     private static final String CHAT_QUEUE_NAME = "chat.queue";
+
+    private static final String USER_QUEUE_NAME = "user.queue";
     private static final String CHAT_EXCHANGE_NAME = "chat.exchange";
     private static final String ROUTING_KEY = ".#";
 
@@ -37,7 +39,10 @@ public class RabbitConfig {
     public Queue queue() {
         return new Queue(CHAT_QUEUE_NAME, true);
     }
-
+    @Bean
+    public Queue userQueue() {
+        return new Queue(USER_QUEUE_NAME, true);
+    }
 
     //Exchange 등록
     @Bean
@@ -47,6 +52,11 @@ public class RabbitConfig {
     @Bean
     public Binding binding(Queue queue, TopicExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding userStateBinding(Queue userQueue, TopicExchange exchange) {
+        return BindingBuilder.bind(userQueue).to(exchange).with(ROUTING_KEY);
     }
 
     /* messageConverter를 커스터마이징 하기 위해 Bean 새로 등록 */
@@ -62,7 +72,7 @@ public class RabbitConfig {
     public SimpleMessageListenerContainer listenerContainer(){
         SimpleMessageListenerContainer listenerContainer = new SimpleMessageListenerContainer();
         listenerContainer.setConnectionFactory(connectionFactory());
-        listenerContainer.setMessageListener(dynamicMessageListener);
+//        listenerContainer.setMessageListener(dynamicMessageListener);
         // MessageListenerAdapter를 사용하여 메시지를 처리하는 메소드와 필터링 로직을 추가합니다.
         MessageListenerAdapter adapter = new MessageListenerAdapter(dynamicMessageListener, "onMessage");
         adapter.setMessageConverter(jsonMessageConverter());

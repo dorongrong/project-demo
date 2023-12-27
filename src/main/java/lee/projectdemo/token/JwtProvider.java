@@ -40,10 +40,11 @@ public class JwtProvider {
     }
 
     // 토큰 생성
-    public String createToken(String account, UserRole role, List<String> itemIdList) {
+    public String createToken(String account, UserRole role, List<String> itemIdList, Long userId) {
         Claims claims = Jwts.claims().setSubject(account);
         claims.put("role", role);
         claims.put("itemsId", itemIdList);
+        claims.put("userId", userId);
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claims)

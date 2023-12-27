@@ -56,8 +56,6 @@ public class ChatRoomController {
             }
         }
 
-        System.out.println("이잉" + chatRoomDto);
-
         model.addAttribute("chatRoom", chatRoomDto);
 
         return "chat/myChatRoom";

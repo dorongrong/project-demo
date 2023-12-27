@@ -73,7 +73,7 @@ public class LoginService {
                     .loginId(user.getLoginId())
                     .loginName(user.getLoginName())
                     .role(user.getUserRole())
-                    .token(jwtProvider.createToken(user.getLoginId(), user.getUserRole(), itemId))
+                    .token(jwtProvider.createToken(user.getLoginId(), user.getUserRole(), itemId, user.getId()))
                     .build();
 
         } catch (NoSuchElementException e) {

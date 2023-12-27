@@ -96,7 +96,7 @@ public class ChatService {
         User seller = userRepository.findByItem(item).get();
 
         //채팅방 요구자(buyer이 아님..)
-        User requestUser = userRepository.findByLoginId(chatRoomDto.getSenderId()).get();
+        User requestUser = userRepository.findByLoginId(chatRoomDto.getSenderLoginId()).get();
 
         String displayName;
         //판매자가 채팅방을 요구하는 경우
@@ -113,7 +113,7 @@ public class ChatService {
                 ChatRoom chatRoom = chatRoomRepository.findByItemAndSellerAndBuyerId(item, requestUser, chatRoomDto.getBuyerId());
 
                 return new ChatRoomDto(item.getId(), String.valueOf(requestUser.getId()), chatRoom.getBuyer().getLoginId(),
-                        chatRoom.getItem().getItemName(), chatRoom.getChats());
+                        chatRoom.getItem().getItemName(), chatRoom.getChats(), chatRoom.getBuyer().getId());
             }
         }
         else{
@@ -124,13 +124,13 @@ public class ChatService {
                 chatRoomRepository.save(chatRoom);
 
                 return new ChatRoomDto(item.getId(), String.valueOf(requestUser.getId()), chatRoom.getSeller().getLoginId(),
-                        chatRoom.getItem().getItemName(), chatRoom.getChats());
+                        chatRoom.getItem().getItemName(), chatRoom.getChats(), chatRoom.getSeller().getId());
             }
             else {
                 //채팅방이 존재하는 경우
                 ChatRoom chatRoom = chatRoomRepository.findByItemAndSellerAndBuyer(item, seller, requestUser);
                 return new ChatRoomDto(item.getId(), String.valueOf(requestUser.getId()), chatRoom.getSeller().getLoginId(),
-                        chatRoom.getItem().getItemName(), chatRoom.getChats());
+                        chatRoom.getItem().getItemName(), chatRoom.getChats(), chatRoom.getSeller().getId());
             }
         }
         

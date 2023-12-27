@@ -1,7 +1,8 @@
 export type ChatRoom = {
-  senderId: String;
+  senderLoginId: String;
   itemId: String;
   buyerId: String;
+  userId: String;
   message?: Message;
 };
 
@@ -11,4 +12,9 @@ export type Message = {
   chatRoomId: string;
   chatCount: number;
   key?: string;
+};
+
+export type UserState = {
+  userId: number;
+  userState: string;
 };
