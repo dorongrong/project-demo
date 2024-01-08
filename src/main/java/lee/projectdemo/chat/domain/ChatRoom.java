@@ -43,4 +43,12 @@ public class ChatRoom {
         this.seller = seller;
         this.buyer = buyer;
     }
+
+    public void setOtherReadCount(Long myId){
+        for (Chat chat : chats) {
+            if (chat.getSendUserId() != myId) {
+                chat.setReadCount(2L);
+            }
+        }
+    }
 }

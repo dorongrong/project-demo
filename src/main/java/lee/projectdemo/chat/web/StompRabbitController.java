@@ -3,6 +3,7 @@ package lee.projectdemo.chat.web;
 
 import lee.projectdemo.chat.domain.ChatDto;
 import lee.projectdemo.chat.domain.ChatUserState;
+import lee.projectdemo.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -25,6 +26,8 @@ public class StompRabbitController {
 
     private final RabbitTemplate template;
 
+    private final ChatService chatService;
+
     private final static String CHAT_EXCHANGE_NAME = "chat.exchange";
     private final static String CHAT_QUEUE_NAME = "chat.queue";
 
@@ -34,9 +37,7 @@ public class StompRabbitController {
         //메시지 고유 키값 설정
 
         String sendUserId = content.getSendUserId();
-        String realUserId = content.getUserId();
 
-        content.setMessage(sendUserId + "님이 입장하셨습니다.");
         content.setRegDate(LocalDateTime.now());
         content.setChatUserState(ChatUserState.ONLINE);
 
@@ -55,7 +56,6 @@ public class StompRabbitController {
     public void exit(@DestinationVariable String chatRoomId, @Payload ChatDto content, @DestinationVariable String buyerId){
 
         String sendUserId = content.getSendUserId();
-        String realUserId = content.getUserId();
 
         content.setRegDate(LocalDateTime.now());
         content.setChatUserState(ChatUserState.OFFLINE);
@@ -77,9 +77,14 @@ public class StompRabbitController {
         System.out.println(scontent);
 
         content.setRegDate(LocalDateTime.now());
-//        content.setId(chatRoomId);
+        content.setChatUserState(ChatUserState.CHAT);
 
         template.convertAndSend(CHAT_EXCHANGE_NAME, chatRoomId + "." + buyerId, content);
+
+        System.out.println("content = " + content);
+        //채팅 저장
+        chatService.messageSave(content, buyerId);
+
     }
 
     @MessageMapping("chat.messageRead.{chatRoomId}")

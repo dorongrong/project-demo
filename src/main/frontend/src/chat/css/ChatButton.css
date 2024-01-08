@@ -1,0 +1,22 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background-color: #212529;
+}
+
+.custom-container {
+  height: 100%;
+  max-width: 70%;
+  overflow: auto;
+  background-color: #343a40;
+  margin: auto;
+}
+
+.chat-box {
+  height: 100%;
+  overflow: auto;
+  margin: auto;
+}

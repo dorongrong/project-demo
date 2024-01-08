@@ -1,17 +1,20 @@
 export type ChatRoom = {
-  senderLoginId: String;
-  itemId: String;
-  buyerId: String;
-  userId: String;
+  sendUserLoginId: string;
+  itemId: string;
+  buyerId: string;
+  sendUserId: string;
   message?: Message;
 };
 
 export type Message = {
   message: string;
+  //보낸사람 Long Id
   sendUserId: string;
+  //보낸사람 login Id
+  sendUserLoginId: string;
   chatRoomId: string;
-  chatCount: number;
-  key?: string;
+  readCount: number;
+  regData?: string;
 };
 
 export type UserState = {

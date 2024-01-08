@@ -3,7 +3,7 @@ package lee.projectdemo.login.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lee.projectdemo.auth.PrincipalDetails;
-import lee.projectdemo.chat.service.ChatService;
+import lee.projectdemo.chat.service.ChatRoomService;
 import lee.projectdemo.item.aws.AwsS3Service;
 import lee.projectdemo.item.item.Item;
 import lee.projectdemo.item.item.ItemDto;
@@ -41,7 +41,7 @@ public class HomeController {
 
     private final AwsS3Service s3Service;
 
-    private final ChatService chatService;
+    private final ChatRoomService chatRoomService;
 
 //    @GetMapping("/")
 //    public String home(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false)
@@ -86,7 +86,7 @@ public class HomeController {
                 //로그인한 순간 유저의 아이템 전부 구독
                 List<Item> items = userDetails.getItem();
                 if (!items.isEmpty())
-                chatService.subscribeQueue(items,userId);
+                chatRoomService.subscribeQueue(items,userId);
                 return "home";
             }
 

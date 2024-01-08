@@ -6,7 +6,7 @@ import lombok.Data;
 public class ChatUserStateDto {
 
     private Long userId;
-    private ChatUserState userStatus;
+    private ChatUserState userState;
 
     // 생성자, Getter, Setter 생략
 
@@ -14,8 +14,8 @@ public class ChatUserStateDto {
     public ChatUserStateDto() {
     }
 
-    public ChatUserStateDto(Long userId, ChatUserState userStatus) {
+    public ChatUserStateDto(Long userId, ChatUserState userState) {
         this.userId = userId;
-        this.userStatus = userStatus;
+        this.userState = userState;
     }
 }

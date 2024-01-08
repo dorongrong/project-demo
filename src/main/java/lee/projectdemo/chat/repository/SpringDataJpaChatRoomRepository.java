@@ -12,6 +12,9 @@ public interface SpringDataJpaChatRoomRepository extends JpaRepository<ChatRoom,
     //판매자가 채팅방을 가져올때
     ChatRoom findByItemAndSellerAndBuyerId(Item item, User seller, Long buyerId);
 
+    //ChatService에서 채팅방을 가져올때
+    ChatRoom findByItemIdAndBuyerId(Long itemId, Long buyerId);
+
     // 기존에 같은 buyer와 item이 존재하는지 확인하는 쿼리 메소드
     boolean existsByBuyerAndSellerAndItem(User buyer, User seller, Item item);
 

@@ -11,11 +11,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ChatDto {
 
-    private Long id;
     //진짜 보낸사람의 long ID
-    private String userId;
-    //진짜 보낸 사람의 login Id
     private String sendUserId;
+    //진짜 보낸 사람의 login Id
+    private String sendUserLoginId;
 
     private Long readCount = 1L;
 

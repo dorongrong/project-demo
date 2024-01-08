@@ -22,9 +22,9 @@ public class QChat extends EntityPathBase<Chat> {
 
     public static final QChat chat = new QChat("chat");
 
-    public final QChatRoom chatRoom;
+    public final NumberPath<Long> chatId = createNumber("chatId", Long.class);
 
-    public final NumberPath<Long> chatRoomId = createNumber("chatRoomId", Long.class);
+    public final QChatRoom chatRoom;
 
     public final StringPath message = createString("message");
 
@@ -32,7 +32,7 @@ public class QChat extends EntityPathBase<Chat> {
 
     public final DateTimePath<java.time.LocalDateTime> regDate = createDateTime("regDate", java.time.LocalDateTime.class);
 
-    public final StringPath sendUserId = createString("sendUserId");
+    public final NumberPath<Long> sendUserId = createNumber("sendUserId", Long.class);
 
     public QChat(String variable) {
         this(Chat.class, forVariable(variable), INITS);
