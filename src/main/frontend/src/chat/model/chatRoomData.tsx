@@ -14,10 +14,17 @@ export type Message = {
   sendUserLoginId: string;
   chatRoomId: string;
   readCount: number;
-  regData?: string;
+  regDate?: string;
 };
 
 export type UserState = {
   userId: number;
   userState: string;
+};
+
+export type Item = {
+  itemName: string;
+  description: string;
+  price: number;
+  bargain: boolean;
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import SockJS from "sockjs-client";
 import webstomp from "webstomp-client";
-import { ChatRoom, Message, UserState } from "./model/chatRoomData";
+import { ChatRoom, Item, Message, UserState } from "./model/chatRoomData";
 import {
   getCookieInfo,
   getCookieChatInfo,
@@ -11,7 +11,9 @@ import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { Cookies } from "react-cookie";
 import "./css/ChatButton.css";
-import { Avatar, Button, Input } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
+import { AppBar, Avatar, Button, Input } from "@mui/material";
+import { formatDate, formatDateArray } from "./FormDate";
 
 const ChatButton: React.FC = () => {
   const [responseMessage, setResponseMessage] = useState("");
@@ -42,6 +44,10 @@ const ChatButton: React.FC = () => {
   const chatRoomDataRef = useRef<ChatRoom | null>(null);
 
   const [userState, setUserState] = useState<UserState>();
+
+  const [item, setItem] = useState<Item>();
+  // 채팅 자동으로 위로
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
   const socketConnect = async () => {
     const sockJS = await new SockJS("http://localhost:1234/stomp/chat");
@@ -108,10 +114,31 @@ const ChatButton: React.FC = () => {
             }
             if (payload.chatUserState === "CHAT") {
               const newChat = (
-                <div>
-                  <div className="nickname">{payload.sendUserLoginId}</div>
-                  <div className="message">{payload.message}</div>
-                </div>
+                <>
+                  {payload.sendUserId === sendUserId ? (
+                    <div className="flex items-end space-x-2 ml-auto">
+                      <div className="p-2 rounded-lg bg-blue-500 text-white">
+                        <p className="text-sm">{payload.message}</p>
+                        <p className="text-xs text-white mt-1">
+                          {formatDateArray(payload.regDate)}
+                        </p>
+                      </div>
+                      <Avatar className="w-6 h-6"></Avatar>
+                    </div>
+                  ) : (
+                    <div className="flex items-end space-x-2">
+                      <Avatar className="w-6 h-6"></Avatar>
+                      <div className="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 text-white">
+                        <p className="text-sm">{payload.message}</p>
+                        <p className="text-xs text-white mt-1">
+                          {formatDateArray(payload.regDate)}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {/* <div className="nickname">{payload.sendUserId}</div>
+                  <div className="message">{payload.message}</div> */}
+                </>
               );
 
               setChats((prevChats) => [...prevChats, newChat]);
@@ -182,6 +209,7 @@ const ChatButton: React.FC = () => {
 
         setFetchChats(resUserState.ChatRoom.chats);
         setUserState(resUserState.userStateDto);
+        setItem(resUserState.Item);
         console.log("fetch success");
         console.log(resUserState);
         console.log("채팅 나와라");
@@ -191,16 +219,44 @@ const ChatButton: React.FC = () => {
           const fetchChat = resUserState.ChatRoom.chats.map(
             //이거 사용자 이름 나오게 제대로 해야함
             (chat: Message, index: number) => (
-              <div key={index}>
-                <div className="nickname">
-                  {String(chat.sendUserId) === sendUserId
-                    ? //채팅이 본인이 보낸것일때
-                      sendUserLoginId
-                    : resUserState.ChatRoom.displayName}
-                </div>
-                <div className="message">{chat.message}</div>
-              </div>
+              <>
+                {String(chat.sendUserId) === sendUserId ? (
+                  //채팅이 본인이 보낸것일때
+                  <div className="flex items-end space-x-2 ml-auto" key={index}>
+                    {/* if (chat.readCount == 2) */}
+                    {chat.readCount === 2 && (
+                      <p className="text-xs text-gray-500">읽음</p>
+                    )}
+                    <div className="p-2 rounded-lg bg-blue-500 text-white">
+                      <p className="text-sm">{chat.message}</p>
+                      <p className="text-xs text-white mt-1">
+                        {formatDate(chat.regDate)}
+                      </p>
+                    </div>
+                    <Avatar className="w-6 h-6"></Avatar>
+                  </div>
+                ) : (
+                  <div className="flex items-end space-x-2" key={index}>
+                    <Avatar className="w-6 h-6"></Avatar>
+                    <div className="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 text-white">
+                      <p className="text-sm">{chat.message}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {formatDate(chat.regDate)}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </>
             )
+            // (chat: Message, index: number) => (
+            //   <div key={index}>
+            //       {String(chat.sendUserId) === sendUserId
+            //         ? //채팅이 본인이 보낸것일때
+            //           sendUserLoginId
+            //         : resUserState.ChatRoom.displayName}
+            //     <div className="message">{chat.message}</div>
+            //   </div>
+            // )
           );
 
           setFetchChats(fetchChat);
@@ -287,14 +343,10 @@ const ChatButton: React.FC = () => {
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // const newChat = (
-    //   <div key={chats.length} className="mine">
-    //     <div className="nickname">{userId}</div>
-    //     <div className="message">{messageContent}</div>
-    //   </div>
-    // );
-
-    // setChats((prevChats) => [...prevChats, newChat]);
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
 
     const message = messageContent;
     setMessageContent("");
@@ -303,7 +355,7 @@ const ChatButton: React.FC = () => {
     console.log("내 userId", sendUserId);
     console.log("내 loginId", sendUserLoginId);
 
-    if (message !== "") {
+    if (message.trim() !== "") {
       const messageData: Message = {
         message: message,
         sendUserLoginId: sendUserLoginId,
@@ -332,73 +384,65 @@ const ChatButton: React.FC = () => {
     }
   };
 
+  //스크롤 이벤트
+  useEffect(() => {
+    // 채팅이 업데이트될 때마다 스크롤을 아래로 이동
+
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [chats]);
+
+  useEffect(() => {}, []);
+
   return (
-    <main>
+    <main className="flex flex-col h-screen">
       <div className="flex flex-col h-full bg-[#343a40]">
-        <div className="p-4 bg-gray-200 dark:bg-gray-800">
-          <h2 className="text-lg font-bold text-gray-700 dark:text-gray-200">
-            상품 정보
-          </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-            이곳에 상품에 대한 간단한 정보가 표시됩니다.
-          </p>
-        </div>
-        <div className="flex flex-col flex-1 overflow-y-auto p-4 space-y-4">
-          <div className="flex items-end space-x-2">
-            <Avatar className="w-6 h-6">리로롱</Avatar>
-            <div className="p-2 rounded-lg bg-gray-200 dark:bg-gray-800">
-              <p className="text-sm">안녕하세요!</p>
-              <p className="text-xs text-gray-500 mt-1">12:00 PM</p>
-            </div>
+        <AppBar position="fixed">
+          <div className="p-4 bg-gray-200 dark:bg-gray-800">
+            <h2 className="text-lg font-bold text-gray-700 dark:text-gray-200">
+              {item?.itemName}
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+              {item?.price} 원
+            </p>
           </div>
-          <div className="flex items-end space-x-2 ml-auto">
-            <p className="text-xs text-gray-500">읽음</p>
-            <div className="p-2 rounded-lg bg-blue-500 text-white">
-              <p className="text-sm">안녕하세요, 어떻게 도와드릴까요?</p>
-              <p className="text-xs text-white mt-1">12:01 PM</p>
-            </div>
-            <Avatar className="w-6 h-6">도로롱</Avatar>
-          </div>
-          <div className="flex items-end space-x-2">
-            <Avatar className="w-6 h-6">도로롱</Avatar>
-            <div className="p-2 rounded-lg bg-gray-200 dark:bg-gray-800">
-              <p className="text-sm">제품에 대해 더 알고 싶습니다.</p>
-              <p className="text-xs text-gray-500 mt-1">12:02 PM</p>
-            </div>
-          </div>
-          <div className="flex items-end space-x-2 ml-auto">
-            <p className="text-xs text-gray-500">읽지 않음</p>
-            <div className="p-2 rounded-lg bg-blue-500 text-white">
-              <p className="text-sm">
-                물론이죠, 어떤 제품에 대해 궁금하신가요?
-              </p>
-              <p className="text-xs text-white mt-1">12:03 PM</p>
-            </div>
-            <Avatar className="w-6 h-6">도로롱</Avatar>
-          </div>
-        </div>
-        <div className="border-t p-4 border-gray-600">
-          <form className="flex space-x-3">
-            <Input className="flex-1" placeholder="메시지를 입력하세요..." />
-            <Button type="submit">전송</Button>
-          </form>
+        </AppBar>
+        <div
+          className="flex flex-col flex-1 p-4 space-y-4 overflow-y-auto mt-4 mb-16"
+          ref={chatContainerRef}
+        >
+          {/* 채팅 시작 */}
+          {fetchChats}
+          {chats}
         </div>
       </div>
-      {/* <div className="chat-box">
-          <h2 style={{}}>Room No. {roomId}</h2>
-          <h2>Nickname {sendUserLoginId}</h2>
-          <form onSubmit={handleSendMessage}>
-            <input
-              type="text"
-              id="message"
-              value={messageContent}
-              onChange={(e) => setMessageContent(e.target.value)}
-            />
-            <input type="submit" value="전송" className="btn-send" />
-          </form>
-          <div className="chats">{fetchChats}</div>
-          <div className="chats">{chats}</div>
-        </div> */}
+      <div className="border-t p-4 border-gray-600 fixed bottom-0 left-0 w-full bg-[#343a40]">
+        <form className="flex space-x-3" onSubmit={handleSendMessage}>
+          <Input
+            type="text"
+            className="flex-1"
+            id="message"
+            // inputProps={{ style: { color: "white" } }}
+            value={messageContent}
+            onChange={(e) => setMessageContent(e.target.value)}
+            placeholder="메시지를 입력하세요..."
+            sx={{
+              color: "white", // 글자색을 흰색으로 지정
+              "&::before": {
+                borderBottomColor: "primary", // 밑줄 색상을 흰색으로 지정
+              },
+              "&::after": {
+                borderBottomColor: "white", // 밑줄 색상을 흰색으로 지정
+              },
+            }}
+          />
+          <Button type="submit" className="btn-send" endIcon={<SendIcon />}>
+            전송
+          </Button>
+        </form>
+      </div>
     </main>
   );
 };

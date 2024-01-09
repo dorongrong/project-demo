@@ -6,6 +6,8 @@ import lee.projectdemo.chat.domain.ChatUserState;
 import lee.projectdemo.chat.domain.ChatUserStateDto;
 import lee.projectdemo.chat.service.ChatRoomService;
 import lee.projectdemo.chat.service.UserStateService;
+import lee.projectdemo.item.item.ItemFetchDto;
+import lee.projectdemo.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,8 @@ public class ChatController {
 
     private final UserStateService userStateService;
 
+    private final ItemService itemService;
+
     @PostMapping("/api/chat")
     public ResponseEntity<ConcurrentHashMap<String, Object>> chatEnterFetch(@RequestBody ChatRoomDto chatRoomDto) {
         //senderId와 itemId를 사용해서 채팅방의 유무를 확인후 채팅방이 있으면 가져오고
@@ -32,6 +36,9 @@ public class ChatController {
 
         System.out.println("fetch api 시작");
         ChatRoomDto saveChatRoom = chatRoomService.getOrSaveChatRoom(chatRoomDto);
+
+        ItemFetchDto item = itemService.getFetchItem(chatRoomDto.getItemId());
+
         Long otherUser = saveChatRoom.getOtherUserId();
         //온라인으로 전환
         userStateService.setUserState(chatRoomDto.getSendUserId(), ChatUserState.ONLINE);
@@ -43,6 +50,7 @@ public class ChatController {
         ConcurrentHashMap<String, Object> responseMap = new ConcurrentHashMap<>();
         responseMap.put("userStateDto", userStateDto);
         responseMap.put("ChatRoom", saveChatRoom);
+        responseMap.put("Item", item);
 
         System.out.println("맵 확인@@1" + responseMap);
 

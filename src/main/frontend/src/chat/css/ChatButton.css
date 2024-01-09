@@ -3,11 +3,11 @@ html {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden;
+  /* overflow: hidden; */
   background-color: #212529;
 }
 
-.custom-container {
+/* .custom-container {
   height: 100%;
   max-width: 70%;
   overflow: auto;
@@ -19,4 +19,4 @@ html {
   height: 100%;
   overflow: auto;
   margin: auto;
-}
+} */

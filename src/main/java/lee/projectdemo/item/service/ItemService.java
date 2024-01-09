@@ -3,6 +3,7 @@ package lee.projectdemo.item.service;
 import lee.projectdemo.chat.service.ChatService;
 import lee.projectdemo.item.item.Item;
 import lee.projectdemo.item.item.ItemDto;
+import lee.projectdemo.item.item.ItemFetchDto;
 import lee.projectdemo.item.item.ItemSearchCond;
 import lee.projectdemo.item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,14 @@ public class ItemService {
 
     public Optional<Item> getItem(Long id){
         return itemRepository.findById(id);
+    }
+
+    //채팅방 상단에 아이템 설명을 위해 fetch api로 요청할때 사용
+    public ItemFetchDto getFetchItem(Long id){
+
+        Item item = itemRepository.findById(id).get();
+
+        return new ItemFetchDto(item.getItemName(), item.getDescription(), item.getPrice(), item.getBargain());
     }
 
     public Page<ItemDto> findAllItemPage(ItemSearchCond cond, Pageable pageable) {
