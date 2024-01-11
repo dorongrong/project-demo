@@ -57,6 +57,15 @@ public class ChatController {
         return new ResponseEntity<>(responseMap, HttpStatus.OK);
     }
 
+    @PostMapping("/api/chatFetch")
+    public ResponseEntity<ChatRoomDto> chatFetch(@RequestBody ChatRoomDto chatRoomDto) {
+        //senderId와 itemId를 사용해서 채팅방의 유무를 확인후 채팅방이 있으면 가져오고
+        //없으면 생성하는데 senderId가 itemId의 판매자일경우 생성을 막음
+        ChatRoomDto saveChatRoom = chatRoomService.getOrSaveChatRoom(chatRoomDto);
+
+        return new ResponseEntity<>(saveChatRoom, HttpStatus.OK);
+    }
+
     @PostMapping("/api/unmount")
     public ResponseEntity<String> chatExitFetch(@RequestBody ChatRoomDto chatRoomDto) {
         System.out.println("fetch api 언마운트!! 시작");

@@ -1,6 +1,7 @@
 package lee.projectdemo.chat.service;
 
 
+import jakarta.transaction.Transactional;
 import lee.projectdemo.chat.domain.Chat;
 import lee.projectdemo.chat.domain.ChatDto;
 import lee.projectdemo.chat.domain.ChatRoom;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ChatService {
 

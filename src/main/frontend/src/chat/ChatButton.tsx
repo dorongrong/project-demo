@@ -44,6 +44,7 @@ const ChatButton: React.FC = () => {
   const chatRoomDataRef = useRef<ChatRoom | null>(null);
 
   const [userState, setUserState] = useState<UserState>();
+  const userStateRef = useRef<string>();
 
   const [item, setItem] = useState<Item>();
   // 채팅 자동으로 위로
@@ -113,10 +114,15 @@ const ChatButton: React.FC = () => {
               // setChats 실행 조건 추가
             }
             if (payload.chatUserState === "CHAT") {
+              console.log("확인용", userState);
+
               const newChat = (
                 <>
                   {payload.sendUserId === sendUserId ? (
                     <div className="flex items-end space-x-2 ml-auto">
+                      {userStateRef.current === "ONLINE" && (
+                        <p className="text-xs text-gray-500">읽음</p>
+                      )}
                       <div className="p-2 rounded-lg bg-blue-500 text-white">
                         <p className="text-sm">{payload.message}</p>
                         <p className="text-xs text-white mt-1">
@@ -128,7 +134,7 @@ const ChatButton: React.FC = () => {
                   ) : (
                     <div className="flex items-end space-x-2">
                       <Avatar className="w-6 h-6"></Avatar>
-                      <div className="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 text-white">
+                      <div className="p-2 rounded-lg bg-gray-800 text-white">
                         <p className="text-sm">{payload.message}</p>
                         <p className="text-xs text-white mt-1">
                           {formatDateArray(payload.regDate)}
@@ -223,7 +229,6 @@ const ChatButton: React.FC = () => {
                 {String(chat.sendUserId) === sendUserId ? (
                   //채팅이 본인이 보낸것일때
                   <div className="flex items-end space-x-2 ml-auto" key={index}>
-                    {/* if (chat.readCount == 2) */}
                     {chat.readCount === 2 && (
                       <p className="text-xs text-gray-500">읽음</p>
                     )}
@@ -238,7 +243,7 @@ const ChatButton: React.FC = () => {
                 ) : (
                   <div className="flex items-end space-x-2" key={index}>
                     <Avatar className="w-6 h-6"></Avatar>
-                    <div className="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 text-white">
+                    <div className="p-2 rounded-lg bg-gray-800 text-white">
                       <p className="text-sm">{chat.message}</p>
                       <p className="text-xs text-gray-500 mt-1">
                         {formatDate(chat.regDate)}
@@ -337,6 +342,75 @@ const ChatButton: React.FC = () => {
   useEffect(() => {
     // count 상태가 업데이트된 후에 실행되는 로직
     console.log("count가 변경되었습니다:", userState);
+    userStateRef.current = userState?.userState;
+    // userState가 바뀌면 Online일시 Chat의 모든 메시지에 읽음 추가
+    if (userStateRef.current === "ONLINE") {
+      //fetch api
+      const fetchChatData = async () => {
+        console.log("fetch 확인이용");
+        try {
+          const response = await fetch("http://localhost:1234/api/chatFetch", {
+            method: "POST",
+            credentials: "include", // 쿠키를 전송해야 하는 경우
+            headers: {
+              Authorization: jwtDecode(cookies.get("Authorization")),
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(chatRoomData),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const resUserState = await response.json();
+
+          if (resUserState.chats) {
+            const fetchChat = resUserState.chats.map(
+              //이거 사용자 이름 나오게 제대로 해야함
+              (chat: Message, index: number) => (
+                <>
+                  {String(chat.sendUserId) === sendUserId ? (
+                    //채팅이 본인이 보낸것일때
+                    <div
+                      className="flex items-end space-x-2 ml-auto"
+                      key={index}
+                    >
+                      {chat.readCount === 2 && (
+                        <p className="text-xs text-gray-500">읽음</p>
+                      )}
+                      <div className="p-2 rounded-lg bg-blue-500 text-white">
+                        <p className="text-sm">{chat.message}</p>
+                        <p className="text-xs text-white mt-1">
+                          {formatDate(chat.regDate)}
+                        </p>
+                      </div>
+                      <Avatar className="w-6 h-6"></Avatar>
+                    </div>
+                  ) : (
+                    <div className="flex items-end space-x-2" key={index}>
+                      <Avatar className="w-6 h-6"></Avatar>
+                      <div className="p-2 rounded-lg bg-gray-800 text-white">
+                        <p className="text-sm">{chat.message}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {formatDate(chat.regDate)}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )
+            );
+            setChats([]);
+            setFetchChats(fetchChat);
+          }
+
+          // 서버 응답을 컴포넌트에 넣어서 (저장된) 채팅을 보여줄꺼임
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      };
+      fetchChatData();
+    }
   }, [userState]);
 
   // 메시지 send 버튼
@@ -410,7 +484,7 @@ const ChatButton: React.FC = () => {
           </div>
         </AppBar>
         <div
-          className="flex flex-col flex-1 p-4 space-y-4 overflow-y-auto mt-4 mb-16"
+          className="flex flex-col flex-1 p-4 space-y-4 overflow-y-auto mt-24 mb-16"
           ref={chatContainerRef}
         >
           {/* 채팅 시작 */}

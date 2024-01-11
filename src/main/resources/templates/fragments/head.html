@@ -14,8 +14,6 @@
     
     import { jwtDecode, InvalidTokenError } from "/static/js/jwt-decode.js";
 
-    const sockJs = new SockJS("http://localhost:1234/stomp/chat");
-    const stomp = webstomp.over(sockJs);
     const cookies = getCookie();
     let decodeCookie;
     let itemsId;
@@ -51,10 +49,16 @@
       console.log("STOMP DEBUG", m);
     }
 
-    stomp.debug = onDebug;
+    if (userId) {
 
     // 소켓연결
     if (cookies !== null) {
+
+      const sockJs = new SockJS("http://localhost:1234/stomp/chat");
+      const stomp = webstomp.over(sockJs);
+
+      stomp.debug = onDebug;
+
       stomp.connect(
         "guest",
         "guest",
@@ -81,6 +85,20 @@
         "/"
       );
     }
+
+    // 변수 값이 true이면 해당 태그를 숨깁니다.
+    document.getElementById('userUnknown').style.display = 'none';
+    document.getElementById('userLogin').style.display = 'block';
+    document.getElementById("userId").innerHTML = userId;
+    } else {
+        console.log("로그인 안됐엉!!@@@@");
+
+        // 변수 값이 false이면 해당 태그를 표시합니다.
+        document.getElementById('userUnknown').style.display = 'block';
+        document.getElementById('userLogin').style.display = 'none';
+    }
+
+
   </script>
   <script th:inline="javascript">
         function findAddr() {

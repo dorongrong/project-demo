@@ -1,5 +1,6 @@
 package lee.projectdemo.chat.service;
 
+import jakarta.transaction.Transactional;
 import lee.projectdemo.chat.domain.ChatUserState;
 import lee.projectdemo.chat.domain.ChatUserStateDto;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static lee.projectdemo.chat.domain.ChatUserState.UNKNOWN;
 
 @Service
+@Transactional
 public class UserStateService {
 
     private Map<Long, ChatUserState> userStatusMap = new ConcurrentHashMap<>();

@@ -2,6 +2,7 @@ package lee.projectdemo.login.service;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lee.projectdemo.exception.UserIdExistsException;
 import lee.projectdemo.item.item.Item;
 import lee.projectdemo.login.repository.UserRepository;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class LoginService {
 

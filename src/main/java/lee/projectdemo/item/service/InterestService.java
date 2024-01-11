@@ -1,6 +1,7 @@
 package lee.projectdemo.item.service;
 
 
+import jakarta.transaction.Transactional;
 import lee.projectdemo.item.item.Item;
 import lee.projectdemo.item.item.interest.Interest;
 import lee.projectdemo.item.repository.InterestRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class InterestService {
 
     private final InterestRepository interestRepository;

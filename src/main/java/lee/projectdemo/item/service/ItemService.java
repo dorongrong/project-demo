@@ -1,5 +1,6 @@
 package lee.projectdemo.item.service;
 
+import jakarta.transaction.Transactional;
 import lee.projectdemo.chat.service.ChatService;
 import lee.projectdemo.item.item.Item;
 import lee.projectdemo.item.item.ItemDto;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ItemService {
 

@@ -1,79 +1,90 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<th:block th:fragment="headerFragment">
-    <header style="background-color: #212529;">
-        <div class="px-3 py-2 border-bottom ">
-            <div class="container">
-                <div
-                        class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"
-                >
-                    <div
-                            class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none"
-                    >
-                        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-                            <svg class="bi me-2" width="40" height="32"><use xlink:href="#logo"/></svg>
-                            <span class="fs-4">Project Demo</span>
-                        </a>
-                    </div>
-                    <ul
-                            class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small"
-                    >
-                        <li>
-                            <a href="/" class="nav-link text-white">
-                                <svg class="bi d-block mx-auto mb-1" width="24" height="24">
-                                    <use xlink:href="#home" />
-                                </svg>
-                                Home
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-link text-white">
-                                <svg class="bi d-block mx-auto mb-1" width="24" height="24">
-                                    <use xlink:href="#chat" />
-                                </svg>
-                                Chat
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-link text-white">
-                                <svg class="bi d-block mx-auto mb-1" width="24" height="24">
-                                    <use xlink:href="#grid" />
-                                </svg>
-                                My Items
-                            </a>
-                        </li>
-                        <li>
-<!--                            거북이-->
-                            <div class="flex-shrink-0 dropdown">
-<!--                            추후 내정보로 이동-->
-                            <a th:if="${user != null}" href="#" class="nav-link text-white"
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                <svg class="bi d-block mx-auto mb-1" width="24" height="24">
-                                    <use xlink:href="#people-circle" />
-                                </svg>
-                                <span th:text="${user}"></span>
-                            </a>
-                            <a th:unless="${user != null}" href="/login" class="nav-link text-white">
-                                <svg class="bi d-block mx-auto mb-1" width="24" height="24">
-                                    <use xlink:href="#people-circle" />
-                                </svg>
-                                Login
-                            </a>
-                                <ul class="dropdown-menu text-small shadow">
-                                    <li><a class="dropdown-item" href="#">판매 아이템</a></li>
-                                    <li><a class="dropdown-item" href="#">관심 아이템</a></li>
-                                    <li><a class="dropdown-item" href="#">채팅</a></li>
-                                    <li><hr class="dropdown-divider" /></li>
-                                    <li><a class="dropdown-item" href="/logout">Sign out</a></li>
-                                </ul>
-                            </div>
-<!--                            거북이-->
-
-                        </li>
-                    </ul>
-                </div>
+  <th:block th:fragment="headerFragment">
+    <header style="background-color: #212529">
+      <div class="px-3 py-2 border-bottom">
+        <div class="container">
+          <div
+            class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"
+          >
+            <div
+              class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none"
+            >
+              <a
+                href="/"
+                class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
+              >
+                <svg class="bi me-2" width="40" height="32">
+                  <use xlink:href="#logo" />
+                </svg>
+                <span class="fs-4">Project Demo</span>
+              </a>
             </div>
+            <ul
+              class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small"
+            >
+              <li>
+                <a href="/" class="nav-link text-white">
+                  <svg class="bi d-block mx-auto mb-1" width="24" height="24">
+                    <use xlink:href="#home" />
+                  </svg>
+                  Home
+                </a>
+              </li>
+              <li>
+                <a href="#" class="nav-link text-white">
+                  <svg class="bi d-block mx-auto mb-1" width="24" height="24">
+                    <use xlink:href="#chat" />
+                  </svg>
+                  Chat
+                </a>
+              </li>
+              <li>
+                <a href="#" class="nav-link text-white">
+                  <svg class="bi d-block mx-auto mb-1" width="24" height="24">
+                    <use xlink:href="#grid" />
+                  </svg>
+                  My Items
+                </a>
+              </li>
+              <li>
+                <!--                            거북이-->
+                <div class="flex-shrink-0 dropdown">
+                  <!--                            추후 내정보로 이동-->
+                  <a
+                    id="userLogin"
+                    href="#"
+                    class="nav-link text-white"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <svg class="bi d-block mx-auto mb-1" width="24" height="24">
+                      <use xlink:href="#people-circle" />
+                    </svg>
+                    <span id="userId"></span>
+                  </a>
+                  <a id="userUnknown" href="/login" class="nav-link text-white">
+                    <svg class="bi d-block mx-auto mb-1" width="24" height="24">
+                      <use xlink:href="#people-circle" />
+                    </svg>
+                    Login
+                  </a>
+                  <ul class="dropdown-menu text-small shadow">
+                    <li><a class="dropdown-item" href="#">판매 아이템</a></li>
+                    <li><a class="dropdown-item" href="#">관심 아이템</a></li>
+                    <li><a class="dropdown-item" href="#">채팅</a></li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                      <a class="dropdown-item" href="/logout">Sign out</a>
+                    </li>
+                  </ul>
+                </div>
+                <!--                            거북이-->
+              </li>
+            </ul>
+          </div>
         </div>
+      </div>
     </header>
-</th:block>
+  </th:block>
 </html>

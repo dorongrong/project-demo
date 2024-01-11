@@ -1,7 +1,6 @@
 package lee.projectdemo.login.repository;
 
 
-import jakarta.transaction.Transactional;
 import lee.projectdemo.item.item.Item;
 import lee.projectdemo.login.user.User;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional //이건 나중에 빼야함
 @RequiredArgsConstructor
 public class JpaUserRepository implements UserRepository {
 

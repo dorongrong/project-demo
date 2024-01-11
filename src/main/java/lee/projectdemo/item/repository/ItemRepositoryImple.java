@@ -3,7 +3,6 @@ package lee.projectdemo.item.repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import lee.projectdemo.item.item.Item;
 import lee.projectdemo.item.item.ItemDto;
 import lee.projectdemo.item.item.ItemSearchCond;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 import static lee.projectdemo.item.item.QItem.item;
 
 @Repository
-@Transactional //추후 변경
 public class ItemRepositoryImple implements ItemRepository {
 
     private final EntityManager em;

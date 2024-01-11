@@ -76,12 +76,37 @@
     background: #000;
   }
   .btn-detail {
-    border-radius: 12px;
     height: 50px;
     flex: 1;
     margin: 0px 10px;
   }
     </style>
+    <script>
+
+      var currentSlide = 0;
+  
+      function changeSlide(slideId) {
+        //다시
+        var slides = document.querySelectorAll('.slides .slide');
+        var slider = document.querySelector('.slides');
+
+        // 현재 슬라이드 비활성화
+        slides[currentSlide].classList.remove('active');
+
+        // 새로운 슬라이드 활성화
+        slides[slideId-1].classList.add('active');
+
+        // 슬라이드 너비를 이용하여 가로 스크롤 위치 계산
+        var scrollPosition = slides[slideId-1].offsetLeft;
+
+        // 가로 스크롤 이동
+        slider.scrollTo({ left: scrollPosition, behavior: 'smooth' });
+
+        // 현재 슬라이드 업데이트
+        currentSlide = slideId-1;
+
+      }
+  </script>
 </head>
 <th:block layout:fragment="content">
 <div class="container" style="max-width: 1000px;">
@@ -91,23 +116,24 @@
     <section class="py-5">
         <div class="container px-4 px-lg-5">
             <div class="row row-cols-1 row-cols-md-2 border-bottom">
-                <div class="slider col mb-5 a-container">
-                    <div class="slides">
-                        <th:block th:each="image, iterStat : ${images}" th:remove="tag">
-                            <div th:id="'slide-' + ${iterStat.index + 1}">
-                                <img class="image-detail" th:src="${image}" />
-                            </div>
-                        </th:block>
-                    </div>
-                    <th:block th:each="image, iterStat : ${images}" th:remove="tag">
-                        <a th:href="'#slide-' + ${iterStat.index + 1}" th:text="${iterStat.index + 1}"></a>
-                    </th:block>
+                <div class="slider col mb-5 a-container" id="imageSlider">
+                  <div class="slides">
+                      <th:block th:each="image, iterStat : ${images}" th:remove="tag">
+                          <div th:id="'slide-' + ${iterStat.index + 1}" class="slide">
+                              <img class="image-detail" th:src="${image}" />
+                          </div>
+                      </th:block>
+                  </div>
+
+                  <th:block th:each="image, iterStat : ${images}" th:remove="tag">
+                      <a href="javascript:void(0);" th:onclick="changeSlide([[${iterStat.index + 1}]])" th:text="${iterStat.index + 1}"></a>
+                  </th:block>
                 </div>
                 <!--                슬라이드-->
                 <div class="col mb-5">
                     <div class="col-md-12 ms-2">
                         <h2 style="color: white;" th:text="${item.itemName}">상품명</h2>
-                        <h1 style="color: white;" th:text="${item.price}">90000원</h1>
+                        <h1 style="color: white;" th:text="${item.price + '원'}">가격을 불러오지 못했습니다.</h1>
                         <hr style="background-color: lightgray;">
                         <ul id="example0">
                             <div class="row row-cols-2">
@@ -125,28 +151,20 @@
                                 <span class="col-md-8" style="color: white;" th:text="${item.state}">보통</span>
                             </div>
                         </ul>
-                        <div style="display: flex; justify-content: space-between;">
+                        <div style="display: flex;">
                             <form th:action="@{'/items/' + ${item.itemId} + '/interest'}" method="post">
-                            <button class="btn-detail" style="background-color: gray;">
+                            <button class="btn btn-secondary btn-detail" type="submit">
+                              <!-- <button type="button" class="btn btn-secondary"> -->
                                 <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij4KICAgIDxwYXRoIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTcuMDA1IDEuMDQ1aC4yMzNjLjI4LjIyOC41MzcuNDkuNzYyLjc3Ny4yMjUtLjI4OC40ODEtLjU0OS43NjItLjc3N2guMjMzYTYuMTYgNi4xNiAwIDAgMC0uMDktLjExM0M5LjY4NC4zNDQgMTAuNjI4IDAgMTEuNiAwIDE0LjA2NCAwIDE2IDIuMTEgMTYgNC43OTZjMCAzLjI5Ni0yLjcyIDUuOTgxLTYuODQgMTAuMDYyTDggMTZsLTEuMTYtMS4xNTFDMi43MiAxMC43NzcgMCA4LjA5MiAwIDQuNzk2IDAgMi4xMSAxLjkzNiAwIDQuNCAwYy45NzIgMCAxLjkxNi4zNDQgMi42OTUuOTMyYTYuMTYgNi4xNiAwIDAgMC0uMDkuMTEzeiIvPgo8L3N2Zz4K" width="16" height="16" alt="찜 아이콘">
                                 <span>찜</span><span th:text="${item.interestCount}"></span>
                             </button>
                             </form>
-                            <!-- 추후 refactor -->
-                            <!-- 본인이 올린 아이템인 경우 채팅 버튼이 아닌 내 채팅으로 이동 버튼으로 바뀜 -->
-
-                            <!-- <a th:href="@{'http://localhost:3000/items/' + ${item.itemId} + '/chat'}">
-                            <button class="btn-detail" style="background-color: yellow;">채팅</button>
-                            </a> -->
-
                             <a th:if="${chatButton}" th:href="@{'http://localhost:1234/chat'}">
-                              <button class="btn-detail" style="background-color: red;" th:text="${chatButton}"></button>
-                          </a>
-                          <a th:unless="${chatButton}" th:href="@{'http://localhost:3000/items/' + ${item.itemId} + '/chat/' + ${buyerId}}">
-                              <button class="btn-detail" style="background-color: yellow;" th:text="'채팅'"></button>
-                          </a>
-
-                            <button class="btn-detail" style="background-color: blue;">바로구매</button>
+                              <button class="btn-detail btn btn-danger" type="button" th:text="${chatButton}"></button>
+                            </a>
+                            <a th:unless="${chatButton}" th:href="@{'http://localhost:3000/items/' + ${item.itemId} + '/chat/' + ${buyerId}}">
+                                <button class="btn-detail btn btn-warning" type="button" th:text="'채팅'"></button>
+                            </a>
                         </div>
                     </div>
                 </div>
