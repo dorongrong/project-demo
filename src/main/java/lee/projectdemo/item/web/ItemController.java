@@ -110,11 +110,6 @@ public class ItemController {
         return "items/details";
     }
 
-    @GetMapping("/items/addd")
-    public String test () {
-        return "items/test";
-    }
-
     //아이템 추가 페이지 get
     // /add
     @GetMapping("/items/add")

@@ -64,6 +64,7 @@ public class ItemService {
         return new ItemFetchDto(item.getItemName(), item.getDescription(), item.getPrice(), item.getBargain());
     }
 
+    //pageable 사용
     public Page<ItemDto> findAllItemPage(ItemSearchCond cond, Pageable pageable) {
 
         Page<ItemDto> itemList = itemRepository.findAllPage(cond, pageable);

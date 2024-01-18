@@ -3,32 +3,26 @@
 <th:block layout:fragment="content">
   <div class="container" style="max-width: 1000px;">
     <div class="py-5 text-center">
-      <h2 style="color: #dee2e6;">최신 등록</h2>
+      <h2 style="color: #dee2e6;">최신 상품</h2>
     </div>
     <section class="py-5">
       <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 justify-content-center">
-          <!-- Thymeleaf iteration -->
           <div th:each="item : ${itemList}" class="col mb-5 a-container">
             <a href="/" th:href="@{'/items/' + ${item.itemId}}">
             <div class="card h-100">
-              <!-- Product image -->
               <div class="image-container">
               <img class="card-img-top img-home" th:if="${item.imageUrls != null and item.imageUrls.size() > 0}" th:src="${item.imageUrls[0]}" />
               </div>
-              <!-- Product details -->
               <div class="card-body p-4">
                 <div class="text-center">
-                  <!-- Product name -->
                   <h5 class="fw-bolder" th:text="${item.itemName}"></h5>
-                  <!-- Product price -->
                   <span th:text="${item.price + '원'}"></span>
                 </div>
               </div>
             </div>
             </a>
           </div>
-          <!-- End Thymeleaf iteration -->
         </div>
       </div>
     </section>
