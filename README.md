@@ -16,8 +16,20 @@
 FE & BE 시스템 아키텍처
 -------------
 
+![FE   BE System Architecture](https://github.com/dorongrong/project-demo/assets/84131419/79e54099-0680-488a-8f77-a835fa1c3229)
+
+
 ERD 다이어그램
 -------------
 
+![Copy of Copy of Copy of Project demo (1)](https://github.com/dorongrong/project-demo/assets/84131419/5291fc12-1c8e-4549-b61d-9d046396517f)
+
+
+
 엔티티 관계도
 -------------
+
+![project-demo 엔티티 다이어그램](https://github.com/dorongrong/project-demo/assets/84131419/e2ce2569-60e3-4fd8-a669-3f4b840534eb)
+
+
+
