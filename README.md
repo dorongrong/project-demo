@@ -33,3 +33,44 @@ ERD 다이어그램
 
 
 
+기능
+-------------
+
+
+
+### 회원가입 & @Validation
+
+<img src="https://github.com/dorongrong/project-demo/assets/84131419/edfcd0c5-b56f-4ac1-a071-d30b6e1f5e29" width="400" height="500"/>
+
+<img src="https://github.com/dorongrong/project-demo/assets/84131419/850c125b-db1f-4958-9e9b-0038d729ba35" width="400" height="500"/>
+
+
+
+
+### 상품등록 & @Validation
+
+<img src="https://github.com/dorongrong/project-demo/assets/84131419/007f5aba-9692-4c63-98a1-709d35b135d3" width="500" height="600"/>
+
+
+
+### 등록된 상품 상세정보
+
+<img src="https://github.com/dorongrong/project-demo/assets/84131419/edfe96d8-bdf5-40ac-89c7-14bc4d12d46a" width="800" height="600"/>
+
+
+
+### QueryDsl 동적 검색 & Pageable
+
+<img src="https://github.com/dorongrong/project-demo/assets/84131419/1364ac8d-e1d3-480a-aed1-b99986b5b715" width="600" height="600"/>
+
+<img src="https://github.com/dorongrong/project-demo/assets/84131419/7d280ab9-a299-4048-a510-d92c3695de07" width="600" height="600"/>
+
+
+
+
+### RabbitMQ를 활용한 채팅 및 읽음기능
+
+
+<img src="https://github.com/dorongrong/project-demo/assets/84131419/56630282-1252-4ba5-9ad5-08aa59348ece" width="500" height="700"/>
+
+
