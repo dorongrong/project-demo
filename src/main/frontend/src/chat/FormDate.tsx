@@ -4,9 +4,12 @@ const formatDate = (dateString: string | undefined): string => {
   }
 
   const date = new Date(dateString);
-  return `${
-    date.getMonth() + 1
-  }/${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+  const formattedMonth = (date.getMonth() + 1).toString().padStart(2, "0");
+  const formattedDay = date.getDate().toString().padStart(2, "0");
+  const formattedHours = date.getHours().toString().padStart(2, "0");
+  const formattedMinutes = date.getMinutes().toString().padStart(2, "0");
+
+  return `${formattedMonth}/${formattedDay} ${formattedHours}:${formattedMinutes}`;
 };
 
 const formatDateArray = (regDateArray: any) => {

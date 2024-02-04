@@ -47,7 +47,7 @@ public class StompRabbitController {
         template.convertAndSend(CHAT_EXCHANGE_NAME, chatRoomId + "." + buyerId, content);
 
         //이건 여러 사용자가 보낸 모든 큐가 읽힌다는걸 유의
-        listenerContainer.addQueueNames("chat.queue." + chatRoomId);
+//        listenerContainer.addQueueNames("chat.queue." + chatRoomId);
 
 //        return content;
     }

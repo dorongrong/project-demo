@@ -45,8 +45,7 @@ public class ChatRoomService {
                                     System.out.println(itemId + "큐가 존재하지 않습니다");
                                     String queueNameString = Long.toString(itemId);
                                     createDynamicQueueAndBinding(queueNameString);
-                                    //생성된 큐 구독
-
+                                    //생성된 큐 구독 (서버단에서 불가능?)
                                 } else {
                                     //생성된 큐랑 바인딩 큐에 맞게 바꿔야함
                                     System.out.println(itemId + "큐가 존재합니다");
@@ -60,6 +59,13 @@ public class ChatRoomService {
         }
     }
 
+//    public void createDynamicQueue(Long id, String userLoginId) {
+//        try {
+//
+//        }
+//    }
+
+    //이거 추후 수정필요함 제대로 못찾는듯
     public boolean isQueueExists(Long queueName) {
 
         String queueNameString = Long.toString(queueName);

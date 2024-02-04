@@ -71,33 +71,31 @@ public class ItemController {
 
         String cToken = loginService.getCookie(request);
         Authentication user = loginService.getUserDetail(cToken);
-        PrincipalDetails userDetails = (PrincipalDetails)user.getPrincipal();
+        PrincipalDetails userDetails = (PrincipalDetails) user.getPrincipal();
         //토큰에서 빼온 유저 정보
         User tokenUser = userDetails.getUser();
 
         //사이트 방문자랑 판매자 동일 인물 비교 후 채팅버튼 변경
         if (tokenUser == item.getUser()) {
             model.addAttribute("chatButton", "내 채팅방");
-        }
-        else{
+        } else {
             model.addAttribute("buyerId", tokenUser.getId());
         }
 
         List<String> imageURLs = new ArrayList<>();
 
         //아이템 상세 이미지
-        if(item.getImages().size() == 0){
+        if (item.getImages().size() == 0) {
             //이미지가 없을 경우 대체이미지 삽입
             imageURLs.add(s3Service.loadEmptyImage());
-        }
-        else{
+        } else {
             for (Image image : item.getImages()) {
                 imageURLs.add(s3Service.loadImage(image.getStoreFileName()));
             }
         }
 
         ItemDto itemDetails = new ItemDto(item.getId(), item.getItemName(), item.getDescription(), item.getPrice(),
-                item.getBargain(), item.getCreatedAt() ,item.getImages(), item.getState(), item.getInterestCount());
+                item.getBargain(), item.getCreatedAt(), item.getImages(), item.getState(), item.getInterestCount());
 
 //        아이템 시간 계산 모델에 따로 넣는 이유는 locadatetime 이라는 데이터타입때문임
         String time = formatTime(itemDetails.getDate());
@@ -113,7 +111,7 @@ public class ItemController {
     //아이템 추가 페이지 get
     // /add
     @GetMapping("/items/add")
-    public String itemAddPage (@ModelAttribute("item") ItemRegDto itemRegDto){
+    public String itemAddPage(@ModelAttribute("item") ItemRegDto itemRegDto) {
         return "items/addItem";
     }
 
@@ -121,9 +119,9 @@ public class ItemController {
     // /add
 
     @PostMapping("/items/add")
-    public String itemAdd (@Valid @ModelAttribute("item") ItemRegDto itemRegDto, BindingResult bindingResult,
-                           HttpServletRequest request,  RedirectAttributes
-                                       redirectAttributes) throws IOException {
+    public String itemAdd(@Valid @ModelAttribute("item") ItemRegDto itemRegDto, BindingResult bindingResult,
+                          HttpServletRequest request, RedirectAttributes
+                                  redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
             return "items/addItem";
         }
@@ -131,7 +129,7 @@ public class ItemController {
         //아이템 저장 서비스에 값 넘겨줘서 저장 엔티티 주인은 걱정하지마라 어차피 둘다 저장할꺼다
         String cToken = loginService.getCookie(request);
         Authentication user = loginService.getUserDetail(cToken);
-        PrincipalDetails userDetails = (PrincipalDetails)user.getPrincipal();
+        PrincipalDetails userDetails = (PrincipalDetails) user.getPrincipal();
         //토큰에서 빼온 유저 정보
         User tokenUser = userDetails.getUser();
 
@@ -140,7 +138,7 @@ public class ItemController {
 
         //S3 업로드와 동시에 List<Image>객체 반환(Image 객체에는 Item이 들어가있지 않은)
         //이미지를 넣지 않았을때
-        if(itemRegDto.getImages().get(0).getOriginalFilename() == ""){
+        if (itemRegDto.getImages().get(0).getOriginalFilename() == "") {
             Item item = new Item(itemRegDto.getItemName(), itemRegDto.getDescription(), itemRegDto.getPrice(),
                     itemRegDto.getBargain(), tokenUser, itemRegDto.getState(), 0);
             itemService.itemSave(item);
@@ -149,8 +147,7 @@ public class ItemController {
 
             // 아이템 상세 페이지로 이동
             return "redirect:/items/{itemId}";
-        }
-        else{
+        } else {
             List<Image> storeImageFiles = s3Service.uploadFile(itemRegDto.getImages(), PRODUCT_IMAGE_PATH);
 
             //storeImageFiles에는 ID,Item 이 세팅 안돼있음
@@ -176,7 +173,7 @@ public class ItemController {
         //아이템 저장 서비스에 값 넘겨줘서 저장 엔티티 주인은 걱정하지마라 어차피 둘다 저장할꺼다
         String cToken = loginService.getCookie(request);
         Authentication user = loginService.getUserDetail(cToken);
-        PrincipalDetails userDetails = (PrincipalDetails)user.getPrincipal();
+        PrincipalDetails userDetails = (PrincipalDetails) user.getPrincipal();
 
         //토큰에서 빼온 유저 정보
         User tokenUser = userDetails.getUser();
@@ -218,5 +215,7 @@ public class ItemController {
             return duration.toMinutes() + "분";
         }
     }
+
+    
 
 }

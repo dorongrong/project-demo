@@ -18,6 +18,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,6 +26,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableRabbit
 @RequiredArgsConstructor
 public class RabbitConfig {
+
+    @Value("${spring.rabbitmq.host}")
+    private String host;
 
     private final DynamicMessageListener dynamicMessageListener;
 
@@ -89,7 +93,8 @@ public class RabbitConfig {
     @Bean
     public ConnectionFactory connectionFactory(){
         CachingConnectionFactory factory = new CachingConnectionFactory();
-        factory.setHost("localhost");
+        //이 부분 localhost로 하고 properties의 spring.rabbitmq.host 부분이랑 매핑해도 안먹히는거같음
+        factory.setHost(host);
         factory.setUsername("guest");
         factory.setPassword("guest");
         return factory;

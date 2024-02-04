@@ -52,7 +52,6 @@ public class ChatController {
         responseMap.put("ChatRoom", saveChatRoom);
         responseMap.put("Item", item);
 
-        System.out.println("맵 확인@@1" + responseMap);
 
         return new ResponseEntity<>(responseMap, HttpStatus.OK);
     }

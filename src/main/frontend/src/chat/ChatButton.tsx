@@ -51,14 +51,15 @@ const ChatButton: React.FC = () => {
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
   const socketConnect = async () => {
-    const sockJS = await new SockJS("http://localhost:1234/stomp/chat");
+    const sockJS = await new SockJS("http://localhost:9097/stomp/chat");
+    console.log(sockJS);
     console.log("socketConnect 진입?");
 
     stomp.current = webstomp.over(sockJS);
 
     const onError = (e: any) => {
       console.log("STOMP ERROR", e);
-      console.log("다시 연결");
+      console.log("RE CONNECT");
 
       stomp.current.disconnect(function () {
         console.log("Disconnected successfully.");
@@ -156,7 +157,6 @@ const ChatButton: React.FC = () => {
         );
         //사용자 상태 업로드
 
-        //폐기
         stomp.current.send(
           `/pub/chat.enter.${roomId}.${buyerId}`,
           JSON.stringify({
@@ -189,14 +189,12 @@ const ChatButton: React.FC = () => {
   //변수 할당후 fetch api 실행
   useEffect(() => {
     //chatRoom 데이터 할당
-
     chatRoomDataRef.current = chatRoomData;
 
     //fetch api
     const fetchData = async () => {
       try {
-        console.log("가긴하냐?");
-        const response = await fetch("http://localhost:1234/api/chat", {
+        const response = await fetch("http://localhost:9097/api/chat", {
           method: "POST",
           credentials: "include", // 쿠키를 전송해야 하는 경우
           headers: {
@@ -209,17 +207,13 @@ const ChatButton: React.FC = () => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        // response가 서버로부터 온 답변이 맞아? 다시 확인해
+
         const resUserState = await response.json();
         // const resUserState: UserState = await response.json();
 
         setFetchChats(resUserState.ChatRoom.chats);
         setUserState(resUserState.userStateDto);
         setItem(resUserState.Item);
-        console.log("fetch success");
-        console.log(resUserState);
-        console.log("채팅 나와라");
-        console.log(resUserState.ChatRoom.chats);
 
         if (resUserState.ChatRoom.chats) {
           const fetchChat = resUserState.ChatRoom.chats.map(
@@ -291,7 +285,7 @@ const ChatButton: React.FC = () => {
   useEffect(() => {
     const fetchUnmountData = async () => {
       try {
-        const response = await fetch("http://localhost:1234/api/unmount", {
+        const response = await fetch("http://localhost:9097/api/unmount", {
           method: "POST",
           credentials: "include", // 쿠키를 전송해야 하는 경우
           headers: {
@@ -341,15 +335,13 @@ const ChatButton: React.FC = () => {
 
   useEffect(() => {
     // count 상태가 업데이트된 후에 실행되는 로직
-    console.log("count가 변경되었습니다:", userState);
     userStateRef.current = userState?.userState;
-    // userState가 바뀌면 Online일시 Chat의 모든 메시지에 읽음 추가
+    // userState가 바뀌면 Online일시 Chat의 모든 메시지에 읽음 추가 => 그냥 fetch 한번 더 받아서 전부 읽음으로 만듬
     if (userStateRef.current === "ONLINE") {
       //fetch api
       const fetchChatData = async () => {
-        console.log("fetch 확인이용");
         try {
-          const response = await fetch("http://localhost:1234/api/chatFetch", {
+          const response = await fetch("http://localhost:9097/api/chatFetch", {
             method: "POST",
             credentials: "include", // 쿠키를 전송해야 하는 경우
             headers: {
@@ -375,9 +367,10 @@ const ChatButton: React.FC = () => {
                       className="flex items-end space-x-2 ml-auto"
                       key={index}
                     >
-                      {chat.readCount === 2 && (
+                      <p className="text-xs text-gray-500">읽음</p>
+                      {/* {chat.readCount === 2 && (
                         <p className="text-xs text-gray-500">읽음</p>
-                      )}
+                      )} */}
                       <div className="p-2 rounded-lg bg-blue-500 text-white">
                         <p className="text-sm">{chat.message}</p>
                         <p className="text-xs text-white mt-1">
@@ -424,10 +417,6 @@ const ChatButton: React.FC = () => {
 
     const message = messageContent;
     setMessageContent("");
-
-    console.log("상대 유저의 상태", userState?.userState);
-    console.log("내 userId", sendUserId);
-    console.log("내 loginId", sendUserLoginId);
 
     if (message.trim() !== "") {
       const messageData: Message = {

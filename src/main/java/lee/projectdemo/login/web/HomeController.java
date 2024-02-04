@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lee.projectdemo.auth.PrincipalDetails;
 import lee.projectdemo.chat.service.ChatRoomService;
 import lee.projectdemo.item.aws.AwsS3Service;
-import lee.projectdemo.item.item.Item;
 import lee.projectdemo.item.item.ItemDto;
 import lee.projectdemo.item.item.ItemSearchCond;
 import lee.projectdemo.item.service.ItemService;
@@ -83,10 +82,10 @@ public class HomeController {
                 model.addAttribute("user", username);
                 //다시 변경
 
-                //로그인한 순간 유저의 아이템 전부 구독
-                List<Item> items = userDetails.getItem();
-                if (!items.isEmpty())
-                chatRoomService.subscribeQueue(items,userId);
+                //로그인한 순간 유저의 아이템 전부 구독 X 본인의 아이템 큐를 동적 생성하는거임
+//                List<Item> items = userDetails.getItem();
+//                if (!items.isEmpty())
+//                chatRoomService.subscribeQueue(items,userId);
                 return "home";
             }
 

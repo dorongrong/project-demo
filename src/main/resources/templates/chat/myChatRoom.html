@@ -5,16 +5,33 @@
   layout:decorate="layout/default"
 >
   <th:block layout:fragment="content">
-    <div class="container" style="max-width: 1000px">
-      <h2>Chat Rooms:</h2>
-      <div th:each="roomName : ${chatRoom}">
+    <div class="container" style="max-width: 1000px; margin-bottom: 50px">
+      <div class="py-5 text-center">
+        <h2>전체 채팅방</h2>
+      </div>
+      <div th:each="roomName : ${chatRoom}" style="margin-bottom: 10px">
         <a
           th:href="@{'http://localhost:3000/items/' + ${roomName.itemId} + '/chat/' + ${roomName.buyerId}}"
+          style="display: flex; justify-content: center"
         >
-          <button
-            th:text="${roomName.itemId} + ${roomName.displayName}"
+          <img
+            th:src="${roomName.imageURLs[0]}"
+            style="width: 100px; height: 100px; border-radius: 10px"
+          />
+          <div style="display: flex; flex-direction: column; margin-left: 10px; width: 200px">
+            <div
+              th:text="${roomName.itemName}"
+              style="font-size: 20px; color: white"
+            ></div>
+            <div
+              th:text="${roomName.displayName}"
+              style="font-size: 15px; color: white"
+            ></div>
+          </div>
+          <!-- <button
+            th:text="${roomName.itemName} + ${roomName.displayName}"
             class="btn-chat"
-          ></button>
+          ></button> -->
         </a>
       </div>
     </div>

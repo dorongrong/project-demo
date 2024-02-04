@@ -20,16 +20,19 @@ public class ChatRoomDto {
 
     private Long buyerId;
 
+    private List<String> imageURLs;
+
     private List<Chat> chats = new ArrayList<>();
 
     public ChatRoomDto() {
     }
 
-    public ChatRoomDto(Long itemId, String displayName, String itemName, Long buyerId) {
+    public ChatRoomDto(Long itemId, String displayName, String itemName, Long buyerId, List<String> imageURLs) {
         this.itemId = itemId;
         this.displayName = displayName;
         this.itemName = itemName;
         this.buyerId = buyerId;
+        this.imageURLs = imageURLs;
     }
 
     public ChatRoomDto(Long itemId, String sendUserLoginId, String displayName, String itemName, List<Chat> chats, Long otherUser) {

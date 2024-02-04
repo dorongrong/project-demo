@@ -54,7 +54,7 @@
     // 소켓연결
     if (cookies !== null) {
 
-      const sockJs = new SockJS("http://localhost:1234/stomp/chat");
+      const sockJs = new SockJS("http://localhost:9097/stomp/chat");
       const stomp = webstomp.over(sockJs);
 
       stomp.debug = onDebug;
