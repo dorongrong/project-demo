@@ -9,6 +9,20 @@
 * 보통 쇼핑몰과 게시판을 주로 하는데 중고거래 사이트가 쇼핑몰과 게시판 두 프로젝트의 성향을 가지고있어 선택했습니다.
 
 <br/>
+
+프로젝트 실행 방법
+-------------
+
+    docker pull dorongrong/my-rabbitmq
+    docker pull dorongrong/front
+    docker pull dorongrong/back
+    docker network create <network name>
+    docker run -d --name my-rabbitmq --network my-network -p 5672:5672 -p 15672:15672 -p 61613:61613 dorongrong/my-rabbitmq
+    docker run --network my-network -p 3000:3000 dorongrong/front
+    docker run --network my-network -p 9097:9097 dorongrong/back
+
+
+<br/>
   
 핵심 기능
 -------------
