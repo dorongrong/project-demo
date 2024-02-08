@@ -9,20 +9,6 @@
 * 보통 쇼핑몰과 게시판을 주로 하는데 중고거래 사이트가 쇼핑몰과 게시판 두 프로젝트의 성향을 가지고있어 선택했습니다.
 
 <br/>
-
-프로젝트 실행 방법
--------------
-
-    docker pull dorongrong/my-rabbitmq
-    docker pull dorongrong/front
-    docker pull dorongrong/back
-    docker network create <network name>
-    docker run -d --name my-rabbitmq --network my-network -p 5672:5672 -p 15672:15672 -p 61613:61613 dorongrong/my-rabbitmq
-    docker run --network my-network -p 3000:3000 dorongrong/front
-    docker run --network my-network -p 9097:9097 dorongrong/back
-
-
-<br/>
   
 핵심 기능
 -------------
@@ -66,61 +52,61 @@ ERD 다이어그램
 
 ### 회원가입 & @Validation
 
-<br/>
-
-<img src="https://github.com/dorongrong/project-demo/assets/84131419/edfcd0c5-b56f-4ac1-a071-d30b6e1f5e29" width="400" height="500"/>
-
-<img src="https://github.com/dorongrong/project-demo/assets/84131419/850c125b-db1f-4958-9e9b-0038d729ba35" width="400" height="500"/>
-
-
 
 * Spring Security를 활용한 비밀번호 암호화 회원가입 및 로그인
 * @Validation 을 활용해 DTO 검증
 * CustomLoginFailureHandler과 JwtProvider 구현으로 인한 권한없는 사용자 접근 제어
 
+<img src="https://github.com/dorongrong/project-demo/assets/84131419/edfcd0c5-b56f-4ac1-a071-d30b6e1f5e29" width="400" height="500"/>
+
+<img src="https://github.com/dorongrong/project-demo/assets/84131419/850c125b-db1f-4958-9e9b-0038d729ba35" width="400" height="500"/>
+
+<br/>
+
 <br/>
 
 ### 상품등록 & @Validation
 
-<br/>
+* HttpServletRequest를 활용한 이미지 업로드 및 S3 스토리지 저장
+* RedirectAttributes를 활용한 상품 업로드 후 리다이렉트
 
 <img src="https://github.com/dorongrong/project-demo/assets/84131419/007f5aba-9692-4c63-98a1-709d35b135d3" width="500" height="600"/>
 
 
-* HttpServletRequest를 활용한 이미지 업로드 및 S3 스토리지 저장
-* RedirectAttributes를 활용한 상품 업로드 후 리다이렉트
 
+<br/>
+<br/>
 
 ### 등록된 상품 상세정보
 
-<br/>
+* 찜기능과 JWT 토큰을 사용한 본인검증후 채팅 혹은 내 채팅방 버튼 활성
 
 <img src="https://github.com/dorongrong/project-demo/assets/84131419/edfe96d8-bdf5-40ac-89c7-14bc4d12d46a" width="800" height="600"/>
 
-
-* 찜기능과 JWT 토큰을 사용한 본인검증후 채팅 혹은 내 채팅방 버튼 활성
+<br/>
+<br/>
 
 
 ### QueryDsl 동적 검색 & Pageable
 
-<br/>
+* Spring Data Jpa의 약점인 복잡한 조회를 QueryDsl 을 활용한 Type-Safe와 동적쿼리로 보완
 
 <img src="https://github.com/dorongrong/project-demo/assets/84131419/1364ac8d-e1d3-480a-aed1-b99986b5b715" width="600" height="600"/>
 
 <img src="https://github.com/dorongrong/project-demo/assets/84131419/7d280ab9-a299-4048-a510-d92c3695de07" width="600" height="600"/>
 
 
-* Spring Data Jpa의 약점인 복잡한 조회를 QueryDsl 을 활용한 Type-Safe와 동적쿼리로 보완
+<br/>
+<br/>
 
 
 ### RabbitMQ를 활용한 채팅 및 읽음기능
 
-<br/>
+* 확장성을 위한 외부 채팅 서버
+* Topic Exchange 및 동적 큐 생성으로 Topic 구독
 
 <img src="https://github.com/dorongrong/project-demo/assets/84131419/56630282-1252-4ba5-9ad5-08aa59348ece" width="500" height="700"/>
 
-* 확장성을 위한 외부 채팅 서버
-* Topic Exchange 및 동적 큐 생성으로 Topic 구독
 
 
 <br/>
