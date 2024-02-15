@@ -1,7 +1,11 @@
 package lee.projectdemo;
 
+import lee.projectdemo.login.web.intercepter.HeaderInterceptor;
 import lee.projectdemo.login.web.intercepter.LoginCheckInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -9,24 +13,27 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//
-//        registry.addInterceptor(new LoginCheckInterceptor())
-//                .order(1) //첫번째로 체크
-//                .addPathPatterns("/**") //모든 경로 체크
-//                .excludePathPatterns(
-//                        "/", "/users/add", "/login", "/logout",
-//                        "/css/**", "/*.ico", "/error"
-//                ); //예외 추가 (ex : "/"은 홈페이지때문에 세션이 없어도 갈수있어야함)
-//    }
 
+    @Autowired
+    HandlerInterceptor headerInterceptor;
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/static/**")
-                .addResourceLocations("classpath:/static/");
+    public void addInterceptors(InterceptorRegistry registry) {
 
+        registry.addInterceptor(headerInterceptor)
+                .order(1) //첫번째로 체크
+                .addPathPatterns("/**") //모든 경로 체크
+                .excludePathPatterns(
+                        "/", "/login", "/items", "/logout",
+                        "/css/**", "/*.ico", "/error"
+                ); //예외 추가 (ex : "/"은 홈페이지때문에 세션이 없어도 갈수있어야함)
     }
+
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/static/**")
+//                .addResourceLocations("classpath:/static/");
+//
+//    }
 
 //    @Override
 //    public void addViewControllers(ViewControllerRegistry registry) {

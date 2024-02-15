@@ -7,7 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
-@Import({SpringDataJpaConfig.class, AwsS3Config.class, QueryDslConfig.class})
+@Import({SpringDataJpaConfig.class, AwsS3Config.class, QueryDslConfig.class, WebConfig.class})
 //@Import({SpringDataJpaConfig.class, AwsS3Config.class, QueryDslConfig.class, WebConfig.class})
 @SpringBootApplication
 public class ProjectDemoApplication {

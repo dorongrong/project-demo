@@ -24,4 +24,6 @@ public interface ItemRepository {
     //페이징용 아이템 찾기
     Page<ItemDto> findAllPage(ItemSearchCond cond, Pageable pageable);
 
+
+
 }

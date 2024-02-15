@@ -108,6 +108,34 @@ public class ItemController {
         return "items/details";
     }
 
+    // 내 아이템 조회
+    @GetMapping("/user/{userId}/items")
+    public String myItems(@ModelAttribute("itemSearch") ItemSearchCond cond, Model model,
+                        @PageableDefault(page = 0, size = 9, sort = "item_id", direction = Sort.Direction.DESC) Pageable pageable) {
+
+
+        //이미지가 들어가있는 itemList 반환
+        Page<ItemDto> itemList = s3Service.addImageItemDto(itemService.findAllItemPage(cond, pageable), pageable);
+
+        model.addAttribute("itemList", itemList);
+
+
+        return "items/myItems";
+    }
+
+    // 찜 아이템 조회
+    @GetMapping("/user/{userId}/interest")
+    public String interest(@ModelAttribute("itemSearch") ItemSearchCond cond, Model model,
+                          @PageableDefault(page = 0, size = 9, sort = "item_id", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        //이미지가 들어가있는 itemList 반환
+        Page<ItemDto> itemList = s3Service.addImageItemDto(itemService.findAllItemPage(cond, pageable), pageable);
+
+        model.addAttribute("itemList", itemList);
+
+        return "items/interestItems";
+    }
+
     //아이템 추가 페이지 get
     // /add
     @GetMapping("/items/add")
