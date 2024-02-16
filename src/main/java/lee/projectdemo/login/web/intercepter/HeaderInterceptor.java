@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 @Slf4j
 @Component
@@ -19,18 +20,23 @@ public class HeaderInterceptor implements HandlerInterceptor {
     @Autowired
     private LoginService loginService;
 
+
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
 
-        String cToken = loginService.getCookie(request);
-        Authentication user = loginService.getUserDetail(cToken);
-        PrincipalDetails userDetails = (PrincipalDetails) user.getPrincipal();
-        //토큰에서 빼온 유저 정보
-        User tokenUser = userDetails.getUser();
-        // 모든 요청의 모델에 사용자 정보 추가
-        model.addAttribute("interceptorId", tokenUser.getId()); // 모델에 사용자 정보를 추가하여 Thymeleaf에서 사용할 수 있도록 함
+        if (modelAndView != null) {
 
-        return HandlerInterceptor.super.preHandle(request, response, handler);
+            String cToken = loginService.getCookie(request);
+            if(cToken != null) {
+            Authentication user = loginService.getUserDetail(cToken);
+            PrincipalDetails userDetails = (PrincipalDetails) user.getPrincipal();
+            //토큰에서 빼온 유저 정보
+            User tokenUser = userDetails.getUser();
+
+            modelAndView.getModel().put("tokenId", tokenUser.getId());
+            }
+        }
+
     }
-
 }

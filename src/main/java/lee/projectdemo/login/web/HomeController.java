@@ -80,7 +80,6 @@ public class HomeController {
                 String username = userDetails.getUsername();
                 String userId = userDetails.getLoginId();
                 model.addAttribute("user", username);
-                model.addAttribute("id", userId);
                 //다시 변경
 
                 //로그인한 순간 유저의 아이템 전부 구독 X 본인의 아이템 큐를 동적 생성하는거임

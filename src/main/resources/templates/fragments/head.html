@@ -18,7 +18,6 @@
     let decodeCookie;
     let itemsId;
     let userId;
-    let id;
 
     function getCookie() {
       const cookies = document.cookie.split(";");
@@ -35,7 +34,6 @@
 
     if (cookies !== null) {
       decodeCookie = jwtDecode(cookies);
-      id = decodeCookie.userId;
       itemsId = decodeCookie.itemsId;
       userId = decodeCookie.sub;
     } else {

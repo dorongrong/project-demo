@@ -70,12 +70,12 @@ public class WebSecurityConfig {
                 )
                 .formLogin(formLogin -> formLogin.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/*", "/").permitAll() //  /** 주소로 다 들어갈수있음
+                    .requestMatchers("/**", "/").permitAll() //  /** 주소로 다 들어갈수있음
                     .requestMatchers("/login").permitAll()
                     .requestMatchers("/users/add").permitAll()
-                    .requestMatchers("/admin/**").hasRole("ADMIN") // /admin/** 주소로는 ADMIN role을 가진사람만 가능)
                                 .requestMatchers("/css/**").permitAll()
                                 .requestMatchers("/static/js/**").permitAll()
+                    .requestMatchers("/admin/**").hasRole("ADMIN") // /admin/** 주소로는 ADMIN role을 가진사람만 가능)
                     .anyRequest().authenticated() // 다른 주소는 모두 로그인 필요!
                     )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
