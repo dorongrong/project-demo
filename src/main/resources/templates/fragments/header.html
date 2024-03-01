@@ -70,9 +70,9 @@
                     Login
                   </a>
                   <ul class="dropdown-menu text-small shadow">
-                    <li><a class="dropdown-item" href="/add">판매 등록</a></li>
-                    <li><a class="dropdown-item" th:href="@{'http://localhost:9097/items/' +  ${tokenId} + '/edit'}">내 아이템</a></li>
-                    <li><a class="dropdown-item" href="#">관심 아이템</a></li>
+                    <li><a class="dropdown-item" href="/items/add">판매 등록</a></li>
+                    <li><a class="dropdown-item" th:href="@{'http://localhost:9097/' +  ${tokenId} + '/items'}">내 아이템</a></li>
+                    <li><a class="dropdown-item" th:href="@{'http://localhost:9097/' +  ${tokenId} + '/interest'}">관심 아이템</a></li>
                     <li><a class="dropdown-item" href="/chat">채팅</a></li>
                     <li><hr class="dropdown-divider" /></li>
                     <li>

@@ -38,12 +38,18 @@ public class ItemRepositoryImple implements ItemRepository {
     }
 
     @Override
-    public void update(Long itemId, ItemUpDto updateParam) {
+    public void update(Long itemId, Item updateParam) {
         Item findItem = em.find(Item.class, itemId);
         findItem.setItemName(updateParam.getItemName());
         findItem.setDescription(updateParam.getDescription());
         findItem.setPrice(updateParam.getPrice());
-        findItem.setImages(updateParam.getImages());
+
+        //설명
+        findItem.getImages().clear();
+
+        findItem.changeImages(updateParam.getImages());
+
+        em.persist(findItem);
     }
 
     @Override
@@ -52,6 +58,14 @@ public class ItemRepositoryImple implements ItemRepository {
         return Optional.ofNullable(item);
     }
 
+    //userId를 받으면 해당 userId를 판매자 필드로 가진 아이템 객체의 Id 리스트 반환
+    @Override
+    public List<Long> findUserIdsByUserId(Long userId) {
+        return query.select(item.id)
+                .from(item)
+                .where(item.user.id.eq(userId))
+                .fetch();
+    }
 
     @Override
     public List<Item> findAll(ItemSearchCond cond) {
@@ -85,6 +99,22 @@ public class ItemRepositoryImple implements ItemRepository {
 
     }
 
+    @Override
+    public Page<ItemDto> findItemIdPage(List<Long> itemId, Pageable pageable) {
+
+        List<Item> items = getUserItemDtos(itemId, pageable);
+
+        //dto객체로 변형
+        List<ItemDto> itemDtos = items.stream()
+                .map(item -> new ItemDto(item.getId(), item.getItemName(), item.getDescription(), item.getPrice(),
+                        item.getBargain(), item.getUser(), item.getImages(), item.getCreatedAt()))
+                .collect(Collectors.toList());
+
+        Long count = getIdCount(itemId);
+
+        return new PageImpl<>(itemDtos, pageable, count);
+    }
+
     private BooleanExpression likeItemName(String itemName) {
         if (StringUtils.hasText(itemName)) {
             return item.itemName.like("%" + itemName + "%");
@@ -98,6 +128,8 @@ public class ItemRepositoryImple implements ItemRepository {
         }
         return null;
     }
+
+
 
     //검색한 아이템의 총 수
     private Long getCount(ItemSearchCond cond) {
@@ -113,6 +145,16 @@ public class ItemRepositoryImple implements ItemRepository {
         return count;
     }
 
+    private Long getIdCount(List<Long> itemId) {
+
+        Long count = query
+                .select(item.count())
+                .from(item)
+                .where(item.id.in(itemId))
+                .fetchOne();
+        return count;
+    }
+
     private List<Item> getItemDtos(ItemSearchCond cond, Pageable pageable) {
 
         String itemName = cond.getItemName();
@@ -122,6 +164,18 @@ public class ItemRepositoryImple implements ItemRepository {
                 .select(item)
                 .from(item)
                 .where(likeItemName(itemName), maxPrice(maxPrice))
+                .offset(pageable.getOffset())   // 페이지 번호
+                .limit(pageable.getPageSize())  // 페이지 사이즈
+                .fetch();
+        return content;
+    }
+
+    private List<Item> getUserItemDtos(List<Long> itemId, Pageable pageable) {
+
+        List<Item> content = query
+                .select(item)
+                .from(item)
+                .where(item.id.in(itemId))
                 .offset(pageable.getOffset())   // 페이지 번호
                 .limit(pageable.getPageSize())  // 페이지 사이즈
                 .fetch();

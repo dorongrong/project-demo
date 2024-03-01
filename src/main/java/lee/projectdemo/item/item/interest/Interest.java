@@ -34,7 +34,6 @@ public class Interest {
     public String toString() {
         return "Interest{" +
                 "id=" + id +
-                ", user=" + user +
                 '}';
     }
 }

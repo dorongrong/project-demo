@@ -1,10 +1,7 @@
 package lee.projectdemo.item.aws;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import lee.projectdemo.item.item.image.Image;
 import lee.projectdemo.item.item.ItemDto;
 import lee.projectdemo.item.repository.ImageRepository;
@@ -15,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,6 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -71,6 +70,15 @@ public class AwsS3Service {
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, dirName + "/" + fileName));
     }
 
+    public void deleteFiles(List<Image> images, String dirName) {
+        for (Image image : images) {
+            String storeFileName = image.getStoreFileName();
+
+            // Amazon S3에서 객체 삭제
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, dirName + "/" + storeFileName));
+        }
+    }
+
     // 먼저 파일 업로드 시, 파일명을 난수화하기 위해 UUID를 붙여준다.
     private String createFileName(String fileName, String dirName) {
         return dirName + "/" + UUID.randomUUID().toString().concat(getFileExtension(fileName));
@@ -109,6 +117,42 @@ public class AwsS3Service {
         }
 
         return new PageImpl<>(addImageDtos, pageable , itemDtos.getTotalElements());
+    }
+
+    public List<MultipartFile> getImagesByItemId(Long itemId) {
+        // itemId를 사용하여 해당 아이템의 이미지 파일명을 가져옴
+        List<Image> images = imageRepository.findByItemId(itemId);
+
+        List<String> storeFileNames = images.stream()
+                .map(Image::getStoreFileName)
+                .collect(Collectors.toList());
+
+        System.out.println("드가자");
+        System.out.println(storeFileNames);
+
+        // 파일명을 사용하여 S3 스토리지에서 이미지 파일을 가져와 List<MultipartFile> 형태로 변환
+        List<MultipartFile> multipartFiles = storeFileNames.stream()
+                .map(fileName -> {
+                    try {
+                        // S3 스토리지에서 이미지 파일을 가져오기
+                        S3Object s3Object = amazonS3.getObject(bucket, fileName);
+                        S3ObjectInputStream inputStream = s3Object.getObjectContent();
+
+                        System.out.println("므웨");
+                        System.out.println(inputStream);
+
+                        // 이미지 파일을 MultipartFile로 변환
+                        return new MockMultipartFile("file", fileName,
+                                s3Object.getObjectMetadata().getContentType(),
+                                inputStream);
+                    } catch (IOException e) {
+                        log.error("이미지 파일을 가져오는 동안 오류가 발생했습니다.", e);
+                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 파일을 가져오는 동안 오류가 발생했습니다.");
+                    }
+                })
+                .collect(Collectors.toList());
+
+        return multipartFiles;
     }
 
 

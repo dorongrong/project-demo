@@ -30,4 +30,12 @@ public class ItemRegDto {
 
     private List<MultipartFile> images = new ArrayList<>();
 
+    public ItemRegDto(String itemName, String description, Integer price, Boolean bargain, String state, List<MultipartFile> images) {
+        this.itemName = itemName;
+        this.description = description;
+        this.price = price;
+        this.bargain = bargain;
+        this.state = state;
+        this.images = images;
+    }
 }

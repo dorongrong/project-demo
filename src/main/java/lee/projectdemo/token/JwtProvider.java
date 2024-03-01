@@ -30,7 +30,7 @@ public class JwtProvider {
     private Key secretKey;
 
     // 만료시간 : 300분
-    private final long exp = 1000L * 60 * 300;
+    private final long exp = 1000L * 60 * 1;
 
     private final PrincipalDetailsService userDetailsService;
 
@@ -94,9 +94,9 @@ public class JwtProvider {
         } catch (MalformedJwtException e) {
             log.info("Invalid JWT token." + e);
             throw new JwtException("유효하지 않은 JWT 토큰");
-        } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
-            return false;
+//        } catch (ExpiredJwtException e) {
+//            log.info("Expired JWT token.");
+//            return false;
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token.");
         } catch (IllegalArgumentException e) {

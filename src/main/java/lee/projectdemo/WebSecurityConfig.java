@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -70,7 +71,7 @@ public class WebSecurityConfig {
                 )
                 .formLogin(formLogin -> formLogin.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/**", "/").permitAll() //  /** 주소로 다 들어갈수있음
+                    .requestMatchers("/*", "/").permitAll() //  /** 주소로 다 들어갈수있음
                     .requestMatchers("/login").permitAll()
                     .requestMatchers("/users/add").permitAll()
                                 .requestMatchers("/css/**").permitAll()
@@ -98,7 +99,7 @@ public class WebSecurityConfig {
                         .deleteCookies("Authorization")) // 로그아웃 후 삭제할 쿠키 지정
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         // 로그인한 사용자만 한해서 권한 체크함
-//                        .accessDeniedPage("/login")
+                        .accessDeniedPage("/login")
                         //로그인 하지 않은 사용자가 로그인시 리다이렉트
                         .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")));
 

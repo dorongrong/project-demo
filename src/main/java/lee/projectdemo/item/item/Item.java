@@ -80,10 +80,13 @@ public class Item {
     //연관관계 편의 메소드
     //아이템에 이미지 리스트를 넣으면 이미지 하나하나에 아이템 객체를 넣는다.
     public void changeImages(List<Image> images) {
-        this.images = images;
+        //객체를 통째로 바꾸면 하이버네이트에서 참조를 잃어버려서 수정할때 위험하다
+//        this.images = images;
+        this.images.addAll(images);
         for (Image image : images) {
             if (image != null) {
-                image.changeItem(this);
+//                image.setItem(this);
+                image.changeItem(this); //뭔차이?
             }
         }
     }

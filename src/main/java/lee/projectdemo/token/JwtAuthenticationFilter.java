@@ -1,13 +1,21 @@
 package lee.projectdemo.token;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -42,15 +50,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 쿠기에 들어가있는 value가 담김
         String cToken = "Bearer " + getCookie(request);
 
-        if (cToken != null && jwtProvider.validateToken(cToken)) {
-            // check access token
-            cToken = cToken.split(" ")[1].trim();
+        //음....
+        try{
+            if (jwtProvider.validateToken(cToken)) {
+                cToken = cToken.split(" ")[1].trim();
 
-            Authentication auth = jwtProvider.getAuthentication(cToken);
-            SecurityContextHolder.getContext().setAuthentication(auth);
+                Authentication auth = jwtProvider.getAuthentication(cToken);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+            filterChain.doFilter(request, response);
+
+        } catch(ExpiredJwtException | MalformedJwtException e) {
+//            throw new AccessDeniedException("테스트");
+            throw new BadCredentialsException("테스트", e);
+//            response.sendRedirect("/login");
         }
 
-        filterChain.doFilter(request, response);
+
+//        Authentication auth = jwtProvider.getAuthentication(cToken);
+//        SecurityContextHolder.getContext().setAuthentication(auth);
+
+//        filterChain.doFilter(request, response);
+
     }
 
     private String getCookie(HttpServletRequest request){
