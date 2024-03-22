@@ -1,7 +1,7 @@
 package lee.projectdemo.test;
 
 
-import lee.projectdemo.exception.UserIdExistsException;
+import lee.projectdemo.exception.UserIdOrPasswordExistsException;
 import lee.projectdemo.login.repository.UserRepository;
 import lee.projectdemo.login.service.LoginService;
 import lee.projectdemo.login.user.AddressDto;
@@ -27,7 +27,7 @@ public class ExceptionTest {
 
         assertThatThrownBy(() -> loginService.signUp(new UserDto("donix", "이지훈", "l4319634",
                 new AddressDto("1234", "4567", "103동 203호"))))
-                .isInstanceOf(UserIdExistsException.class);
+                .isInstanceOf(UserIdOrPasswordExistsException.class);
     }
 
 }

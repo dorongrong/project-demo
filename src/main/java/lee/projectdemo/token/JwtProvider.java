@@ -39,6 +39,7 @@ public class JwtProvider {
         secretKey = Keys.hmacShaKeyFor(salt.getBytes(StandardCharsets.UTF_8));
     }
 
+
     // 토큰 생성
     public String createToken(String account, UserRole role, List<String> itemIdList, Long userId) {
         Claims claims = Jwts.claims().setSubject(account);
@@ -77,6 +78,7 @@ public class JwtProvider {
         if (token.equals("Bearer null")) {
             return false;
         }
+
         try {
             // Bearer 검증
             // bearer로 시작하는 경우 false를 반환 아니면 true

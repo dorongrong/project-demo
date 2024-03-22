@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Repository
+//@Repository
 @Slf4j
 public class MemoryUserRepository implements UserRepository {
 

@@ -9,23 +9,28 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
     private final JwtProvider jwtProvider;
 
-//    @Override
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
+        super(authenticationManager);
+        this.jwtProvider = jwtProvider;
+    }
+
+    //    @Override
 //    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 //        // 헤더에서 JWT 를 받아옵니다.
 //        String token = jwtProvider.resolveToken(request);
@@ -50,27 +55,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 쿠기에 들어가있는 value가 담김
         String cToken = "Bearer " + getCookie(request);
 
-        //음....
-        try{
-            if (jwtProvider.validateToken(cToken)) {
-                cToken = cToken.split(" ")[1].trim();
-
-                Authentication auth = jwtProvider.getAuthentication(cToken);
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            }
-            filterChain.doFilter(request, response);
-
-        } catch(ExpiredJwtException | MalformedJwtException e) {
-//            throw new AccessDeniedException("테스트");
-            throw new BadCredentialsException("테스트", e);
-//            response.sendRedirect("/login");
-        }
-
-
-//        Authentication auth = jwtProvider.getAuthentication(cToken);
-//        SecurityContextHolder.getContext().setAuthentication(auth);
-
+//        try{
+//            if (jwtProvider.validateToken(cToken)) {
+//                cToken = cToken.split(" ")[1].trim();
+//
+//                Authentication auth = jwtProvider.getAuthentication(cToken);
+//                SecurityContextHolder.getContext().setAuthentication(auth);
+//            }
+////            filterChain.doFilter(request, response);
+//
+//        } catch(ExpiredJwtException | MalformedJwtException e) {
+//            request.setAttribute("exception", "hello");
+////            response.sendRedirect("/logout");
+//            System.out.println("가가가");
+//        }
 //        filterChain.doFilter(request, response);
+
+
+        Authentication auth = jwtProvider.getAuthentication(cToken);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        filterChain.doFilter(request, response);
 
     }
 

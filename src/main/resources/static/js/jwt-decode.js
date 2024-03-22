@@ -46,6 +46,7 @@ export function jwtDecode(token, options) {
   let decoded;
   try {
     decoded = base64UrlDecode(part);
+    console.log(decoded);
   } catch (e) {
     throw new InvalidTokenError(
       `Invalid token specified: invalid base64 for part #${pos + 1} (${

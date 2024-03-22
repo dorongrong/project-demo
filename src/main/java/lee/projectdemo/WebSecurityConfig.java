@@ -1,16 +1,24 @@
 package lee.projectdemo;
 
+import lee.projectdemo.auth.PrincipalDetailsService;
 import lee.projectdemo.exception.exhandler.CustomLoginFailureHandler;
+import lee.projectdemo.login.filter.loginAuthenticationFilter;
 import lee.projectdemo.token.JwtAuthenticationFilter;
 import lee.projectdemo.token.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -32,9 +40,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final CustomLoginFailureHandler customLoginFailureHandler;
-
     private final JwtProvider jwtProvider;
+
+    private final UserDetailsService principalDetailsService;
+
+    private final CustomLoginFailureHandler customLoginFailureHandler;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -47,8 +57,8 @@ public class WebSecurityConfig {
         http
                 // CSRF 보호 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
-                // 세션 사용 안 함
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 세션 사용 안 함
                 // 일반적인 루트가 아닌 다른 방식으로 요청시 거절, header에 id, pw가 아닌 token(jwt)을 달고 간다. 그래서 basic이 아닌 bearer를 사용한다.
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .cors(c -> {
@@ -70,16 +80,19 @@ public class WebSecurityConfig {
                         }
                 )
                 .formLogin(formLogin -> formLogin.disable())
+                //test 이부분 authenticationManager의 userDetails등 필요한것들을 설정하는 방법 분기가 갈림
+                .addFilter(loginAuthenticationFilter())
                 .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/*", "/").permitAll() //  /** 주소로 다 들어갈수있음
-                    .requestMatchers("/login").permitAll()
-                    .requestMatchers("/users/add").permitAll()
-                                .requestMatchers("/css/**").permitAll()
-                                .requestMatchers("/static/js/**").permitAll()
-                    .requestMatchers("/admin/**").hasRole("ADMIN") // /admin/** 주소로는 ADMIN role을 가진사람만 가능)
-                    .anyRequest().authenticated() // 다른 주소는 모두 로그인 필요!
-                    )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
+                        .requestMatchers("/*").permitAll()
+                        .requestMatchers("/").permitAll() //  /** 주소로 다 들어갈수있음
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/users/add").permitAll()
+                        .requestMatchers("/css/**").permitAll()
+                        .requestMatchers("/static/js/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // /admin/** 주소로는 ADMIN role을 가진사람만 가능)
+                        .anyRequest().authenticated() // 다른 주소는 모두 로그인 필요!
+                )
+                .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(), jwtProvider),
                         UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
                         .logoutUrl("/logout")
@@ -100,26 +113,36 @@ public class WebSecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         // 로그인한 사용자만 한해서 권한 체크함
                         .accessDeniedPage("/login")
-                        //로그인 하지 않은 사용자가 로그인시 리다이렉트
+                        //인증 예외시 커스텀 JwtAuthenticationEntryPoint 구현체 사용
                         .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")));
-
-
-
-//                .logout((logout) -> logout.permitAll());
-
-
-//                .formLogin((form) -> form
-//                        .loginPage("/login") // 들어가지 못하는 주소로 들어갔을때 /login으로 가짐
-//                        .failureHandler(customLoginFailureHandler) // 커스텀 로그인 실패 핸들러 등록
-//                        .loginProcessingUrl("/login") // 주소가 호출되면 시큐리티가 낚아채서 대신 로그인을 진행 한마디로 로그인 안만들어도됨 ㅋㅋ
-//                        .usernameParameter("loginId")
-//                        .passwordParameter("password")
-//                        .defaultSuccessUrl("/") //로그인이 완료될시 주소로 이동
-//                        .permitAll()
-//                )
-//                .logout((logout) -> logout.permitAll());
 
         return http.build();
     }
+
+    @Bean
+    public UsernamePasswordAuthenticationFilter loginAuthenticationFilter() {
+        UsernamePasswordAuthenticationFilter filter = new loginAuthenticationFilter(jwtProvider);
+        filter.setAuthenticationManager(authenticationManager());
+        filter.setAuthenticationFailureHandler(customLoginFailureHandler);
+
+        return filter;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(principalDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+
+        return new ProviderManager(authenticationProvider);
+    }
+
+//    @Bean
+//    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+//            throws Exception {
+//        return authenticationConfiguration.getAuthenticationManager();
+//    }
+
+
 
 }
