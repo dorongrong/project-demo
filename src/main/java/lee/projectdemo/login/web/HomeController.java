@@ -61,12 +61,12 @@ public class HomeController {
     public String home(HttpServletRequest request, Model model,
                        @PageableDefault(page = 0, size = 9, sort = "item_id", direction = Sort.Direction.DESC) Pageable pageable) {
         //세션에 회원 데이터가 없으면 home
-        System.out.println("홈으로 리다이렉트으");
+        System.out.println("홈");
 
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
 
-        System.out.println("1111111111112222222222222");
+        System.out.println("인증객체 이름 출력");
         System.out.println(authentication.getName());
 
 

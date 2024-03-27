@@ -5,10 +5,13 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lee.projectdemo.auth.PrincipalDetailsService;
+import lee.projectdemo.exception.JwtAuthenticationException;
 import lee.projectdemo.login.user.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.auth.AuthenticationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -96,9 +99,8 @@ public class JwtProvider {
         } catch (MalformedJwtException e) {
             log.info("Invalid JWT token." + e);
             throw new JwtException("유효하지 않은 JWT 토큰");
-//        } catch (ExpiredJwtException e) {
-//            log.info("Expired JWT token.");
-//            return false;
+        } catch (ExpiredJwtException e) {
+            log.info("Expired JWT token.");
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token.");
         } catch (IllegalArgumentException e) {

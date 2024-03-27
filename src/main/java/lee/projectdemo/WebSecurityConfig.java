@@ -2,6 +2,7 @@ package lee.projectdemo;
 
 import lee.projectdemo.auth.PrincipalDetailsService;
 import lee.projectdemo.exception.exhandler.CustomLoginFailureHandler;
+import lee.projectdemo.exception.exhandler.SecurityAuthenticationEntryPoint;
 import lee.projectdemo.login.filter.loginAuthenticationFilter;
 import lee.projectdemo.token.JwtAuthenticationFilter;
 import lee.projectdemo.token.JwtProvider;
@@ -46,6 +47,7 @@ public class WebSecurityConfig {
 
     private final CustomLoginFailureHandler customLoginFailureHandler;
 
+    private final AuthenticationEntryPoint securityAuthenticationEntryPoint;
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -114,7 +116,8 @@ public class WebSecurityConfig {
                         // 로그인한 사용자만 한해서 권한 체크함
                         .accessDeniedPage("/login")
                         //인증 예외시 커스텀 JwtAuthenticationEntryPoint 구현체 사용
-                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")));
+                        .authenticationEntryPoint(securityAuthenticationEntryPoint));
+//                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")));
 
         return http.build();
     }

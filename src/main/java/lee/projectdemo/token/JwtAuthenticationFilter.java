@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lee.projectdemo.exception.JwtAuthenticationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -55,27 +56,30 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         // 쿠기에 들어가있는 value가 담김
         String cToken = "Bearer " + getCookie(request);
 
-//        try{
-//            if (jwtProvider.validateToken(cToken)) {
-//                cToken = cToken.split(" ")[1].trim();
+        try{
+            if (jwtProvider.validateToken(cToken)) {
+
+                cToken = cToken.split(" ")[1].trim();
+
+                Authentication auth = jwtProvider.getAuthentication(cToken);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+        } catch(ExpiredJwtException | MalformedJwtException | JwtAuthenticationException | AccessDeniedException e) {
+            request.setAttribute("exception", "hello");
+            //여기서 예외를 던지면 필터가 중단됨 그럼 provider에서 던지면 어케될까? 여기서 잡으면 문제 없음
+        }
+        filterChain.doFilter(request, response);
+
+
+//        if (jwtProvider.validateToken(cToken)) {
+//        cToken = cToken.split(" ")[1].trim();
 //
-//                Authentication auth = jwtProvider.getAuthentication(cToken);
-//                SecurityContextHolder.getContext().setAuthentication(auth);
-//            }
-////            filterChain.doFilter(request, response);
-//
-//        } catch(ExpiredJwtException | MalformedJwtException e) {
-//            request.setAttribute("exception", "hello");
-////            response.sendRedirect("/logout");
-//            System.out.println("가가가");
+//            //여기서 expired 발생
+//            // 이러면 예외를 catch 하지 않아서 필터가 바로 중단됨
+//            Authentication auth = jwtProvider.getAuthentication(cToken);
+//            SecurityContextHolder.getContext().setAuthentication(auth);
 //        }
 //        filterChain.doFilter(request, response);
-
-
-        Authentication auth = jwtProvider.getAuthentication(cToken);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
-        filterChain.doFilter(request, response);
 
     }
 
