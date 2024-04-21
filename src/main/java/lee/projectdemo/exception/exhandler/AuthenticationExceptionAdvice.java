@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.nio.file.AccessDeniedException;
@@ -31,11 +32,11 @@ public class AuthenticationExceptionAdvice {
 
     @ExceptionHandler(AuthenticationException.class)
     public RedirectView AuthenticationException(AuthenticationException e) {
-        log.error("테에스트aaaa");
-        String redirectUrl = "/login";
+//        log.error("테에스트", e);
+        System.out.println("테스트");
+        String redirectUrl = "/logout";
         return new RedirectView(redirectUrl);
     }
-
 
 //    @ExceptionHandler(SignatureException.class)
 //    public RedirectView handleSignatureException() {
@@ -50,7 +51,7 @@ public class AuthenticationExceptionAdvice {
 
     @ExceptionHandler(ExpiredJwtException.class)
     public RedirectView handleExpiredJwtException(ExpiredJwtException e) {
-        log.error("십라란ㅇ라", e);
+        System.out.println("테스트 토큰");
         String redirectUrl = "/logout";
         return new RedirectView(redirectUrl);
     }

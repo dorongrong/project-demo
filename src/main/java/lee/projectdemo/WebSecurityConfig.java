@@ -2,11 +2,13 @@ package lee.projectdemo;
 
 import lee.projectdemo.auth.PrincipalDetailsService;
 import lee.projectdemo.exception.exhandler.CustomLoginFailureHandler;
+import lee.projectdemo.exception.exhandler.JwtExceptionFilter;
 import lee.projectdemo.exception.exhandler.SecurityAuthenticationEntryPoint;
 import lee.projectdemo.login.filter.loginAuthenticationFilter;
 import lee.projectdemo.token.JwtAuthenticationFilter;
 import lee.projectdemo.token.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,6 +28,7 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.util.List;
 
@@ -41,12 +44,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
+    private final JwtExceptionFilter jwtExceptionFilter;
     private final JwtProvider jwtProvider;
-
     private final UserDetailsService principalDetailsService;
-
     private final CustomLoginFailureHandler customLoginFailureHandler;
-
     private final AuthenticationEntryPoint securityAuthenticationEntryPoint;
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -94,8 +95,10 @@ public class WebSecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN") // /admin/** 주소로는 ADMIN role을 가진사람만 가능)
                         .anyRequest().authenticated() // 다른 주소는 모두 로그인 필요!
                 )
+                //순환참조때문에 JwtAuthenticationFilter는 Componenet화 하기 애매함
                 .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(), jwtProvider),
                         UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         // 로그아웃 핸들러 추가

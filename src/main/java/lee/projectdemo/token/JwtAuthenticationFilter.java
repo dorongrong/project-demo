@@ -1,6 +1,7 @@
 package lee.projectdemo.token;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -64,8 +65,11 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                 Authentication auth = jwtProvider.getAuthentication(cToken);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
-        } catch(ExpiredJwtException | MalformedJwtException | JwtAuthenticationException | AccessDeniedException e) {
+            //여기 왜 안걸림? 4/15
+        } catch(MalformedJwtException | ExpiredJwtException e) {
+//        } catch(ExpiredJwtException | MalformedJwtException | JwtAuthenticationException e) {
             request.setAttribute("exception", "hello");
+            throw new AccessDeniedException("Jwt Expired");
             //여기서 예외를 던지면 필터가 중단됨 그럼 provider에서 던지면 어케될까? 여기서 잡으면 문제 없음
         }
         filterChain.doFilter(request, response);

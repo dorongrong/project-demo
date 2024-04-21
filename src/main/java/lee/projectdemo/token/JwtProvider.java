@@ -33,7 +33,8 @@ public class JwtProvider {
     private Key secretKey;
 
     // 만료시간 : 300분
-    private final long exp = 1000L * 60 * 1;
+//    private final long exp = 1000L * 60 * 1;
+    private final long exp = 100L * 60 * 1;
 
     private final PrincipalDetailsService userDetailsService;
 
@@ -81,33 +82,44 @@ public class JwtProvider {
         if (token.equals("Bearer null")) {
             return false;
         }
-
-        try {
-            // Bearer 검증
-            // bearer로 시작하는 경우 false를 반환 아니면 true
-            if (!token.substring(0, "BEARER ".length()).equalsIgnoreCase("BEARER ")) {
-                return false;
-            } else {
-                token = token.split(" ")[1].trim();
-            }
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-            // 만료되었을 시 false
-            return !claims.getBody().getExpiration().before(new Date());
-        } catch (SecurityException e) {
-            log.info("Invalid JWT signature.");
-            throw new JwtException("잘못된 JWT 시그니처");
-        } catch (MalformedJwtException e) {
-            log.info("Invalid JWT token." + e);
-            throw new JwtException("유효하지 않은 JWT 토큰");
-        } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
-        } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT token.");
-        } catch (IllegalArgumentException e) {
-            log.info("JWT token compact of handler are invalid.");
-            throw new JwtException("JWT token compact of handler are invalid.");
+        // bearer로 시작하는 경우 false를 반환 아니면 true
+        if (!token.substring(0, "BEARER ".length()).equalsIgnoreCase("BEARER ")) {
+            return false;
+        } else {
+            token = token.split(" ")[1].trim();
         }
-        return false;
+        Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+        // 만료되었을 시 false
+        return !claims.getBody().getExpiration().before(new Date());
+
+//        try {
+//            // Bearer 검증
+//            // bearer로 시작하는 경우 false를 반환 아니면 true
+//            if (!token.substring(0, "BEARER ".length()).equalsIgnoreCase("BEARER ")) {
+//                return false;
+//            } else {
+//                token = token.split(" ")[1].trim();
+//            }
+//            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+//            // 만료되었을 시 false
+//            return !claims.getBody().getExpiration().before(new Date());
+//        } catch (SecurityException e) {
+//            log.info("Invalid JWT signature.");
+//            throw new JwtException("잘못된 JWT 시그니처", e);
+//        } catch (MalformedJwtException e) {
+//            log.info("Invalid JWT token." + e);
+//            throw new JwtException("유효하지 않은 JWT 토큰", e);
+//        } catch (ExpiredJwtException e) {
+//            log.info("Expired JWT token.");
+//            throw new AccessDeniedException("테스으요", e);
+////            throw new JwtException("만료된 JWT 토큰", e);
+//        } catch (UnsupportedJwtException e) {
+//            log.info("Unsupported JWT token.");
+//            throw new JwtException("지원하지 않는 JWT 토큰", e);
+//        } catch (IllegalArgumentException e) {
+//            log.info("JWT token compact of handler are invalid.");
+//            throw new JwtException("JWT token compact of handler are invalid.", e);
+//        }
     }
 
 //    public boolean validateToken(String token) {
