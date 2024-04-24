@@ -2,7 +2,7 @@ package lee.projectdemo.login.web.user;
 
 
 import jakarta.validation.Valid;
-import lee.projectdemo.exception.UserIdExistsException;
+import lee.projectdemo.exception.UserIdOrPasswordExistsException;
 import lee.projectdemo.login.service.LoginService;
 import lee.projectdemo.login.user.UserDto;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class UserController {
 //        catch (UserIdExistsException e) {
 //            throw e;
 //        }
-        catch (UserIdExistsException e) {
+        catch (UserIdOrPasswordExistsException e) {
             bindingResult.reject("loginIdExists", "동일한 아이디가 존재합니다.");
             return "user/addUserForm";
         }

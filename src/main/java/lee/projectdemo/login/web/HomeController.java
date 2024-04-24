@@ -18,6 +18,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,15 +61,22 @@ public class HomeController {
     public String home(HttpServletRequest request, Model model,
                        @PageableDefault(page = 0, size = 9, sort = "item_id", direction = Sort.Direction.DESC) Pageable pageable) {
         //세션에 회원 데이터가 없으면 home
-        System.out.println("홈으로 리다이렉트으");
+        System.out.println("홈");
+
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+
+        System.out.println("인증객체 이름 출력");
+        System.out.println(authentication.getName());
+
 
         // 최신 등록 아이템만 보여주기 위해 빈 ItemSearchCond 값 생성
         ItemSearchCond cond = new ItemSearchCond(null, null);
-        Page<ItemDto> itemList = s3Service.addImageItemDto(itemService.findAllItemPage(cond , pageable), pageable);
+        Page<ItemDto> itemList = s3Service.addImageItemDto(itemService.findAllItemPage(cond, pageable), pageable);
 
         model.addAttribute("itemList", itemList);
 
-        if (loginService.getCookie(request) == null){
+        if (loginService.getCookie(request) == null) {
             return "home";
         }
 //        String cToken = loginService.getCookie(request);

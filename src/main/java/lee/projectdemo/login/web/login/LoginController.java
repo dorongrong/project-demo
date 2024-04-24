@@ -5,16 +5,23 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lee.projectdemo.auth.PrincipalDetails;
 import lee.projectdemo.login.service.LoginService;
 import lee.projectdemo.login.user.SignResponse;
+import lee.projectdemo.login.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.NoSuchElementException;
 
@@ -44,7 +51,25 @@ public class LoginController {
 //    }
 
     @GetMapping("/login")
-    public String loginForm(@ModelAttribute("loginForm") LoginForm form) {
+    public String loginForm(@RequestParam(required = false) String username,
+                            @RequestParam(required = false) String error,
+                            @RequestParam(required = false) String errorMessage,
+                            @ModelAttribute("loginForm") LoginForm form, BindingResult bindingResult) {
+
+
+        //empty는 글로벌 unknown도 글로벌 자격증명은 필드
+        if ("empty".equals(error)) {
+            bindingResult.reject("global", errorMessage);
+        } else if ("badcredentials".equals(error)) {
+            form.setLoginId(username);
+
+            bindingResult.rejectValue("loginId", "Illegal");
+            bindingResult.rejectValue("password", "Illegal");
+            bindingResult.reject("loginId", errorMessage);
+        } else if ("unknown".equals(error)) {
+            bindingResult.reject("global", errorMessage);
+        }
+
         return "login/loginForm";
     }
 
@@ -52,32 +77,53 @@ public class LoginController {
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute LoginForm form, BindingResult
             bindingResult, HttpServletRequest request, HttpServletResponse response) {
-        if (bindingResult.hasErrors()) {
-            return "login/loginForm";
+//        if (bindingResult.hasErrors()) {
+//            return "login/loginForm";
+//        }
+//
+//        if (request.getAttribute("exception") == "test") {
+//            bindingResult.reject("loginFail", "아이디가 맞지 않습니다.");
+//            return "login/loginForm";
+//        }
+//
+//        try {
+//            SignResponse signResponse = loginService.login(form.getLoginId(), form.getPassword());
+//
+//            //이건 헤더에 추가
+//            response.addHeader("Authorization", "Bearer " + signResponse.getToken());
+//
+//            // 쿠키 추가 밑에 3줄은 쿠키에 넣을려고 넣는거임
+//            Cookie cookie = new Cookie("Authorization", signResponse.getToken());
+//            cookie.setMaxAge(360000);
+//            cookie.setPath("/");
+//            response.addCookie(cookie);
+//
+//            return "redirect:/";
+//
+//        } catch (NoSuchElementException e) {
+//            bindingResult.reject("loginFail", "아이디가 맞지 않습니다.");
+//            return "login/loginForm";
+//
+//        } catch (BadCredentialsException e) {
+//            bindingResult.reject("loginFail", "비밀번호가 맞지 않습니다.");
+//            return "login/loginForm";
+//        }
+        return "login/loginForm";
+    }
+
+    //이거 필터에도 있음
+    private String getCookie(HttpServletRequest request){
+        Cookie[] tokenCookie = request.getCookies();
+        if (tokenCookie != null) {
+            for (Cookie c : tokenCookie) {
+                String name = c.getName(); // 쿠키 이름 가져오기
+                String value = c.getValue(); // 쿠키 값 가져오기
+                if (name.equals("Authorization")) {
+                    return value;
+                }
+            }
         }
-
-        try {
-            SignResponse signResponse = loginService.login(form.getLoginId(), form.getPassword());
-
-            //이건 헤더에 추가
-            response.addHeader("Authorization", "Bearer " + signResponse.getToken());
-
-            // 쿠키 추가 밑에 3줄은 쿠키에 넣을려고 넣는거임
-            Cookie cookie = new Cookie("Authorization", signResponse.getToken());
-            cookie.setMaxAge(360000);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-
-            return "redirect:/";
-
-        } catch (NoSuchElementException e) {
-            bindingResult.reject("loginFail", "아이디가 맞지 않습니다.");
-            return "login/loginForm";
-
-        } catch (BadCredentialsException e) {
-            bindingResult.reject("loginFail", "비밀번호가 맞지 않습니다.");
-            return "login/loginForm";
-        }
+        return null;
     }
 }
 

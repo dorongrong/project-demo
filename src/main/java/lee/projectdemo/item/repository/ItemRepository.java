@@ -15,13 +15,20 @@ public interface ItemRepository {
 
     Item save(Item item);
 
-    void update(Long itemId, ItemUpDto updateParam);
+    void update(Long itemId, Item updateParam);
 
     Optional<Item> findById(Long id);
+
+    List<Long> findUserIdsByUserId(Long userId);
 
     List<Item> findAll(ItemSearchCond cond);
 
     //페이징용 아이템 찾기
     Page<ItemDto> findAllPage(ItemSearchCond cond, Pageable pageable);
+
+    //아이템 Id list map으로 받아서 페이징
+    Page<ItemDto> findItemIdPage(List<Long> itemId, Pageable pageable);
+
+
 
 }

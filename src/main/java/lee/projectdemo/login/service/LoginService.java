@@ -3,7 +3,7 @@ package lee.projectdemo.login.service;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
-import lee.projectdemo.exception.UserIdExistsException;
+import lee.projectdemo.exception.UserIdOrPasswordExistsException;
 import lee.projectdemo.item.item.Item;
 import lee.projectdemo.login.repository.UserRepository;
 import lee.projectdemo.login.user.*;
@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,8 +31,7 @@ public class LoginService {
     private final UserRepository userRepository;
     //패스워드 인코더
     private final BCryptPasswordEncoder passwordEncoder;
-    //
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
     private final JwtProvider jwtProvider;
 
 //    public User login(String loginId, String password) {
@@ -56,7 +54,7 @@ public class LoginService {
             userRepository.save(regisUser);
         }
         catch (DataIntegrityViolationException e) {
-            throw new UserIdExistsException("이미 존재하는 아이디입니다.");
+            throw new UserIdOrPasswordExistsException("이미 존재하는 아이디입니다.");
         }
     }
 

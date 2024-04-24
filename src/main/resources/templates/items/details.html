@@ -159,6 +159,10 @@
                                 <span>찜</span><span th:text="${item.interestCount}"></span>
                             </button>
                             </form>
+<!--                            주소 수정해야함-->
+                            <a th:if="${chatButton}" th:href="@{'http://localhost:9097/items/' +  ${item.itemId} + '/edit'}">
+                                <button class="btn-detail btn btn-primary" type="button" th:text="'수정'"></button>
+                            </a>
                             <a th:if="${chatButton}" th:href="@{'http://localhost:9097/chat'}">
                               <button class="btn-detail btn btn-danger" type="button" th:text="${chatButton}"></button>
                             </a>

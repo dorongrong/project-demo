@@ -108,6 +108,33 @@ public class ItemController {
         return "items/details";
     }
 
+    // 내 아이템 조회
+    @GetMapping("/{userId}/items")
+    public String myItems(@PathVariable Long userId, Model model,
+                          @PageableDefault(page = 0, size = 9, sort = "item_id", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        //이미지가 들어가있는 itemList 반환
+        Page<ItemDto> itemList = s3Service.addImageItemDto(itemService.findUserItemPage(userId, pageable), pageable);
+
+        model.addAttribute("itemList", itemList);
+
+
+        return "items/myItems";
+    }
+
+    // 찜 아이템 조회
+    @GetMapping("/{userId}/interest")
+    public String interestItems(@PathVariable Long userId, Model model,
+                          @PageableDefault(page = 0, size = 9, sort = "item_id", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        //이미지가 들어가있는 itemList 반환
+        Page<ItemDto> itemList = s3Service.addImageItemDto(itemService.findUserInterestItemPage(userId, pageable), pageable);
+
+        model.addAttribute("itemList", itemList);
+
+        return "items/interestItems";
+    }
+
     //아이템 추가 페이지 get
     // /add
     @GetMapping("/items/add")
@@ -185,7 +212,59 @@ public class ItemController {
 
 
     //아이템 수정 get
-    // /{itemId}/edit
+    @GetMapping("/items/{itemId}/edit")
+    public String editItemPage(@PathVariable Long itemId, Model model) {
+
+        ItemRegDto itemRegDto = itemService.getItemRegDto(itemId);
+
+        model.addAttribute("item", itemRegDto);
+
+        return "items/editItem";
+    }
+
+    @PostMapping("/items/{itemId}/edit")
+    public String submitEditItem(@PathVariable Long itemId, HttpServletRequest request, RedirectAttributes
+            redirectAttributes, @ModelAttribute("item") ItemRegDto itemRegDto) {
+
+        //아이템 저장 서비스에 값 넘겨줘서 저장 엔티티 주인은 걱정하지마라 어차피 둘다 저장할꺼다
+        String cToken = loginService.getCookie(request);
+        Authentication user = loginService.getUserDetail(cToken);
+        PrincipalDetails userDetails = (PrincipalDetails) user.getPrincipal();
+
+        //토큰에서 빼온 유저 정보
+        User tokenUser = userDetails.getUser();
+
+        redirectAttributes.addAttribute("itemId", itemId);
+        
+        //기존 아이템 이미지 삭제
+        List<Image> images = itemService.getItem(itemId).get().getImages();
+
+        s3Service.deleteFiles(images, PRODUCT_IMAGE_PATH);
+
+        //S3 업로드와 동시에 List<Image>객체 반환(Image 객체에는 Item이 들어가있지 않은)
+        //이미지를 넣지 않았을때
+        if (itemRegDto.getImages().get(0).getOriginalFilename() == "") {
+            Item item = new Item(itemRegDto.getItemName(), itemRegDto.getDescription(), itemRegDto.getPrice(),
+                    itemRegDto.getBargain(), tokenUser, itemRegDto.getState(), 0);
+            itemService.itemUpdate(tokenUser.getId(), itemId, item);
+
+            // 아이템 상세 페이지로 이동
+            return "redirect:/items/{itemId}";
+        } else {
+            List<Image> storeImageFiles = s3Service.uploadFile(itemRegDto.getImages(), PRODUCT_IMAGE_PATH);
+
+            //storeImageFiles에는 ID,Item 이 세팅 안돼있음
+            Item item = new Item(itemRegDto.getItemName(), itemRegDto.getDescription(), itemRegDto.getPrice(),
+                    itemRegDto.getBargain(), tokenUser, itemRegDto.getState(), 0);
+            // 이미지 객체에 아이템 객체 넣어주기
+            item.changeImages(storeImageFiles);
+
+            itemService.itemUpdate(tokenUser.getId(), itemId, item);
+
+            // 아이템 상세 페이지로 이동
+            return "redirect:/items/{itemId}";
+        }
+    }
 
     //아이템 수정 post
     // /{itemId}/edit

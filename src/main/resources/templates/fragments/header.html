@@ -40,11 +40,11 @@
                 </a>
               </li>
               <li>
-                <a href="#" class="nav-link text-white">
+                <a href="/items" class="nav-link text-white">
                   <svg class="bi d-block mx-auto mb-1" width="24" height="24">
                     <use xlink:href="#grid" />
                   </svg>
-                  My Items
+                  Items
                 </a>
               </li>
               <li>
@@ -70,9 +70,10 @@
                     Login
                   </a>
                   <ul class="dropdown-menu text-small shadow">
-                    <li><a class="dropdown-item" href="#">판매 아이템</a></li>
-                    <li><a class="dropdown-item" href="#">관심 아이템</a></li>
-                    <li><a class="dropdown-item" href="#">채팅</a></li>
+                    <li><a class="dropdown-item" href="/items/add">판매 등록</a></li>
+                    <li><a class="dropdown-item" th:href="@{'http://localhost:9097/' +  ${tokenId} + '/items'}">내 아이템</a></li>
+                    <li><a class="dropdown-item" th:href="@{'http://localhost:9097/' +  ${tokenId} + '/interest'}">관심 아이템</a></li>
+                    <li><a class="dropdown-item" href="/chat">채팅</a></li>
                     <li><hr class="dropdown-divider" /></li>
                     <li>
                       <a class="dropdown-item" href="/logout">Sign out</a>

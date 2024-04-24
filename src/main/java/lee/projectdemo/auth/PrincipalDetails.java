@@ -14,7 +14,6 @@ import java.util.List;
 public class PrincipalDetails implements UserDetails {
 
     private final User user;
-
     public PrincipalDetails(User user) {
         this.user = user;
     }

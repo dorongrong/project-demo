@@ -5,10 +5,13 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lee.projectdemo.auth.PrincipalDetailsService;
+import lee.projectdemo.exception.JwtAuthenticationException;
 import lee.projectdemo.login.user.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.auth.AuthenticationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,7 +33,8 @@ public class JwtProvider {
     private Key secretKey;
 
     // 만료시간 : 300분
-    private final long exp = 1000L * 60 * 300;
+//    private final long exp = 1000L * 60 * 1;
+    private final long exp = 100L * 60 * 1;
 
     private final PrincipalDetailsService userDetailsService;
 
@@ -38,6 +42,7 @@ public class JwtProvider {
     protected void init() {
         secretKey = Keys.hmacShaKeyFor(salt.getBytes(StandardCharsets.UTF_8));
     }
+
 
     // 토큰 생성
     public String createToken(String account, UserRole role, List<String> itemIdList, Long userId) {
@@ -77,33 +82,44 @@ public class JwtProvider {
         if (token.equals("Bearer null")) {
             return false;
         }
-        try {
-            // Bearer 검증
-            // bearer로 시작하는 경우 false를 반환 아니면 true
-            if (!token.substring(0, "BEARER ".length()).equalsIgnoreCase("BEARER ")) {
-                return false;
-            } else {
-                token = token.split(" ")[1].trim();
-            }
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-            // 만료되었을 시 false
-            return !claims.getBody().getExpiration().before(new Date());
-        } catch (SecurityException e) {
-            log.info("Invalid JWT signature.");
-            throw new JwtException("잘못된 JWT 시그니처");
-        } catch (MalformedJwtException e) {
-            log.info("Invalid JWT token." + e);
-            throw new JwtException("유효하지 않은 JWT 토큰");
-        } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
+        // bearer로 시작하는 경우 false를 반환 아니면 true
+        if (!token.substring(0, "BEARER ".length()).equalsIgnoreCase("BEARER ")) {
             return false;
-        } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT token.");
-        } catch (IllegalArgumentException e) {
-            log.info("JWT token compact of handler are invalid.");
-            throw new JwtException("JWT token compact of handler are invalid.");
+        } else {
+            token = token.split(" ")[1].trim();
         }
-        return false;
+        Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+        // 만료되었을 시 false
+        return !claims.getBody().getExpiration().before(new Date());
+
+//        try {
+//            // Bearer 검증
+//            // bearer로 시작하는 경우 false를 반환 아니면 true
+//            if (!token.substring(0, "BEARER ".length()).equalsIgnoreCase("BEARER ")) {
+//                return false;
+//            } else {
+//                token = token.split(" ")[1].trim();
+//            }
+//            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+//            // 만료되었을 시 false
+//            return !claims.getBody().getExpiration().before(new Date());
+//        } catch (SecurityException e) {
+//            log.info("Invalid JWT signature.");
+//            throw new JwtException("잘못된 JWT 시그니처", e);
+//        } catch (MalformedJwtException e) {
+//            log.info("Invalid JWT token." + e);
+//            throw new JwtException("유효하지 않은 JWT 토큰", e);
+//        } catch (ExpiredJwtException e) {
+//            log.info("Expired JWT token.");
+//            throw new AccessDeniedException("테스으요", e);
+////            throw new JwtException("만료된 JWT 토큰", e);
+//        } catch (UnsupportedJwtException e) {
+//            log.info("Unsupported JWT token.");
+//            throw new JwtException("지원하지 않는 JWT 토큰", e);
+//        } catch (IllegalArgumentException e) {
+//            log.info("JWT token compact of handler are invalid.");
+//            throw new JwtException("JWT token compact of handler are invalid.", e);
+//        }
     }
 
 //    public boolean validateToken(String token) {
