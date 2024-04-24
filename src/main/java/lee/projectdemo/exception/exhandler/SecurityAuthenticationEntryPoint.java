@@ -32,26 +32,35 @@ public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoin
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
 
 //        authException.printStackTrace();
+
         //예외 원인마다 다르게 처리하면됨
         if (authException.getCause() instanceof JwtException) {
             if(authException.getCause() instanceof ExpiredJwtException){
                 response.sendRedirect(LOGOUT_URL);
             }
-            if(authException.getCause() instanceof MalformedJwtException){
+            else if(authException.getCause() instanceof MalformedJwtException){
                 response.sendRedirect(LOGOUT_URL);
             }
-            if(authException.getCause() instanceof UnsupportedJwtException){
+            else if(authException.getCause() instanceof UnsupportedJwtException){
                 response.sendRedirect(LOGOUT_URL);
             }
-            if(authException.getCause() instanceof IllegalArgumentException){
+            else if(authException.getCause() instanceof IllegalArgumentException){
+                response.sendRedirect(LOGOUT_URL);
+            }
+            else {
                 response.sendRedirect(LOGOUT_URL);
             }
         }
         else {
             //JWTException이 아닌경우 이미 ExceptionTranslationFilter에서 예외가 정제되어 나온걸 commence를 호출한거기에 따로 분류 X
-
-            response.sendRedirect(LOGOUT_URL);
+            response.sendRedirect(LOGIN_URL);
         }
 
     }
+
+//    @Override
+//    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+//        resolver.resolveException(request, response, null, authException);
+//    }
+
 }

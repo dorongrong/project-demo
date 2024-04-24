@@ -32,8 +32,6 @@ public class AuthenticationExceptionAdvice {
 
     @ExceptionHandler(AuthenticationException.class)
     public RedirectView AuthenticationException(AuthenticationException e) {
-//        log.error("테에스트", e);
-        System.out.println("테스트");
         String redirectUrl = "/logout";
         return new RedirectView(redirectUrl);
     }

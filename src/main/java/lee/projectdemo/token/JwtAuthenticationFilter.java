@@ -57,34 +57,31 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         // 쿠기에 들어가있는 value가 담김
         String cToken = "Bearer " + getCookie(request);
 
-        try{
-            if (jwtProvider.validateToken(cToken)) {
+        if (jwtProvider.validateToken(cToken)) {
+            cToken = cToken.split(" ")[1].trim();
 
-                cToken = cToken.split(" ")[1].trim();
-
-                Authentication auth = jwtProvider.getAuthentication(cToken);
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            }
-            //여기 왜 안걸림? 4/15
-        } catch(MalformedJwtException | ExpiredJwtException e) {
-//        } catch(ExpiredJwtException | MalformedJwtException | JwtAuthenticationException e) {
-            request.setAttribute("exception", "hello");
-            throw new AccessDeniedException("Jwt Expired");
-            //여기서 예외를 던지면 필터가 중단됨 그럼 provider에서 던지면 어케될까? 여기서 잡으면 문제 없음
+            //여기서 expired 발생
+            // 이러면 예외를 catch 하지 않아서 필터가 바로 중단됨
+            Authentication auth = jwtProvider.getAuthentication(cToken);
+            SecurityContextHolder.getContext().setAuthentication(auth);
         }
         filterChain.doFilter(request, response);
 
-
-//        if (jwtProvider.validateToken(cToken)) {
-//        cToken = cToken.split(" ")[1].trim();
+//        try{
+//            if (jwtProvider.validateToken(cToken)) {
 //
-//            //여기서 expired 발생
-//            // 이러면 예외를 catch 하지 않아서 필터가 바로 중단됨
-//            Authentication auth = jwtProvider.getAuthentication(cToken);
-//            SecurityContextHolder.getContext().setAuthentication(auth);
+//                cToken = cToken.split(" ")[1].trim();
+//
+//                Authentication auth = jwtProvider.getAuthentication(cToken);
+//                SecurityContextHolder.getContext().setAuthentication(auth);
+//            }
+//            //여기 왜 안걸림? 4/15
+//        } catch(ExpiredJwtException | MalformedJwtException | JwtAuthenticationException e) {
+//            request.setAttribute("exception", "hello");
+//            throw new AccessDeniedException("Jwt Expired");
+//            //여기서 예외를 던지면 필터가 중단됨 그럼 provider에서 던지면 어케될까? 여기서 잡으면 문제 없음
 //        }
 //        filterChain.doFilter(request, response);
-
     }
 
     private String getCookie(HttpServletRequest request){

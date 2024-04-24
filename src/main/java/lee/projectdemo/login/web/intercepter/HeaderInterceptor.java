@@ -17,9 +17,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Component
 public class HeaderInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    private LoginService loginService;
+    private final LoginService loginService;
 
+    public HeaderInterceptor(LoginService loginService) {
+        this.loginService = loginService;
+    }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
