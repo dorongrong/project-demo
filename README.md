@@ -2,6 +2,17 @@
 =============
 <br/>
 
+Installation
+-------------
+
+* Docker Hub 에서 dorongrong/front, dorongrong/back, dorongrong/my-rabbitmq PULL 
+* 도커 네트워크 생성 => docker network creat [network name]
+* RabbitMQ 실행 => docker run -d --name my-rabbitmq --network [network name] -p 5672:5672 -p 15672:15672 -p 61613:61613 dorongrong/my-rabbitmq
+* FrontEnd React Server 실행 => docker run --network [network name] -p 3000:3000 dorongrong/front
+* BackEnd Spring Server 실행 => docker run --network [network name] -p 9097:9097 dorongrong/back
+
+<br/>
+
 프로젝트 기획 동기
 -------------
 
